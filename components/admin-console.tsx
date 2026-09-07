@@ -299,7 +299,7 @@ export function AdminConsole({ apiUrl, googleClientId }: { apiUrl: string; googl
 
   async function copyForWhatsApp() {
     const announcement = formToAnnouncement(form);
-    const noticeUrl = new URL(`${sitePath}/notice?slug=${encodeURIComponent(announcement.slug)}`, window.location.origin).href;
+    const noticeUrl = new URL(`${sitePath}/notice/${encodeURIComponent(announcement.slug)}/`, window.location.origin).href;
     const text = `*${announcement.title}*\n\n${announcement.summary}\n\nRead the complete update: ${noticeUrl}`;
     await navigator.clipboard.writeText(text);
     setCopied(true);

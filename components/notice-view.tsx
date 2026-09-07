@@ -1,6 +1,3 @@
-'use client';
-
-import { useEffect, useState } from 'react';
 import { ArrowLeft, Building2, CalendarDays, Clock3, ExternalLink, MapPin, UserRound } from 'lucide-react';
 import type { Announcement } from '@/lib/announcements';
 import { ShareButton } from '@/components/share-button';
@@ -10,36 +7,7 @@ function formatDate(value: string) {
   return new Intl.DateTimeFormat('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(value));
 }
 
-export function NoticeView({ announcements }: { announcements: Announcement[] }) {
-  const [slug, setSlug] = useState<string | null>();
-
-  useEffect(() => {
-    const frame = window.requestAnimationFrame(() => {
-      setSlug(new URLSearchParams(window.location.search).get('slug'));
-    });
-
-    return () => window.cancelAnimationFrame(frame);
-  }, []);
-
-  if (slug === undefined) {
-    return <main className="grid min-h-screen place-items-center bg-background text-muted-foreground">Loading update…</main>;
-  }
-
-  const announcement = announcements.find((item) => item.slug === slug);
-
-  if (!announcement) {
-    return (
-      <main className="grid min-h-screen place-items-center bg-background p-6 text-center">
-        <div>
-          <p className="eyebrow justify-center">Notice unavailable</p>
-          <h1 className="mt-4 font-heading text-5xl font-semibold tracking-tight text-ink">This update could not be found.</h1>
-          <p className="mx-auto mt-4 max-w-lg text-muted-foreground">It may have been removed or replaced with a newer announcement.</p>
-          <a className="primary-action mt-7" href={siteHref('/')}>Return to all updates</a>
-        </div>
-      </main>
-    );
-  }
-
+export function NoticeView({ announcement }: { announcement: Announcement }) {
   return (
     <main className="min-h-screen bg-background">
       <header className="border-b border-white/10 bg-ink text-white">

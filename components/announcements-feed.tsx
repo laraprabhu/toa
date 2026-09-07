@@ -126,7 +126,7 @@ function FeaturedCard({ announcement }: { announcement: Announcement }) {
           <h2 className="max-w-2xl font-heading text-3xl font-semibold leading-tight tracking-[-0.03em] sm:text-5xl">{announcement.title}</h2>
           <p className="mt-4 max-w-2xl text-base leading-7 text-white/75 sm:text-lg">{announcement.summary}</p>
           <MetaRow announcement={announcement} featured />
-          <a className="read-button mt-7" href={siteHref(`/notice?slug=${encodeURIComponent(announcement.slug)}`)}>
+          <a className="read-button mt-7" href={siteHref(`/notice/${encodeURIComponent(announcement.slug)}/`)}>
             Read complete update <ChevronRight size={17} aria-hidden="true" />
           </a>
         </div>
@@ -145,7 +145,7 @@ function CompactCard({ announcement }: { announcement: Announcement }) {
       <h3>{announcement.title}</h3>
       <p>{announcement.summary}</p>
       <MetaRow announcement={announcement} />
-      <a className="card-link" href={siteHref(`/notice?slug=${encodeURIComponent(announcement.slug)}`)}>
+      <a className="card-link" href={siteHref(`/notice/${encodeURIComponent(announcement.slug)}/`)}>
         View details <ChevronRight size={16} aria-hidden="true" />
       </a>
     </article>
