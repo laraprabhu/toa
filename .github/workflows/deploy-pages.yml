@@ -9,6 +9,7 @@ on:
       - 'content/**'
       - 'lib/**'
       - 'public/**'
+      - 'scripts/**'
       - 'next.config.ts'
       - 'vite.config.ts'
       - 'package.json'
