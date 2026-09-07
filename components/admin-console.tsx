@@ -383,7 +383,7 @@ export function AdminConsole({ apiUrl, googleClientId }: { apiUrl: string; googl
     while (Date.now() < deadline) {
       if (publicationCheckTokensRef.current.get(announcement.id) !== checkToken) return null;
       try {
-        const pageUrl = new URL(`${sitePath}/notice/${encodeURIComponent(announcement.slug)}/`, window.location.origin);
+        const pageUrl = new URL(`${sitePath}/${announcement.number}/`, window.location.origin);
         pageUrl.searchParams.set('__toa_publish_check', `${announcement.previewVersion}-${Date.now()}`);
         const response = await fetch(pageUrl, { cache: 'no-store' });
         if (response.ok && (await response.text()).includes(announcement.previewVersion)) return true;
@@ -507,12 +507,9 @@ export function AdminConsole({ apiUrl, googleClientId }: { apiUrl: string; googl
       return;
     }
     const announcement = formToAnnouncement(form);
-    const noticeUrl = new URL(`${sitePath}/notice/${encodeURIComponent(announcement.slug)}/`, window.location.origin).href;
-    const versionedNoticeUrl = new URL(noticeUrl);
-    if (announcement.number > 0) versionedNoticeUrl.searchParams.set('v', announcement.previewVersion ?? `${announcement.number}-banner-1`);
-    versionedNoticeUrl.searchParams.set('card', 'minimal-title-1');
+    const noticeUrl = new URL(`${sitePath}/${announcement.number}/`, window.location.origin).href;
     const numberLabel = announcement.number > 0 ? `Announcement #${announcement.number}: ` : '';
-    const text = `*${numberLabel}${announcement.title}*\n\n${announcement.summary}\n\nRead the complete update: ${versionedNoticeUrl.href}`;
+    const text = `*${numberLabel}${announcement.title}*\n\n${announcement.summary}\n\nRead the complete update: ${noticeUrl}`;
     await navigator.clipboard.writeText(text);
     setCopied(true);
     window.setTimeout(() => setCopied(false), 1800);

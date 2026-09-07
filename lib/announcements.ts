@@ -37,3 +37,9 @@ export function getPublishedAnnouncements() {
 export function getAnnouncement(slug: string) {
   return getPublishedAnnouncements().find((announcement) => announcement.slug === slug);
 }
+
+export function getAnnouncementByNumber(number: string | number) {
+  const announcementNumber = typeof number === 'number' ? number : Number(number);
+  if (!Number.isInteger(announcementNumber) || announcementNumber < 1) return undefined;
+  return getPublishedAnnouncements().find((announcement) => announcement.number === announcementNumber);
+}

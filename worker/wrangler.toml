@@ -4,6 +4,9 @@ compatibility_date = "2026-08-28"
 
 [vars]
 GITHUB_BRANCH = "main"
+GITHUB_REPO = "laraprabhu/toa"
+GOOGLE_CLIENT_ID = "352916246680-s4v2g316r5ljj2gabnrr4gneddv17v5a.apps.googleusercontent.com"
+ALLOWED_ORIGINS = "https://laraprabhu.github.io"
 
 # Set these values for local development in worker/.dev.vars:
 # GOOGLE_CLIENT_ID=

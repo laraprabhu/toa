@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 
-const siteUrl = 'https://laraprabhu.github.io/toa-noticeboard/';
+const siteUrl = 'https://laraprabhu.github.io/toa/';
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),

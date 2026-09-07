@@ -74,7 +74,7 @@ const worker = {
         await putRepoBase64(`public${image}`, imageBase64, env, `Update preview for announcement #${announcement.number}`);
         const previewVersion = `${announcement.number}-${Date.now().toString(36)}`;
         const result = await mutateAnnouncements(env, admin.email, (items) => items.map((item) => (
-          item.id === id ? { ...item, image, previewVersion, previewHeight: 540 } : item
+          item.id === id ? { ...item, image, previewVersion, previewHeight: 800 } : item
         )));
         return json({ announcements: result, admin }, 200, corsHeaders);
       }

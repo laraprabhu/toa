@@ -1,10 +1,10 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { NoticeView } from '@/components/notice-view';
-import { getAnnouncement, getPublishedAnnouncements } from '@/lib/announcements';
+import { getAnnouncementByNumber, getPublishedAnnouncements } from '@/lib/announcements';
 
-type NoticePageProps = {
-  params: Promise<{ slug: string }>;
+type NumberedNoticePageProps = {
+  params: Promise<{ number: string }>;
 };
 
 export const dynamicParams = false;
@@ -12,11 +12,11 @@ const minimalPreviewTitle = 'TOA Noticeboard';
 const hiddenPreviewDescription = '\u200B';
 
 export function generateStaticParams() {
-  return getPublishedAnnouncements().map(({ slug }) => ({ slug }));
+  return getPublishedAnnouncements().map(({ number }) => ({ number: String(number) }));
 }
 
-export async function generateMetadata({ params }: NoticePageProps): Promise<Metadata> {
-  const announcement = getAnnouncement((await params).slug);
+export async function generateMetadata({ params }: NumberedNoticePageProps): Promise<Metadata> {
+  const announcement = getAnnouncementByNumber((await params).number);
   if (!announcement) return { title: 'Resident update' };
 
   const url = `https://laraprabhu.github.io/toa/${announcement.number}/`;
@@ -48,8 +48,8 @@ export async function generateMetadata({ params }: NoticePageProps): Promise<Met
   };
 }
 
-export default async function NoticePage({ params }: NoticePageProps) {
-  const announcement = getAnnouncement((await params).slug);
+export default async function NumberedNoticePage({ params }: NumberedNoticePageProps) {
+  const announcement = getAnnouncementByNumber((await params).number);
   if (!announcement) notFound();
 
   return <NoticeView announcement={announcement} />;
