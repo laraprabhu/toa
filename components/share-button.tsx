@@ -11,6 +11,7 @@ export function ShareButton({ number, title, summary, previewVersion }: { number
     shareUrl.search = '';
     shareUrl.hash = '';
     shareUrl.searchParams.set('v', previewVersion ?? `${number}-banner-1`);
+    shareUrl.searchParams.set('card', 'image-only-1');
     const url = shareUrl.href;
     const shareTitle = `Announcement #${number}: ${title}`;
     const text = `*${shareTitle}*\n\n${summary}\n\nRead the complete update: ${url}`;

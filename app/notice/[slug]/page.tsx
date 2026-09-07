@@ -8,6 +8,7 @@ type NoticePageProps = {
 };
 
 export const dynamicParams = false;
+const imageOnlyPreviewText = '\u200B';
 
 export function generateStaticParams() {
   return getPublishedAnnouncements().map(({ slug }) => ({ slug }));
@@ -33,16 +34,15 @@ export async function generateMetadata({ params }: NoticePageProps): Promise<Met
     openGraph: {
       type: 'article',
       url,
-      siteName: 'TOA Noticeboard',
-      title,
-      description: announcement.summary,
+      title: imageOnlyPreviewText,
+      description: imageOnlyPreviewText,
       publishedTime: announcement.publishedAt,
       images: image ? [{ url: image, width: 1200, height: announcement.previewHeight ?? 630, alt: `TOA Announcement #${announcement.number}` }] : [],
     },
     twitter: {
       card: image ? 'summary_large_image' : 'summary',
-      title,
-      description: announcement.summary,
+      title: imageOnlyPreviewText,
+      description: imageOnlyPreviewText,
       images: image ? [image] : [],
     },
   };
