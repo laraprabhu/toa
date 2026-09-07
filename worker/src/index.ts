@@ -16,6 +16,7 @@ interface AdminRecord {
 }
 
 interface Announcement {
+  number: number;
   id: string;
   slug: string;
   title: string;
@@ -67,11 +68,12 @@ const worker = {
       const id = match[1] ? decodeURIComponent(match[1]) : undefined;
       if (request.method === 'POST' && !id) {
         const candidate = validateAnnouncement(await request.json());
+        const number = await allocateAnnouncementNumber(env);
         const result = await mutateAnnouncements(env, admin.email, (items) => {
           if (items.some((item) => item.id === candidate.id || item.slug === candidate.slug)) {
             throw new HttpError(409, 'An announcement with this ID or page address already exists.');
           }
-          return [candidate, ...items];
+          return [{ ...candidate, number }, ...items];
         });
         return json({ announcements: result, admin }, 201, corsHeaders);
       }
@@ -82,6 +84,7 @@ const worker = {
         const result = await mutateAnnouncements(env, admin.email, (items) => {
           const index = items.findIndex((item) => item.id === id);
           if (index < 0) throw new HttpError(404, 'Announcement not found.');
+          if (items[index].number !== candidate.number) throw new HttpError(400, 'The announcement number cannot be changed.');
           if (items.some((item, itemIndex) => itemIndex !== index && item.slug === candidate.slug)) {
             throw new HttpError(409, 'Another announcement already uses this page address.');
           }
@@ -150,6 +153,21 @@ async function mutateAnnouncements(env: Env, adminEmail: string, mutate: (items:
   throw new HttpError(409, 'The repository changed while saving. Please try again.');
 }
 
+async function allocateAnnouncementNumber(env: Env) {
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    const sequence = await getRepoJson<{ nextNumber: number }>('content/announcement-sequence.json', env);
+    const number = sequence.content.nextNumber;
+    if (!Number.isInteger(number) || number < 1) throw new HttpError(500, 'The announcement sequence is invalid.');
+    try {
+      await putRepoJson('content/announcement-sequence.json', { nextNumber: number + 1 }, sequence.sha, env, `Reserve announcement #${number}`);
+      return number;
+    } catch (error) {
+      if (!(error instanceof HttpError) || error.status !== 409 || attempt === 2) throw error;
+    }
+  }
+  throw new HttpError(409, 'Unable to reserve an announcement number. Please try again.');
+}
+
 async function getRepoJson<T>(path: string, env: Env): Promise<GitHubFile<T>> {
   const branch = env.GITHUB_BRANCH || 'main';
   const response = await githubFetch(`/repos/${env.GITHUB_REPO}/contents/${path}?ref=${encodeURIComponent(branch)}`, env);
@@ -197,6 +215,7 @@ function githubFetch(path: string, env: Env, init?: RequestInit) {
 function validateAnnouncement(input: unknown): Announcement {
   if (!input || typeof input !== 'object') throw new HttpError(400, 'Announcement data is required.');
   const value = input as Record<string, unknown>;
+  if (!Number.isInteger(value.number) || Number(value.number) < 0) throw new HttpError(400, 'Announcement number must be a whole number.');
   const requiredStrings = ['id', 'slug', 'title', 'summary', 'body', 'publishedAt'] as const;
   for (const field of requiredStrings) {
     if (typeof value[field] !== 'string' || !String(value[field]).trim()) throw new HttpError(400, `${field} is required.`);

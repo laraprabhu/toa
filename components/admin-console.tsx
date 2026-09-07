@@ -62,6 +62,7 @@ type ApiResult = { announcements: Announcement[]; admin?: { email: string; name?
 type FormState = Omit<Announcement, 'publishedAt' | 'expiresAt'> & { publishedAt: string; expiresAt: string };
 
 const emptyForm = (): FormState => ({
+  number: 0,
   id: '',
   slug: '',
   title: '',
@@ -228,6 +229,7 @@ export function AdminConsole({ apiUrl, googleClientId }: { apiUrl: string; googl
           throw new Error('Title, summary, body and a valid category are required.');
         }
         const item: Announcement = {
+          number: Math.max(0, ...announcements.map((announcement) => announcement.number)) + 1,
           id: crypto.randomUUID(),
           slug: slugify(candidate.title),
           title: candidate.title.trim(),
@@ -247,7 +249,7 @@ export function AdminConsole({ apiUrl, googleClientId }: { apiUrl: string; googl
     }, { signal: lifecycle.signal })).catch(() => undefined);
 
     return () => lifecycle.abort();
-  }, [apiRequest, authState, credential]);
+  }, [announcements, apiRequest, authState, credential]);
 
   const sortedAnnouncements = useMemo(
     () => [...announcements].sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()),
@@ -300,7 +302,8 @@ export function AdminConsole({ apiUrl, googleClientId }: { apiUrl: string; googl
   async function copyForWhatsApp() {
     const announcement = formToAnnouncement(form);
     const noticeUrl = new URL(`${sitePath}/notice/${encodeURIComponent(announcement.slug)}/`, window.location.origin).href;
-    const text = `*${announcement.title}*\n\n${announcement.summary}\n\nRead the complete update: ${noticeUrl}`;
+    const numberLabel = announcement.number > 0 ? `Announcement #${announcement.number}: ` : '';
+    const text = `*${numberLabel}${announcement.title}*\n\n${announcement.summary}\n\nRead the complete update: ${noticeUrl}`;
     await navigator.clipboard.writeText(text);
     setCopied(true);
     window.setTimeout(() => setCopied(false), 1800);
@@ -374,7 +377,7 @@ export function AdminConsole({ apiUrl, googleClientId }: { apiUrl: string; googl
                   onClick={() => { setForm(announcementToForm(announcement)); setNotice(''); }}
                 >
                   <span className={`status-dot ${announcement.status}`} />
-                  <span><strong>{announcement.title}</strong><small>{announcement.status} · {announcement.category}</small></span>
+                  <span><strong>#{announcement.number} · {announcement.title}</strong><small>{announcement.status} · {announcement.category}</small></span>
                 </button>
               ))}
             </div>
@@ -383,7 +386,7 @@ export function AdminConsole({ apiUrl, googleClientId }: { apiUrl: string; googl
           <section className="editor-panel">
             <div className="editor-heading">
               <div>
-                <p className="eyebrow">{selectedId ? 'Editing announcement' : 'New announcement'}</p>
+                <p className="eyebrow">{selectedId ? `Announcement #${form.number}` : 'New announcement'}</p>
                 <h2>{selectedId ? form.title || 'Untitled' : 'Create a clear resident update'}</h2>
               </div>
               <FilePenLine className="text-teal" aria-hidden="true" />

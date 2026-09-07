@@ -15,10 +15,30 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: NoticePageProps): Promise<Metadata> {
   const announcement = getAnnouncement((await params).slug);
+  if (!announcement) return { title: 'Resident update' };
+
+  const title = `Announcement #${announcement.number}: ${announcement.title}`;
+  const url = `https://laraprabhu.github.io/toa-noticeboard/notice/${encodeURIComponent(announcement.slug)}/`;
 
   return {
-    title: announcement?.title ?? 'Resident update',
-    description: announcement?.summary ?? 'Official resident update from TOA.',
+    title,
+    description: announcement.summary,
+    alternates: { canonical: url },
+    openGraph: {
+      type: 'article',
+      url,
+      siteName: 'TOA Noticeboard',
+      title,
+      description: announcement.summary,
+      publishedTime: announcement.publishedAt,
+      images: [],
+    },
+    twitter: {
+      card: 'summary',
+      title,
+      description: announcement.summary,
+      images: [],
+    },
   };
 }
 

@@ -120,7 +120,7 @@ function FeaturedCard({ announcement }: { announcement: Announcement }) {
       <div className="relative z-10 flex h-full flex-col">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <CategoryLabel announcement={announcement} />
-          <span className="text-sm text-white/65">Posted {formatDate(announcement.publishedAt)}</span>
+          <span className="text-sm text-white/65">Announcement #{announcement.number} · {formatDate(announcement.publishedAt)}</span>
         </div>
         <div className="mt-auto pt-20 sm:pt-28">
           <h2 className="max-w-2xl font-heading text-3xl font-semibold leading-tight tracking-[-0.03em] sm:text-5xl">{announcement.title}</h2>
@@ -140,7 +140,7 @@ function CompactCard({ announcement }: { announcement: Announcement }) {
     <article className="compact-card">
       <div className="flex items-start justify-between gap-4">
         <CategoryLabel announcement={announcement} />
-        <span className="text-xs text-muted-foreground">{formatDate(announcement.publishedAt)}</span>
+        <span className="text-xs text-muted-foreground">#{announcement.number} · {formatDate(announcement.publishedAt)}</span>
       </div>
       <h3>{announcement.title}</h3>
       <p>{announcement.summary}</p>

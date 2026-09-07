@@ -5,6 +5,7 @@ export type AnnouncementPriority = 'normal' | 'high';
 export type AnnouncementStatus = 'draft' | 'published';
 
 export interface Announcement {
+  number: number;
   id: string;
   slug: string;
   title: string;

@@ -119,18 +119,18 @@
   .section-heading span { @apply text-sm text-muted-foreground; }
   .empty-state { @apply mt-7 grid min-h-72 place-items-center content-center gap-2 rounded-2xl border border-dashed border-border bg-white p-8 text-center text-muted-foreground; }
   .empty-state h2 { @apply mt-2 font-heading text-2xl font-semibold text-ink; }
-  .notice-layout { @apply grid gap-7 lg:grid-cols-[minmax(0,1fr)_340px] lg:gap-12; }
-  .notice-article { @apply rounded-[1.75rem] border border-border bg-white p-6 shadow-[0_16px_48px_rgb(16_45_54/6%)] sm:p-10 lg:p-12; }
-  .notice-article h1 { @apply mt-6 max-w-3xl font-heading text-4xl font-semibold leading-[1.08] tracking-[-0.04em] text-ink sm:text-6xl; }
-  .notice-summary { @apply mt-6 max-w-3xl border-l-4 border-sun pl-5 text-lg leading-8 text-muted-foreground sm:text-xl; }
-  .notice-body { @apply mt-9 max-w-3xl space-y-5 text-base leading-8 text-foreground; }
-  .notice-sidebar { @apply h-fit rounded-[1.5rem] bg-ink p-6 text-white shadow-[0_16px_48px_rgb(16_45_54/14%)] lg:sticky lg:top-7; }
-  .notice-sidebar h2 { @apply font-heading text-2xl font-semibold; }
-  .info-row { @apply mt-6 flex items-start gap-3 border-t border-white/10 pt-5 text-sm leading-6 text-white/85; }
-  .info-row > svg { @apply mt-1 size-5 shrink-0 text-sun; }
-  .info-row span { @apply grid; }
-  .info-row small { @apply text-xs font-bold uppercase tracking-[0.1em] text-white/50; }
-  .share-button { @apply inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-sun px-4 text-sm font-bold text-ink transition hover:bg-[#ffd872]; }
+  .notice-shell { @apply mx-auto w-full max-w-[820px] px-5 sm:px-8; }
+  .notice-paper { @apply rounded-2xl border border-border bg-white p-6 sm:p-10; }
+  .notice-paper h1 { @apply mt-5 font-heading text-4xl font-semibold leading-[1.1] tracking-[-0.035em] text-ink sm:text-5xl; }
+  .notice-summary { @apply mt-5 text-lg leading-8 text-muted-foreground; }
+  .notice-body { @apply mt-7 space-y-5 border-t border-border pt-7 text-base leading-8 text-foreground; }
+  .notice-facts { @apply mt-8 grid gap-x-8 gap-y-5 border-y border-border py-6 sm:grid-cols-2; }
+  .notice-facts > div { @apply grid gap-1; }
+  .notice-facts dt { @apply flex items-center gap-2 text-xs font-bold uppercase tracking-[0.09em] text-muted-foreground; }
+  .notice-facts dt svg { @apply size-4 text-teal; }
+  .notice-facts dd { @apply m-0 text-sm font-semibold text-ink; }
+  .notice-actions { @apply mt-6 flex flex-col gap-3 sm:flex-row sm:items-center; }
+  .share-button { @apply inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-sun px-4 text-sm font-bold text-ink transition hover:bg-[#ffd872] sm:w-auto; }
   .primary-action { @apply inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-primary px-5 text-sm font-bold text-primary-foreground transition hover:bg-[#095f57]; }
   .admin-gate { @apply grid min-h-screen place-items-center bg-ink p-5; background-image: radial-gradient(circle at 20% 15%, rgba(14,117,107,.32), transparent 30%), radial-gradient(circle at 85% 80%, rgba(246,200,88,.18), transparent 28%); }
   .admin-gate-card { @apply w-full max-w-xl rounded-[2rem] border border-white/10 bg-white p-7 text-center shadow-2xl sm:p-12; }

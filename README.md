@@ -6,6 +6,7 @@ A mobile-first communication hub for residents. The public site is a static GitH
 
 - **Resident site:** static Vinext/React site deployed by GitHub Actions to GitHub Pages.
 - **Source of truth:** `content/announcements.json`.
+- **Global numbering:** `content/announcement-sequence.json` reserves permanent announcement numbers that are never reused after deletion.
 - **Admin allowlist:** `content/admins.json`, preferably using SHA-256 email hashes.
 - **Authentication:** Google Identity Services in the browser; Google ID tokens are verified by the admin service.
 - **Admin writes:** a stateless Cloudflare Worker verifies the Google account, checks the repository allowlist, and commits JSON changes through the GitHub Contents API.
@@ -84,6 +85,7 @@ Then:
 
 Announcements support:
 
+- a permanent global announcement number;
 - title, concise summary and complete message;
 - category, priority, draft/published status;
 - publish and expiry timestamps;

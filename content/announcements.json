@@ -1,5 +1,6 @@
 [
   {
+    "number": 1,
     "id": "ann-2026-09-chathurthi-practice",
     "slug": "chathurthi-practice-mph",
     "title": "Chathurthi practice at MPH Hall",
@@ -15,6 +16,7 @@
     "contact": "TOA Management Committee"
   },
   {
+    "number": 2,
     "id": "ann-2026-09-tank-cleaning",
     "slug": "water-tank-cleaning-block-a-b",
     "title": "Water tank cleaning for Blocks A & B",
@@ -30,6 +32,7 @@
     "contact": "Maintenance Desk · 98XX XXX 012"
   },
   {
+    "number": 3,
     "id": "ann-2026-09-gbm",
     "slug": "general-body-meeting-september",
     "title": "General body meeting",
@@ -45,6 +48,7 @@
     "contact": "TOA Management Committee"
   },
   {
+    "number": 4,
     "id": "ann-2026-09-sticker",
     "slug": "vehicle-sticker-renewal",
     "title": "Renew your vehicle sticker",
