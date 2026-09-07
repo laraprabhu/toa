@@ -9,8 +9,10 @@ import {
   Cloud,
   FilePenLine,
   ImageIcon,
+  LoaderCircle,
   LogOut,
   Plus,
+  RefreshCw,
   Save,
   ShieldAlert,
   ShieldCheck,
@@ -65,8 +67,12 @@ declare global {
 }
 
 type AuthState = 'loading' | 'signed-out' | 'authorized' | 'denied' | 'misconfigured';
+type PublicationState = 'idle' | 'publishing' | 'ready' | 'delayed';
 type ApiResult = { announcements: Announcement[]; admin?: { email: string; name?: string } };
 type FormState = Omit<Announcement, 'publishedAt' | 'expiresAt'> & { publishedAt: string; expiresAt: string };
+
+const PUBLICATION_POLL_INTERVAL_MS = 4_000;
+const PUBLICATION_TIMEOUT_MS = 180_000;
 
 const emptyForm = (): FormState => ({
   number: 0,
@@ -137,8 +143,14 @@ export function AdminConsole({ apiUrl, googleClientId }: { apiUrl: string; googl
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState('');
   const [copied, setCopied] = useState(false);
+  const [publicationState, setPublicationState] = useState<PublicationState>('idle');
   const googleButtonRef = useRef<HTMLDivElement>(null);
+  const publicationCheckRef = useRef(0);
   const selectedId = form.id;
+  const canShare = form.status === 'published'
+    && form.number > 0
+    && publicationState === 'ready'
+    && !busy;
 
   const apiRequest = useCallback(async (path: string, token: string, init?: RequestInit) => {
     const headers = new Headers(init?.headers);
@@ -287,7 +299,45 @@ export function AdminConsole({ apiUrl, googleClientId }: { apiUrl: string; googl
   );
 
   function updateField<K extends keyof FormState>(key: K, value: FormState[K]) {
+    publicationCheckRef.current += 1;
+    setPublicationState('idle');
     setForm((current) => ({ ...current, [key]: value }));
+  }
+
+  async function waitForPublishedVersion(announcement: Announcement, checkId: number) {
+    if (!announcement.previewVersion) return false;
+    const deadline = Date.now() + PUBLICATION_TIMEOUT_MS;
+
+    while (Date.now() < deadline) {
+      if (publicationCheckRef.current !== checkId) return null;
+      try {
+        const pageUrl = new URL(`${sitePath}/notice/${encodeURIComponent(announcement.slug)}/`, window.location.origin);
+        pageUrl.searchParams.set('__toa_publish_check', `${announcement.previewVersion}-${Date.now()}`);
+        const response = await fetch(pageUrl, { cache: 'no-store' });
+        if (response.ok && (await response.text()).includes(announcement.previewVersion)) return true;
+      } catch {
+        // A page may be unavailable while GitHub Pages is replacing the deployment.
+      }
+      await new Promise((resolve) => window.setTimeout(resolve, PUBLICATION_POLL_INTERVAL_MS));
+    }
+
+    return false;
+  }
+
+  async function monitorPublication(announcement: Announcement) {
+    const checkId = publicationCheckRef.current + 1;
+    publicationCheckRef.current = checkId;
+    setPublicationState('publishing');
+    setNotice('Publishing… Waiting for GitHub Pages to make the page and WhatsApp preview available.');
+    const ready = await waitForPublishedVersion(announcement, checkId);
+    if (publicationCheckRef.current !== checkId || ready === null) return;
+    if (ready) {
+      setPublicationState('ready');
+      setNotice('Ready to share. The public page and WhatsApp preview are live.');
+    } else {
+      setPublicationState('delayed');
+      setNotice('The announcement is saved, but publishing is taking longer than expected. Check again before sharing.');
+    }
   }
 
   async function saveAnnouncement() {
@@ -296,6 +346,8 @@ export function AdminConsole({ apiUrl, googleClientId }: { apiUrl: string; googl
       return;
     }
     setBusy(true);
+    publicationCheckRef.current += 1;
+    setPublicationState('idle');
     setNotice('');
     try {
       const announcement = formToAnnouncement(form);
@@ -310,12 +362,15 @@ export function AdminConsole({ apiUrl, googleClientId }: { apiUrl: string; googl
         setAnnouncements(previewResult.announcements);
         const completed = previewResult.announcements.find((item) => item.id === saved.id) ?? saved;
         setForm(announcementToForm(completed));
-        setNotice(announcement.status === 'published'
-          ? 'Published with a custom preview image. GitHub Pages will refresh after its build completes.'
-          : 'Draft and custom preview image saved to the repository.');
+        if (completed.status === 'published') {
+          await monitorPublication(completed);
+        } else {
+          setNotice('Draft and custom preview image saved to the repository.');
+        }
       } catch (previewError) {
         setAnnouncements(result.announcements);
         setForm(announcementToForm(saved));
+        setPublicationState('idle');
         const reason = previewError instanceof Error ? previewError.message : 'Preview generation failed.';
         setNotice(`Announcement saved, but its custom preview was not updated: ${reason}`);
       }
@@ -334,6 +389,8 @@ export function AdminConsole({ apiUrl, googleClientId }: { apiUrl: string; googl
       const result = await apiRequest(`/api/announcements/${encodeURIComponent(selectedId)}`, credential, { method: 'DELETE' });
       setAnnouncements(result.announcements);
       setForm(emptyForm());
+      publicationCheckRef.current += 1;
+      setPublicationState('idle');
       setNotice('Announcement deleted from the repository.');
     } catch (error) {
       setNotice(error instanceof Error ? error.message : 'Unable to delete this announcement.');
@@ -343,6 +400,10 @@ export function AdminConsole({ apiUrl, googleClientId }: { apiUrl: string; googl
   }
 
   async function copyForWhatsApp() {
+    if (!canShare) {
+      setNotice('Wait until this published announcement is ready to share.');
+      return;
+    }
     const announcement = formToAnnouncement(form);
     const noticeUrl = new URL(`${sitePath}/notice/${encodeURIComponent(announcement.slug)}/`, window.location.origin).href;
     const versionedNoticeUrl = new URL(noticeUrl);
@@ -355,12 +416,14 @@ export function AdminConsole({ apiUrl, googleClientId }: { apiUrl: string; googl
   }
 
   function signOut() {
+    publicationCheckRef.current += 1;
     window.google?.accounts.id.disableAutoSelect();
     setCredential('');
     setAdmin(null);
     setAnnouncements([]);
     setForm(emptyForm());
     setPreviewImage('');
+    setPublicationState('idle');
     setAuthState('signed-out');
     setNotice('');
   }
@@ -375,7 +438,19 @@ export function AdminConsole({ apiUrl, googleClientId }: { apiUrl: string; googl
       number: form.number || Math.max(0, ...announcements.map((item) => item.number)) + 1,
     });
     setPreviewImage(`data:image/png;base64,${generateAnnouncementPreview(candidate)}`);
+    publicationCheckRef.current += 1;
+    setPublicationState('idle');
     setNotice('Banner preview generated. Save the announcement to store it in the repository.');
+  }
+
+  async function retryPublicationCheck() {
+    if (!form.id || form.status !== 'published' || !form.previewVersion) return;
+    setBusy(true);
+    try {
+      await monitorPublication(formToAnnouncement(form));
+    } finally {
+      setBusy(false);
+    }
   }
 
   if (authState !== 'authorized') {
@@ -424,7 +499,7 @@ export function AdminConsole({ apiUrl, googleClientId }: { apiUrl: string; googl
           <aside className="announcement-list">
             <div className="flex items-center justify-between gap-3 border-b border-border p-4">
               <div><h2>Announcements</h2><p>{announcements.length} total</p></div>
-              <Button size="lg" onClick={() => { setForm(emptyForm()); setPreviewImage(''); setNotice(''); }}><Plus aria-hidden="true" /> New</Button>
+              <Button size="lg" onClick={() => { publicationCheckRef.current += 1; setPublicationState('idle'); setForm(emptyForm()); setPreviewImage(''); setNotice(''); }}><Plus aria-hidden="true" /> New</Button>
             </div>
             <div className="max-h-[calc(100vh-240px)] overflow-y-auto p-2">
               {sortedAnnouncements.map((announcement) => (
@@ -433,7 +508,7 @@ export function AdminConsole({ apiUrl, googleClientId }: { apiUrl: string; googl
                   type="button"
                   aria-label={`Edit ${announcement.title}`}
                   className={selectedId === announcement.id ? 'announcement-list-item active' : 'announcement-list-item'}
-                  onClick={() => { setForm(announcementToForm(announcement)); setPreviewImage(''); setNotice(''); }}
+                  onClick={() => { publicationCheckRef.current += 1; setPublicationState(announcement.status === 'published' ? 'ready' : 'idle'); setForm(announcementToForm(announcement)); setPreviewImage(''); setNotice(''); }}
                 >
                   <span className={`status-dot ${announcement.status}`} />
                   <span><strong>#{announcement.number} · {announcement.title}</strong><small>{announcement.status} · {announcement.category}</small></span>
@@ -531,12 +606,23 @@ export function AdminConsole({ apiUrl, googleClientId }: { apiUrl: string; googl
             )}
 
             <div className="editor-actions">
-              <Button className="h-11 px-5" onClick={saveAnnouncement} disabled={busy}><Save aria-hidden="true" /> {busy ? 'Saving…' : 'Save announcement'}</Button>
-              <Button className="h-11" variant="outline" onClick={previewBanner} disabled={!form.title || !form.summary}>
+              <Button className="h-11 px-5" onClick={saveAnnouncement} disabled={busy}>
+                {publicationState === 'publishing' ? <LoaderCircle className="animate-spin" aria-hidden="true" /> : <Save aria-hidden="true" />}
+                {busy ? publicationState === 'publishing' ? 'Publishing…' : 'Saving…' : 'Save announcement'}
+              </Button>
+              <Button className="h-11" variant="outline" onClick={previewBanner} disabled={busy || !form.title || !form.summary}>
                 <ImageIcon aria-hidden="true" /> Preview banner
               </Button>
-              <Button className="h-11" variant="outline" onClick={copyForWhatsApp} disabled={!form.title || !form.summary}>
-                {copied ? <Check aria-hidden="true" /> : <Clipboard aria-hidden="true" />}{copied ? 'Copied' : 'Copy for WhatsApp'}
+              {publicationState === 'delayed' && (
+                <Button className="h-11" variant="outline" onClick={retryPublicationCheck} disabled={busy}>
+                  <RefreshCw aria-hidden="true" /> Check again
+                </Button>
+              )}
+              <Button className="h-11" variant="outline" onClick={copyForWhatsApp} disabled={!canShare}>
+                {publicationState === 'publishing'
+                  ? <LoaderCircle className="animate-spin" aria-hidden="true" />
+                  : copied ? <Check aria-hidden="true" /> : <Clipboard aria-hidden="true" />}
+                {publicationState === 'publishing' ? 'Publishing…' : copied ? 'Copied' : 'Copy for WhatsApp'}
               </Button>
               {selectedId && (
                 <AlertDialog>
