@@ -1,7 +1,7 @@
 import type { Announcement } from '@/lib/announcements';
 
 export const ANNOUNCEMENT_PREVIEW_WIDTH = 1200;
-export const ANNOUNCEMENT_PREVIEW_HEIGHT = 630;
+export const ANNOUNCEMENT_PREVIEW_HEIGHT = 720;
 
 const categoryLabels: Record<Announcement['category'], string> = {
   urgent: 'URGENT UPDATE',
@@ -127,11 +127,11 @@ export function generateAnnouncementPreview(announcement: Announcement) {
   const titleLines = fitLines(context, announcement.title, 1056, 3);
 
   context.font = '400 34px "Segoe UI", Arial, sans-serif';
-  const summaryLines = fitLines(context, announcement.summary, 1056, 2);
+  const summaryLines = fitLines(context, announcement.summary, 1056, 3);
   const titleLineHeight = 90;
   const summaryLineHeight = 46;
   const contentHeight = titleLines.length * titleLineHeight + 28 + summaryLines.length * summaryLineHeight;
-  const contentTop = 184 + Math.max(0, (414 - contentHeight) / 2);
+  const contentTop = 184 + Math.max(0, (506 - contentHeight) / 2);
   const titleStartY = contentTop + 72;
 
   context.fillStyle = '#ffffff';
