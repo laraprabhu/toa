@@ -11,11 +11,6 @@ const categoryLabels: Record<Announcement['category'], string> = {
   community: 'COMMUNITY UPDATE',
 };
 
-const priorityLabels: Record<Announcement['priority'], string> = {
-  normal: 'NORMAL PRIORITY',
-  high: 'HIGH PRIORITY',
-};
-
 function roundedRect(
   context: CanvasRenderingContext2D,
   x: number,
@@ -116,30 +111,21 @@ export function generateAnnouncementPreview(announcement: Announcement) {
   context.textAlign = 'center';
   context.fillText(numberLabel, numberX + numberWidth / 2, 94);
 
-  const priorityLabel = priorityLabels[announcement.priority];
-  const priorityWidth = context.measureText(priorityLabel).width + 38;
-  const priorityX = numberX - priorityWidth - 12;
-  context.fillStyle = announcement.priority === 'high' ? '#f07863' : 'rgba(255,255,255,0.13)';
-  roundedRect(context, priorityX, 65, priorityWidth, 45, 23);
+  const category = categoryLabels[announcement.category];
+  const categoryWidth = context.measureText(category).width + 38;
+  const categoryX = numberX - categoryWidth - 12;
+  context.fillStyle = 'rgba(255,255,255,0.13)';
+  roundedRect(context, categoryX, 65, categoryWidth, 45, 23);
   context.fill();
   context.fillStyle = '#ffffff';
-  context.fillText(priorityLabel, priorityX + priorityWidth / 2, 94);
+  context.fillText(category, categoryX + categoryWidth / 2, 94);
 
   context.textAlign = 'left';
-  context.font = '700 18px "Segoe UI", Arial, sans-serif';
-  const category = categoryLabels[announcement.category];
-  const badgeWidth = context.measureText(category).width + 42;
-  context.fillStyle = 'rgba(255,255,255,0.12)';
-  roundedRect(context, 72, 163, badgeWidth, 42, 21);
-  context.fill();
-  context.fillStyle = '#f7cf79';
-  context.fillText(category, 93, 191);
-
   context.strokeStyle = 'rgba(255,255,255,0.14)';
   context.lineWidth = 1;
   context.beginPath();
-  context.moveTo(72, 226);
-  context.lineTo(1128, 226);
+  context.moveTo(72, 148);
+  context.lineTo(1128, 148);
   context.stroke();
 
   context.fillStyle = '#ffffff';
@@ -151,7 +137,7 @@ export function generateAnnouncementPreview(announcement: Announcement) {
   const titleLineHeight = 72;
   const summaryLineHeight = 35;
   const contentHeight = titleLines.length * titleLineHeight + 28 + summaryLines.length * summaryLineHeight;
-  const contentTop = 245 + Math.max(0, (350 - contentHeight) / 2);
+  const contentTop = 170 + Math.max(0, (420 - contentHeight) / 2);
   const titleStartY = contentTop + 57;
 
   context.fillStyle = '#ffffff';
