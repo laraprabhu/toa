@@ -47,7 +47,12 @@ export function NoticeView({ announcement }: { announcement: Announcement }) {
             {announcement.expiresAt && <div className="info-row"><CalendarDays aria-hidden="true" /><span><small>Current until</small>{formatDate(announcement.expiresAt)}</span></div>}
             {announcement.contact && <div className="info-row"><UserRound aria-hidden="true" /><span><small>Contact</small>{announcement.contact}</span></div>}
             <div className="mt-6 border-t border-white/10 pt-6">
-              <ShareButton number={announcement.number} title={announcement.title} summary={announcement.summary} />
+              <ShareButton
+                number={announcement.number}
+                title={announcement.title}
+                summary={announcement.summary}
+                previewVersion={announcement.previewVersion}
+              />
             </div>
           </aside>
         </div>

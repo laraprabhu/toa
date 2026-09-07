@@ -10,6 +10,7 @@ A mobile-first communication hub for residents. The public site is a static GitH
 - **Admin allowlist:** `content/admins.json`, preferably using SHA-256 email hashes.
 - **Authentication:** Google Identity Services in the browser; Google ID tokens are verified by the admin service.
 - **Admin writes:** a stateless Cloudflare Worker verifies the Google account, checks the repository allowlist, and commits JSON changes through the GitHub Contents API.
+- **Preview images:** after GitHub assigns the permanent number, the admin browser renders a 1200×630 PNG with Canvas and the Worker commits it to `public/previews/announcement-N.png`.
 - **Publishing:** each content commit triggers the Pages workflow, so residents see the new version after the build finishes.
 
 GitHub Pages cannot securely hold a GitHub write credential or verify Google authorization by itself. The Worker is therefore required for secure editing, but it stores no announcement or resident data.
@@ -87,12 +88,13 @@ Announcements support:
 
 - a permanent global announcement number;
 - title, concise summary and complete message;
+- a generated WhatsApp preview containing its number, category, title and summary;
 - category, priority, draft/published status;
 - publish and expiry timestamps;
 - timing, location and contact information;
 - optional action label and URL.
 
-The admin console can create, edit and delete announcements, generate a WhatsApp-ready summary, and keeps every change in Git history.
+The admin console can create, edit and delete announcements, generate a WhatsApp-ready summary, and keeps every change—including generated preview images—in Git history. Editing an announcement regenerates the same numbered image and changes its preview version so newly shared links do not reuse stale WhatsApp metadata.
 
 ## Security notes
 

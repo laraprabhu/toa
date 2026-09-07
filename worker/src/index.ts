@@ -22,6 +22,7 @@ interface Announcement {
   title: string;
   summary: string;
   image?: string;
+  previewVersion?: string;
   body: string;
   category: 'urgent' | 'maintenance' | 'event' | 'action' | 'community';
   priority: 'normal' | 'high';
@@ -58,6 +59,25 @@ const worker = {
     try {
       const admin = await requireAdmin(request, env);
       const url = new URL(request.url);
+      const previewMatch = url.pathname.match(/^\/api\/announcements\/([^/]+)\/preview\/?$/);
+
+      if (request.method === 'PUT' && previewMatch) {
+        const id = decodeURIComponent(previewMatch[1]);
+        const payload = await request.json() as { imageBase64?: unknown };
+        const imageBase64 = validatePngBase64(payload.imageBase64);
+        const { content } = await getRepoJson<Announcement[]>('content/announcements.json', env);
+        const announcement = content.find((item) => item.id === id);
+        if (!announcement) throw new HttpError(404, 'Announcement not found.');
+
+        const image = `/previews/announcement-${announcement.number}.png`;
+        await putRepoBase64(`public${image}`, imageBase64, env, `Update preview for announcement #${announcement.number}`);
+        const previewVersion = `${announcement.number}-${Date.now().toString(36)}`;
+        const result = await mutateAnnouncements(env, admin.email, (items) => items.map((item) => (
+          item.id === id ? { ...item, image, previewVersion } : item
+        )));
+        return json({ announcements: result, admin }, 200, corsHeaders);
+      }
+
       const match = url.pathname.match(/^\/api\/announcements(?:\/([^/]+))?\/?$/);
       if (!match) return json({ error: 'Not found.' }, 404, corsHeaders);
 
@@ -200,6 +220,34 @@ async function putRepoJson(path: string, content: unknown, sha: string, env: Env
   }
 }
 
+async function putRepoBase64(path: string, content: string, env: Env, message: string) {
+  const branch = env.GITHUB_BRANCH || 'main';
+  const existing = await githubFetch(`/repos/${env.GITHUB_REPO}/contents/${path}?ref=${encodeURIComponent(branch)}`, env);
+  let sha: string | undefined;
+  if (existing.ok) {
+    const payload = await existing.json() as { sha?: string };
+    if (!payload.sha) throw new HttpError(500, `GitHub returned an invalid ${path} response.`);
+    sha = payload.sha;
+  } else if (existing.status !== 404) {
+    throw new HttpError(existing.status, `Unable to inspect ${path} on GitHub.`);
+  }
+
+  const response = await githubFetch(`/repos/${env.GITHUB_REPO}/contents/${path}`, env, {
+    method: 'PUT',
+    body: JSON.stringify({
+      message,
+      content,
+      branch,
+      ...(sha ? { sha } : {}),
+    }),
+  });
+  if (response.status === 409) throw new HttpError(409, 'Repository update conflict. Please save again.');
+  if (!response.ok) {
+    const details = await response.json().catch(() => ({})) as { message?: string };
+    throw new HttpError(response.status, details.message || 'GitHub rejected the preview image.');
+  }
+}
+
 function githubFetch(path: string, env: Env, init?: RequestInit) {
   const headers = new Headers(init?.headers);
   headers.set('Accept', 'application/vnd.github+json');
@@ -234,6 +282,9 @@ function validateAnnouncement(input: unknown): Announcement {
   if (value.image !== undefined && (typeof value.image !== 'string' || !/^\/[a-zA-Z0-9][a-zA-Z0-9._/-]*$/.test(value.image))) {
     throw new HttpError(400, 'Preview image must be a site-relative path.');
   }
+  if (value.previewVersion !== undefined && (typeof value.previewVersion !== 'string' || value.previewVersion.length > 80)) {
+    throw new HttpError(400, 'Preview version is invalid.');
+  }
   if (value.actionUrl) {
     if (typeof value.actionUrl !== 'string') throw new HttpError(400, 'Action URL must be text.');
     try {
@@ -244,6 +295,19 @@ function validateAnnouncement(input: unknown): Announcement {
     }
   }
   return value as unknown as Announcement;
+}
+
+function validatePngBase64(input: unknown) {
+  if (
+    typeof input !== 'string'
+    || input.length < 100
+    || input.length > 8_000_000
+    || !input.startsWith('iVBORw0KGgo')
+    || !/^[A-Za-z0-9+/]+={0,2}$/.test(input)
+  ) {
+    throw new HttpError(400, 'A valid PNG preview image is required.');
+  }
+  return input;
 }
 
 function originAllowed(origin: string, env: Env) {

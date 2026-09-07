@@ -3,14 +3,14 @@
 import { useState } from 'react';
 import { Check, Share2 } from 'lucide-react';
 
-export function ShareButton({ number, title, summary }: { number: number; title: string; summary: string }) {
+export function ShareButton({ number, title, summary, previewVersion }: { number: number; title: string; summary: string; previewVersion?: string }) {
   const [copied, setCopied] = useState(false);
 
   async function share() {
     const shareUrl = new URL(window.location.href);
     shareUrl.search = '';
     shareUrl.hash = '';
-    shareUrl.searchParams.set('v', `${number}-banner-1`);
+    shareUrl.searchParams.set('v', previewVersion ?? `${number}-banner-1`);
     const url = shareUrl.href;
     const shareTitle = `Announcement #${number}: ${title}`;
     const text = `*${shareTitle}*\n\n${summary}\n\nRead the complete update: ${url}`;

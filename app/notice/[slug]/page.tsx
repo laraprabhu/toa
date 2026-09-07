@@ -19,8 +19,11 @@ export async function generateMetadata({ params }: NoticePageProps): Promise<Met
 
   const title = `Announcement #${announcement.number}: ${announcement.title}`;
   const url = `https://laraprabhu.github.io/toa-noticeboard/notice/${encodeURIComponent(announcement.slug)}/`;
-  const image = announcement.image
+  const imageUrl = announcement.image
     ? `https://laraprabhu.github.io/toa-noticeboard${announcement.image.startsWith('/') ? announcement.image : `/${announcement.image}`}`
+    : undefined;
+  const image = imageUrl
+    ? `${imageUrl}?v=${encodeURIComponent(announcement.previewVersion ?? `${announcement.number}-banner-1`)}`
     : undefined;
 
   return {

@@ -11,6 +11,7 @@ export interface Announcement {
   title: string;
   summary: string;
   image?: string;
+  previewVersion?: string;
   body: string;
   category: AnnouncementCategory;
   priority: AnnouncementPriority;

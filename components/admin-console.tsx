@@ -32,6 +32,7 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { siteHref, sitePath } from '@/lib/site-path';
+import { generateAnnouncementPreview } from '@/lib/announcement-preview';
 
 type GoogleCredentialResponse = { credential: string };
 type GoogleAccounts = {
@@ -145,6 +146,14 @@ export function AdminConsole({ apiUrl, googleClientId }: { apiUrl: string; googl
     return payload as ApiResult;
   }, [apiUrl]);
 
+  const generateAndStorePreview = useCallback(async (announcement: Announcement, token: string) => {
+    const imageBase64 = generateAnnouncementPreview(announcement);
+    return apiRequest(`/api/announcements/${encodeURIComponent(announcement.id)}/preview`, token, {
+      method: 'PUT',
+      body: JSON.stringify({ imageBase64 }),
+    });
+  }, [apiRequest]);
+
   const authorize = useCallback(async (token: string) => {
     try {
       setAuthState('loading');
@@ -235,6 +244,7 @@ export function AdminConsole({ apiUrl, googleClientId }: { apiUrl: string; googl
           slug: slugify(candidate.title),
           title: candidate.title.trim(),
           summary: candidate.summary.trim(),
+          image: '/announcement-preview.png',
           body: candidate.body.trim(),
           category: candidate.category as AnnouncementCategory,
           priority: 'normal',
@@ -242,15 +252,26 @@ export function AdminConsole({ apiUrl, googleClientId }: { apiUrl: string; googl
           publishedAt: new Date().toISOString(),
         };
         const result = await apiRequest('/api/announcements', credential, { method: 'POST', body: JSON.stringify(item) });
-        setAnnouncements(result.announcements);
         const saved = result.announcements.find((announcement) => announcement.id === item.id);
-        if (saved) setForm(announcementToForm(saved));
-        return { id: item.id, slug: item.slug, status: item.status };
+        let finalResult = result;
+        let previewStored = false;
+        if (saved) {
+          try {
+            finalResult = await generateAndStorePreview(saved, credential);
+            previewStored = true;
+          } catch {
+            // The announcement is already safely committed; a later edit can regenerate its preview.
+          }
+        }
+        setAnnouncements(finalResult.announcements);
+        const completed = finalResult.announcements.find((announcement) => announcement.id === item.id);
+        if (completed) setForm(announcementToForm(completed));
+        return { id: item.id, slug: item.slug, number: completed?.number, status: item.status, previewStored };
       },
     }, { signal: lifecycle.signal })).catch(() => undefined);
 
     return () => lifecycle.abort();
-  }, [announcements, apiRequest, authState, credential]);
+  }, [announcements, apiRequest, authState, credential, generateAndStorePreview]);
 
   const sortedAnnouncements = useMemo(
     () => [...announcements].sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()),
@@ -273,10 +294,23 @@ export function AdminConsole({ apiUrl, googleClientId }: { apiUrl: string; googl
       const method = selectedId ? 'PUT' : 'POST';
       const path = selectedId ? `/api/announcements/${encodeURIComponent(selectedId)}` : '/api/announcements';
       const result = await apiRequest(path, credential, { method, body: JSON.stringify(announcement) });
-      setAnnouncements(result.announcements);
       const saved = result.announcements.find((item) => item.id === announcement.id);
-      if (saved) setForm(announcementToForm(saved));
-      setNotice(announcement.status === 'published' ? 'Published. GitHub Pages will refresh after its build completes.' : 'Draft saved to the repository.');
+      if (!saved) throw new Error('The announcement was saved, but could not be reloaded.');
+
+      try {
+        const previewResult = await generateAndStorePreview(saved, credential);
+        setAnnouncements(previewResult.announcements);
+        const completed = previewResult.announcements.find((item) => item.id === saved.id) ?? saved;
+        setForm(announcementToForm(completed));
+        setNotice(announcement.status === 'published'
+          ? 'Published with a custom preview image. GitHub Pages will refresh after its build completes.'
+          : 'Draft and custom preview image saved to the repository.');
+      } catch (previewError) {
+        setAnnouncements(result.announcements);
+        setForm(announcementToForm(saved));
+        const reason = previewError instanceof Error ? previewError.message : 'Preview generation failed.';
+        setNotice(`Announcement saved, but its custom preview was not updated: ${reason}`);
+      }
     } catch (error) {
       setNotice(error instanceof Error ? error.message : 'Unable to save this announcement.');
     } finally {
@@ -304,7 +338,7 @@ export function AdminConsole({ apiUrl, googleClientId }: { apiUrl: string; googl
     const announcement = formToAnnouncement(form);
     const noticeUrl = new URL(`${sitePath}/notice/${encodeURIComponent(announcement.slug)}/`, window.location.origin).href;
     const versionedNoticeUrl = new URL(noticeUrl);
-    if (announcement.number > 0) versionedNoticeUrl.searchParams.set('v', `${announcement.number}-banner-1`);
+    if (announcement.number > 0) versionedNoticeUrl.searchParams.set('v', announcement.previewVersion ?? `${announcement.number}-banner-1`);
     const numberLabel = announcement.number > 0 ? `Announcement #${announcement.number}: ` : '';
     const text = `*${numberLabel}${announcement.title}*\n\n${announcement.summary}\n\nRead the complete update: ${versionedNoticeUrl.href}`;
     await navigator.clipboard.writeText(text);
