@@ -1,8 +1,21 @@
-import { copyFile, mkdir, readdir, writeFile } from 'node:fs/promises';
+import { copyFile, cp, mkdir, readdir, writeFile } from 'node:fs/promises';
 import { dirname, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const outputDirectory = fileURLToPath(new URL('../dist/client/', import.meta.url));
+const basePath = (process.env.NEXT_PUBLIC_BASE_PATH ?? '').replace(/^\/+|\/+$/g, '');
+
+if (basePath) {
+  if (basePath.includes('..')) throw new Error('NEXT_PUBLIC_BASE_PATH must not contain path traversal segments.');
+
+  const nestedAssetDirectory = join(outputDirectory, basePath);
+  for (const entry of await readdir(nestedAssetDirectory, { withFileTypes: true })) {
+    await cp(join(nestedAssetDirectory, entry.name), join(outputDirectory, entry.name), {
+      recursive: true,
+      force: true,
+    });
+  }
+}
 
 async function collectHtml(directory) {
   const entries = await readdir(directory, { withFileTypes: true });
