@@ -18,7 +18,6 @@ export async function generateMetadata({ params }: NoticePageProps): Promise<Met
   const announcement = getAnnouncement((await params).slug);
   if (!announcement) return { title: 'Resident update' };
 
-  const title = `Announcement #${announcement.number}: ${announcement.title}`;
   const url = `https://laraprabhu.github.io/toa-noticeboard/notice/${encodeURIComponent(announcement.slug)}/`;
   const imageUrl = announcement.image
     ? `https://laraprabhu.github.io/toa-noticeboard${announcement.image.startsWith('/') ? announcement.image : `/${announcement.image}`}`
@@ -28,8 +27,8 @@ export async function generateMetadata({ params }: NoticePageProps): Promise<Met
     : undefined;
 
   return {
-    title,
-    description: announcement.summary,
+    title: { absolute: imageOnlyPreviewText },
+    description: imageOnlyPreviewText,
     alternates: { canonical: url },
     openGraph: {
       type: 'article',
