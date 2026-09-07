@@ -136,15 +136,13 @@ export function generateAnnouncementPreview(announcement: Announcement) {
   const summaryLines = fitLines(context, announcement.summary, 990, 2);
   const titleLineHeight = 72;
   const summaryLineHeight = 35;
-  const contentHeight = titleLines.length * titleLineHeight + 28 + summaryLines.length * summaryLineHeight;
-  const contentTop = 170 + Math.max(0, (420 - contentHeight) / 2);
-  const titleStartY = contentTop + 57;
+  const titleStartY = 285;
 
   context.fillStyle = '#ffffff';
   context.font = '700 62px Georgia, "Times New Roman", serif';
   titleLines.forEach((line, index) => context.fillText(line, 72, titleStartY + index * titleLineHeight));
 
-  const summaryY = contentTop + titleLines.length * titleLineHeight + 52;
+  const summaryY = 528 - (summaryLines.length - 1) * summaryLineHeight;
   context.fillStyle = 'rgba(255,255,255,0.78)';
   context.font = '400 24px "Segoe UI", Arial, sans-serif';
   summaryLines.forEach((line, index) => context.fillText(line, 72, summaryY + index * summaryLineHeight));
