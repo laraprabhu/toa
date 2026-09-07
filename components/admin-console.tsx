@@ -80,6 +80,7 @@ type FormState = Omit<Announcement, 'publishedAt' | 'expiresAt'> & { publishedAt
 const PUBLICATION_POLL_INTERVAL_MS = 4_000;
 const PUBLICATION_TIMEOUT_MS = 180_000;
 const PUBLICATION_STORAGE_KEY = 'toa-noticeboard-publications-v1';
+const AUTH_SESSION_STORAGE_KEY = 'toa-noticeboard-admin-session-v1';
 
 const emptyForm = (): FormState => ({
   number: 0,
@@ -155,6 +156,31 @@ function loadPublicationRecords() {
   }
 }
 
+function loadStoredCredential() {
+  if (typeof window === 'undefined') return '';
+  try {
+    return window.sessionStorage.getItem(AUTH_SESSION_STORAGE_KEY) ?? '';
+  } catch {
+    return '';
+  }
+}
+
+function storeCredential(token: string) {
+  try {
+    window.sessionStorage.setItem(AUTH_SESSION_STORAGE_KEY, token);
+  } catch {
+    // The signed-in session still works until refresh when browser storage is unavailable.
+  }
+}
+
+function clearStoredCredential() {
+  try {
+    window.sessionStorage.removeItem(AUTH_SESSION_STORAGE_KEY);
+  } catch {
+    // There is no persisted credential to clear when browser storage is unavailable.
+  }
+}
+
 export function AdminConsole({ apiUrl, googleClientId }: { apiUrl: string; googleClientId: string }) {
   const [authState, setAuthState] = useState<AuthState>(() => !apiUrl || !googleClientId ? 'misconfigured' : 'loading');
   const [credential, setCredential] = useState('');
@@ -215,15 +241,26 @@ export function AdminConsole({ apiUrl, googleClientId }: { apiUrl: string; googl
       setAuthState('loading');
       const result = await apiRequest('/api/announcements', token);
       setCredential(token);
+      storeCredential(token);
       setAdmin(result.admin ?? null);
       setAnnouncements(result.announcements);
       setAuthState('authorized');
+      setNotice('');
     } catch (error) {
       setCredential('');
+      clearStoredCredential();
       setAuthState('denied');
       setNotice(error instanceof Error ? error.message : 'Access denied.');
     }
   }, [apiRequest]);
+
+  useEffect(() => {
+    if (!apiUrl || !googleClientId) return;
+    const storedCredential = loadStoredCredential();
+    if (!storedCredential) return;
+    const restoreTimer = window.setTimeout(() => void authorize(storedCredential), 0);
+    return () => window.clearTimeout(restoreTimer);
+  }, [apiUrl, authorize, googleClientId]);
 
   useEffect(() => {
     if (!apiUrl || !googleClientId) {
@@ -245,7 +282,7 @@ export function AdminConsole({ apiUrl, googleClientId }: { apiUrl: string; googl
         text: 'signin_with',
         width: 280,
       });
-      setAuthState('signed-out');
+      if (!loadStoredCredential()) setAuthState('signed-out');
     };
 
     if (window.google) {
@@ -483,6 +520,7 @@ export function AdminConsole({ apiUrl, googleClientId }: { apiUrl: string; googl
 
   function signOut() {
     window.google?.accounts.id.disableAutoSelect();
+    clearStoredCredential();
     setCredential('');
     setAdmin(null);
     setAnnouncements([]);
