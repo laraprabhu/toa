@@ -23,6 +23,7 @@ interface Announcement {
   summary: string;
   image?: string;
   previewVersion?: string;
+  previewHeight?: number;
   body: string;
   category: 'urgent' | 'maintenance' | 'event' | 'action' | 'community';
   priority: 'normal' | 'high';
@@ -73,7 +74,7 @@ const worker = {
         await putRepoBase64(`public${image}`, imageBase64, env, `Update preview for announcement #${announcement.number}`);
         const previewVersion = `${announcement.number}-${Date.now().toString(36)}`;
         const result = await mutateAnnouncements(env, admin.email, (items) => items.map((item) => (
-          item.id === id ? { ...item, image, previewVersion } : item
+          item.id === id ? { ...item, image, previewVersion, previewHeight: 540 } : item
         )));
         return json({ announcements: result, admin }, 200, corsHeaders);
       }
@@ -284,6 +285,9 @@ function validateAnnouncement(input: unknown): Announcement {
   }
   if (value.previewVersion !== undefined && (typeof value.previewVersion !== 'string' || value.previewVersion.length > 80)) {
     throw new HttpError(400, 'Preview version is invalid.');
+  }
+  if (value.previewHeight !== undefined && (!Number.isInteger(value.previewHeight) || Number(value.previewHeight) < 300 || Number(value.previewHeight) > 1200)) {
+    throw new HttpError(400, 'Preview height is invalid.');
   }
   if (value.actionUrl) {
     if (typeof value.actionUrl !== 'string') throw new HttpError(400, 'Action URL must be text.');

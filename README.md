@@ -10,7 +10,7 @@ A mobile-first communication hub for residents. The public site is a static GitH
 - **Admin allowlist:** `content/admins.json`, preferably using SHA-256 email hashes.
 - **Authentication:** Google Identity Services in the browser; Google ID tokens are verified by the admin service.
 - **Admin writes:** a stateless Cloudflare Worker verifies the Google account, checks the repository allowlist, and commits JSON changes through the GitHub Contents API.
-- **Preview images:** after GitHub assigns the permanent number, the admin browser renders a 1200×630 PNG with Canvas and the Worker commits it to `public/previews/announcement-N.png`.
+- **Preview images:** after GitHub assigns the permanent number, the admin browser renders a compact 1200×540 PNG with Canvas and the Worker commits it to `public/previews/announcement-N.png`.
 - **Publishing:** each content commit triggers the Pages workflow, so residents see the new version after the build finishes.
 
 GitHub Pages cannot securely hold a GitHub write credential or verify Google authorization by itself. The Worker is therefore required for secure editing, but it stores no announcement or resident data.

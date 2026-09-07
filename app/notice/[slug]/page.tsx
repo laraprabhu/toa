@@ -37,7 +37,7 @@ export async function generateMetadata({ params }: NoticePageProps): Promise<Met
       title,
       description: announcement.summary,
       publishedTime: announcement.publishedAt,
-      images: image ? [{ url: image, width: 1200, height: 630, alt: `TOA Announcement #${announcement.number}` }] : [],
+      images: image ? [{ url: image, width: 1200, height: announcement.previewHeight ?? 630, alt: `TOA Announcement #${announcement.number}` }] : [],
     },
     twitter: {
       card: image ? 'summary_large_image' : 'summary',

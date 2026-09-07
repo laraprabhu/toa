@@ -35,7 +35,11 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { siteHref, sitePath } from '@/lib/site-path';
-import { generateAnnouncementPreview } from '@/lib/announcement-preview';
+import {
+  ANNOUNCEMENT_PREVIEW_HEIGHT,
+  ANNOUNCEMENT_PREVIEW_WIDTH,
+  generateAnnouncementPreview,
+} from '@/lib/announcement-preview';
 
 type GoogleCredentialResponse = { credential: string };
 type GoogleAccounts = {
@@ -339,6 +343,7 @@ export function AdminConsole({
         const completed: Announcement = {
           ...announcement,
           previewVersion: `demo-${Date.now().toString(36)}`,
+          previewHeight: ANNOUNCEMENT_PREVIEW_HEIGHT,
         };
         const next = selectedId
           ? announcements.map((item) => item.id === selectedId ? completed : item)
@@ -597,15 +602,15 @@ export function AdminConsole({
                 <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
                   <div>
                     <strong className="text-sm text-ink">WhatsApp banner preview</strong>
-                    <p className="text-xs text-muted-foreground">Generated at 1200 × 630 pixels</p>
+                    <p className="text-xs text-muted-foreground">Generated at {ANNOUNCEMENT_PREVIEW_WIDTH} × {ANNOUNCEMENT_PREVIEW_HEIGHT} pixels</p>
                   </div>
                   <a className="text-sm font-semibold text-teal underline-offset-4 hover:underline" href={previewImage} download={`announcement-${form.number || 'preview'}.png`}>Download PNG</a>
                 </div>
                 <Image
                   className="h-auto w-full rounded-xl border border-border shadow-sm"
                   src={previewImage}
-                  width={1200}
-                  height={630}
+                  width={ANNOUNCEMENT_PREVIEW_WIDTH}
+                  height={ANNOUNCEMENT_PREVIEW_HEIGHT}
                   unoptimized
                   alt="Generated announcement banner preview"
                 />

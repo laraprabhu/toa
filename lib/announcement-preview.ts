@@ -1,7 +1,7 @@
 import type { Announcement } from '@/lib/announcements';
 
-const WIDTH = 1200;
-const HEIGHT = 630;
+export const ANNOUNCEMENT_PREVIEW_WIDTH = 1200;
+export const ANNOUNCEMENT_PREVIEW_HEIGHT = 540;
 
 const categoryLabels: Record<Announcement['category'], string> = {
   urgent: 'URGENT UPDATE',
@@ -58,38 +58,38 @@ function fitLines(
 /** Generates the social-sharing PNG after the server assigns the permanent number. */
 export function generateAnnouncementPreview(announcement: Announcement) {
   const canvas = document.createElement('canvas');
-  canvas.width = WIDTH;
-  canvas.height = HEIGHT;
+  canvas.width = ANNOUNCEMENT_PREVIEW_WIDTH;
+  canvas.height = ANNOUNCEMENT_PREVIEW_HEIGHT;
   const context = canvas.getContext('2d');
   if (!context) throw new Error('This browser cannot generate announcement previews.');
 
-  const background = context.createLinearGradient(0, 0, WIDTH, HEIGHT);
+  const background = context.createLinearGradient(0, 0, ANNOUNCEMENT_PREVIEW_WIDTH, ANNOUNCEMENT_PREVIEW_HEIGHT);
   background.addColorStop(0, '#102f3f');
   background.addColorStop(0.62, '#164853');
   background.addColorStop(1, '#0f5d66');
   context.fillStyle = background;
-  context.fillRect(0, 0, WIDTH, HEIGHT);
+  context.fillRect(0, 0, ANNOUNCEMENT_PREVIEW_WIDTH, ANNOUNCEMENT_PREVIEW_HEIGHT);
 
   const glow = context.createRadialGradient(1140, 40, 20, 1140, 40, 540);
   glow.addColorStop(0, 'rgba(245, 190, 79, 0.22)');
   glow.addColorStop(1, 'rgba(245, 190, 79, 0)');
   context.fillStyle = glow;
-  context.fillRect(600, 0, 600, 580);
+  context.fillRect(600, 0, 600, ANNOUNCEMENT_PREVIEW_HEIGHT);
 
   context.save();
   context.strokeStyle = 'rgba(255,255,255,0.045)';
   context.lineWidth = 2;
-  for (let offset = -HEIGHT; offset < WIDTH + HEIGHT; offset += 76) {
+  for (let offset = -ANNOUNCEMENT_PREVIEW_HEIGHT; offset < ANNOUNCEMENT_PREVIEW_WIDTH + ANNOUNCEMENT_PREVIEW_HEIGHT; offset += 76) {
     context.beginPath();
     context.moveTo(offset, 0);
-    context.lineTo(offset - HEIGHT, HEIGHT);
+    context.lineTo(offset - ANNOUNCEMENT_PREVIEW_HEIGHT, ANNOUNCEMENT_PREVIEW_HEIGHT);
     context.stroke();
   }
   context.strokeStyle = 'rgba(245,190,79,0.035)';
-  for (let offset = 0; offset < WIDTH + HEIGHT; offset += 152) {
+  for (let offset = 0; offset < ANNOUNCEMENT_PREVIEW_WIDTH + ANNOUNCEMENT_PREVIEW_HEIGHT; offset += 152) {
     context.beginPath();
     context.moveTo(offset, 0);
-    context.lineTo(offset + HEIGHT, HEIGHT);
+    context.lineTo(offset + ANNOUNCEMENT_PREVIEW_HEIGHT, ANNOUNCEMENT_PREVIEW_HEIGHT);
     context.stroke();
   }
   context.restore();
@@ -103,7 +103,7 @@ export function generateAnnouncementPreview(announcement: Announcement) {
   context.font = '700 16px "Segoe UI", Arial, sans-serif';
   const numberLabel = `ANNOUNCEMENT  #${announcement.number}`;
   const numberWidth = context.measureText(numberLabel).width + 40;
-  const numberX = WIDTH - numberWidth - 72;
+  const numberX = ANNOUNCEMENT_PREVIEW_WIDTH - numberWidth - 72;
   context.fillStyle = '#f5be4f';
   roundedRect(context, numberX, 65, numberWidth, 45, 23);
   context.fill();
@@ -134,15 +134,17 @@ export function generateAnnouncementPreview(announcement: Announcement) {
 
   context.font = '400 24px "Segoe UI", Arial, sans-serif';
   const summaryLines = fitLines(context, announcement.summary, 990, 2);
-  const titleLineHeight = 72;
-  const summaryLineHeight = 35;
-  const titleStartY = 285;
+  const titleLineHeight = 68;
+  const summaryLineHeight = 34;
+  const contentHeight = titleLines.length * titleLineHeight + 24 + summaryLines.length * summaryLineHeight;
+  const contentTop = 168 + Math.max(0, (340 - contentHeight) / 2);
+  const titleStartY = contentTop + 54;
 
   context.fillStyle = '#ffffff';
   context.font = '700 62px Georgia, "Times New Roman", serif';
   titleLines.forEach((line, index) => context.fillText(line, 72, titleStartY + index * titleLineHeight));
 
-  const summaryY = 528 - (summaryLines.length - 1) * summaryLineHeight;
+  const summaryY = contentTop + titleLines.length * titleLineHeight + 48;
   context.fillStyle = 'rgba(255,255,255,0.78)';
   context.font = '400 24px "Segoe UI", Arial, sans-serif';
   summaryLines.forEach((line, index) => context.fillText(line, 72, summaryY + index * summaryLineHeight));
