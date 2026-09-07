@@ -19,6 +19,9 @@ export async function generateMetadata({ params }: NoticePageProps): Promise<Met
 
   const title = `Announcement #${announcement.number}: ${announcement.title}`;
   const url = `https://laraprabhu.github.io/toa-noticeboard/notice/${encodeURIComponent(announcement.slug)}/`;
+  const image = announcement.image
+    ? `https://laraprabhu.github.io/toa-noticeboard${announcement.image.startsWith('/') ? announcement.image : `/${announcement.image}`}`
+    : undefined;
 
   return {
     title,
@@ -31,13 +34,13 @@ export async function generateMetadata({ params }: NoticePageProps): Promise<Met
       title,
       description: announcement.summary,
       publishedTime: announcement.publishedAt,
-      images: [],
+      images: image ? [{ url: image, width: 1200, height: 630, alt: `TOA Announcement #${announcement.number}` }] : [],
     },
     twitter: {
-      card: 'summary',
+      card: image ? 'summary_large_image' : 'summary',
       title,
       description: announcement.summary,
-      images: [],
+      images: image ? [image] : [],
     },
   };
 }

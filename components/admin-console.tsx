@@ -67,6 +67,7 @@ const emptyForm = (): FormState => ({
   slug: '',
   title: '',
   summary: '',
+  image: '/announcement-preview.png',
   body: '',
   category: 'community',
   priority: 'normal',
@@ -303,7 +304,7 @@ export function AdminConsole({ apiUrl, googleClientId }: { apiUrl: string; googl
     const announcement = formToAnnouncement(form);
     const noticeUrl = new URL(`${sitePath}/notice/${encodeURIComponent(announcement.slug)}/`, window.location.origin).href;
     const versionedNoticeUrl = new URL(noticeUrl);
-    if (announcement.number > 0) versionedNoticeUrl.searchParams.set('v', String(announcement.number));
+    if (announcement.number > 0) versionedNoticeUrl.searchParams.set('v', `${announcement.number}-banner-1`);
     const numberLabel = announcement.number > 0 ? `Announcement #${announcement.number}: ` : '';
     const text = `*${numberLabel}${announcement.title}*\n\n${announcement.summary}\n\nRead the complete update: ${versionedNoticeUrl.href}`;
     await navigator.clipboard.writeText(text);

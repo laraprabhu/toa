@@ -10,7 +10,7 @@ export function ShareButton({ number, title, summary }: { number: number; title:
     const shareUrl = new URL(window.location.href);
     shareUrl.search = '';
     shareUrl.hash = '';
-    shareUrl.searchParams.set('v', String(number));
+    shareUrl.searchParams.set('v', `${number}-banner-1`);
     const url = shareUrl.href;
     const shareTitle = `Announcement #${number}: ${title}`;
     const text = `*${shareTitle}*\n\n${summary}\n\nRead the complete update: ${url}`;

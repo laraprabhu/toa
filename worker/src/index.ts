@@ -21,6 +21,7 @@ interface Announcement {
   slug: string;
   title: string;
   summary: string;
+  image?: string;
   body: string;
   category: 'urgent' | 'maintenance' | 'event' | 'action' | 'community';
   priority: 'normal' | 'high';
@@ -229,6 +230,9 @@ function validateAnnouncement(input: unknown): Announcement {
   if (typeof value.expiresAt === 'string' && Number.isNaN(Date.parse(value.expiresAt))) throw new HttpError(400, 'Expiry date is invalid.');
   if (String(value.title).length > 120 || String(value.summary).length > 360 || String(value.body).length > 12_000) {
     throw new HttpError(400, 'One or more announcement fields are too long.');
+  }
+  if (value.image !== undefined && (typeof value.image !== 'string' || !/^\/[a-zA-Z0-9][a-zA-Z0-9._/-]*$/.test(value.image))) {
+    throw new HttpError(400, 'Preview image must be a site-relative path.');
   }
   if (value.actionUrl) {
     if (typeof value.actionUrl !== 'string') throw new HttpError(400, 'Action URL must be text.');

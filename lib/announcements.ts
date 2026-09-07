@@ -10,6 +10,7 @@ export interface Announcement {
   slug: string;
   title: string;
   summary: string;
+  image?: string;
   body: string;
   category: AnnouncementCategory;
   priority: AnnouncementPriority;
