@@ -11,6 +11,11 @@ const categoryLabels: Record<Announcement['category'], string> = {
   community: 'COMMUNITY UPDATE',
 };
 
+const priorityLabels: Record<Announcement['priority'], string> = {
+  normal: 'NORMAL PRIORITY',
+  high: 'HIGH PRIORITY',
+};
+
 function roundedRect(
   context: CanvasRenderingContext2D,
   x: number,
@@ -76,30 +81,49 @@ export function generateAnnouncementPreview(announcement: Announcement) {
   context.fillStyle = glow;
   context.fillRect(600, 0, 600, 580);
 
-  context.fillStyle = '#f5be4f';
-  roundedRect(context, 72, 58, 58, 58, 16);
-  context.fill();
-  context.fillStyle = '#102f3f';
-  context.font = '700 24px Georgia, serif';
-  context.textAlign = 'center';
-  context.textBaseline = 'middle';
-  context.fillText('TOA', 101, 88);
+  context.save();
+  context.strokeStyle = 'rgba(255,255,255,0.045)';
+  context.lineWidth = 2;
+  for (let offset = -HEIGHT; offset < WIDTH + HEIGHT; offset += 76) {
+    context.beginPath();
+    context.moveTo(offset, 0);
+    context.lineTo(offset - HEIGHT, HEIGHT);
+    context.stroke();
+  }
+  context.strokeStyle = 'rgba(245,190,79,0.035)';
+  for (let offset = 0; offset < WIDTH + HEIGHT; offset += 152) {
+    context.beginPath();
+    context.moveTo(offset, 0);
+    context.lineTo(offset + HEIGHT, HEIGHT);
+    context.stroke();
+  }
+  context.restore();
 
   context.textAlign = 'left';
   context.fillStyle = '#ffffff';
-  context.font = '700 25px "Segoe UI", Arial, sans-serif';
+  context.font = '700 36px Georgia, "Times New Roman", serif';
   context.textBaseline = 'alphabetic';
-  context.fillText('TOA NOTICEBOARD', 151, 96);
+  context.fillText('TOA Noticeboard', 72, 104);
 
-  context.font = '700 17px "Segoe UI", Arial, sans-serif';
+  context.font = '700 16px "Segoe UI", Arial, sans-serif';
   const numberLabel = `ANNOUNCEMENT  #${announcement.number}`;
-  const numberWidth = context.measureText(numberLabel).width + 44;
+  const numberWidth = context.measureText(numberLabel).width + 40;
+  const numberX = WIDTH - numberWidth - 72;
   context.fillStyle = '#f5be4f';
-  roundedRect(context, WIDTH - numberWidth - 72, 65, numberWidth, 45, 23);
+  roundedRect(context, numberX, 65, numberWidth, 45, 23);
   context.fill();
   context.fillStyle = '#102f3f';
   context.textAlign = 'center';
-  context.fillText(numberLabel, WIDTH - 72 - numberWidth / 2, 94);
+  context.fillText(numberLabel, numberX + numberWidth / 2, 94);
+
+  const priorityLabel = priorityLabels[announcement.priority];
+  const priorityWidth = context.measureText(priorityLabel).width + 38;
+  const priorityX = numberX - priorityWidth - 12;
+  context.fillStyle = announcement.priority === 'high' ? '#f07863' : 'rgba(255,255,255,0.13)';
+  roundedRect(context, priorityX, 65, priorityWidth, 45, 23);
+  context.fill();
+  context.fillStyle = '#ffffff';
+  context.fillText(priorityLabel, priorityX + priorityWidth / 2, 94);
 
   context.textAlign = 'left';
   context.font = '700 18px "Segoe UI", Arial, sans-serif';
@@ -114,20 +138,30 @@ export function generateAnnouncementPreview(announcement: Announcement) {
   context.strokeStyle = 'rgba(255,255,255,0.14)';
   context.lineWidth = 1;
   context.beginPath();
-  context.moveTo(72, 231);
-  context.lineTo(1128, 231);
+  context.moveTo(72, 226);
+  context.lineTo(1128, 226);
   context.stroke();
 
   context.fillStyle = '#ffffff';
-  context.font = '700 60px Georgia, "Times New Roman", serif';
+  context.font = '700 62px Georgia, "Times New Roman", serif';
   const titleLines = fitLines(context, announcement.title, 990, 3);
-  titleLines.forEach((line, index) => context.fillText(line, 72, 301 + index * 70));
 
-  const summaryY = 362 + (titleLines.length - 1) * 70;
-  context.fillStyle = 'rgba(255,255,255,0.76)';
   context.font = '400 24px "Segoe UI", Arial, sans-serif';
-  const summaryLines = fitLines(context, announcement.summary, 990, Math.max(1, Math.min(2, Math.floor((575 - summaryY) / 34))));
-  summaryLines.forEach((line, index) => context.fillText(line, 72, summaryY + index * 34));
+  const summaryLines = fitLines(context, announcement.summary, 990, 2);
+  const titleLineHeight = 72;
+  const summaryLineHeight = 35;
+  const contentHeight = titleLines.length * titleLineHeight + 28 + summaryLines.length * summaryLineHeight;
+  const contentTop = 245 + Math.max(0, (350 - contentHeight) / 2);
+  const titleStartY = contentTop + 57;
+
+  context.fillStyle = '#ffffff';
+  context.font = '700 62px Georgia, "Times New Roman", serif';
+  titleLines.forEach((line, index) => context.fillText(line, 72, titleStartY + index * titleLineHeight));
+
+  const summaryY = contentTop + titleLines.length * titleLineHeight + 52;
+  context.fillStyle = 'rgba(255,255,255,0.78)';
+  context.font = '400 24px "Segoe UI", Arial, sans-serif';
+  summaryLines.forEach((line, index) => context.fillText(line, 72, summaryY + index * summaryLineHeight));
 
   const dataUrl = canvas.toDataURL('image/png');
   const encoded = dataUrl.split(',')[1];
