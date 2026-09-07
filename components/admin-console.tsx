@@ -302,8 +302,10 @@ export function AdminConsole({ apiUrl, googleClientId }: { apiUrl: string; googl
   async function copyForWhatsApp() {
     const announcement = formToAnnouncement(form);
     const noticeUrl = new URL(`${sitePath}/notice/${encodeURIComponent(announcement.slug)}/`, window.location.origin).href;
+    const versionedNoticeUrl = new URL(noticeUrl);
+    if (announcement.number > 0) versionedNoticeUrl.searchParams.set('v', String(announcement.number));
     const numberLabel = announcement.number > 0 ? `Announcement #${announcement.number}: ` : '';
-    const text = `*${numberLabel}${announcement.title}*\n\n${announcement.summary}\n\nRead the complete update: ${noticeUrl}`;
+    const text = `*${numberLabel}${announcement.title}*\n\n${announcement.summary}\n\nRead the complete update: ${versionedNoticeUrl.href}`;
     await navigator.clipboard.writeText(text);
     setCopied(true);
     window.setTimeout(() => setCopied(false), 1800);

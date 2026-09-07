@@ -3,15 +3,20 @@
 import { useState } from 'react';
 import { Check, Share2 } from 'lucide-react';
 
-export function ShareButton({ title, summary }: { title: string; summary: string }) {
+export function ShareButton({ number, title, summary }: { number: number; title: string; summary: string }) {
   const [copied, setCopied] = useState(false);
 
   async function share() {
-    const url = window.location.href;
-    const text = `*${title}*\n\n${summary}\n\nRead the complete update: ${url}`;
+    const shareUrl = new URL(window.location.href);
+    shareUrl.search = '';
+    shareUrl.hash = '';
+    shareUrl.searchParams.set('v', String(number));
+    const url = shareUrl.href;
+    const shareTitle = `Announcement #${number}: ${title}`;
+    const text = `*${shareTitle}*\n\n${summary}\n\nRead the complete update: ${url}`;
 
     if (navigator.share) {
-      await navigator.share({ title, text, url }).catch(() => undefined);
+      await navigator.share({ title: shareTitle, text, url }).catch(() => undefined);
       return;
     }
 

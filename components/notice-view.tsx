@@ -53,7 +53,7 @@ export function NoticeView({ announcement }: { announcement: Announcement }) {
               </a>
             )}
             <div className="w-full sm:ml-auto sm:w-auto">
-              <ShareButton title={announcement.title} summary={announcement.summary} />
+              <ShareButton number={announcement.number} title={announcement.title} summary={announcement.summary} />
             </div>
           </div>
         </div>
