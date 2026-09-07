@@ -119,38 +119,18 @@
   .section-heading span { @apply text-sm text-muted-foreground; }
   .empty-state { @apply mt-7 grid min-h-72 place-items-center content-center gap-2 rounded-2xl border border-dashed border-border bg-white p-8 text-center text-muted-foreground; }
   .empty-state h2 { @apply mt-2 font-heading text-2xl font-semibold text-ink; }
-  .notice-page { @apply relative min-h-screen overflow-hidden bg-ink; background-image: linear-gradient(145deg, #081f29 0%, #123c46 52%, #0b2a35 100%); }
-  .notice-atmosphere { @apply pointer-events-none fixed inset-0 overflow-hidden; }
-  .notice-glow { @apply absolute rounded-full blur-3xl; }
-  .notice-glow-one { width: 34rem; height: 34rem; left: -13rem; top: 8%; background: rgb(14 117 107 / 35%); }
-  .notice-glow-two { width: 30rem; height: 30rem; right: -12rem; bottom: -8rem; background: rgb(246 200 88 / 18%); }
-  .notice-grid { @apply absolute inset-0 opacity-20; background-image: linear-gradient(rgb(255 255 255 / 8%) 1px, transparent 1px), linear-gradient(90deg, rgb(255 255 255 / 8%) 1px, transparent 1px); background-size: 64px 64px; mask-image: linear-gradient(to bottom, black, transparent 82%); }
-  .notice-particle { position: absolute; left: var(--x); top: var(--y); width: var(--size); height: var(--size); border-radius: 999px; background: #f6c858; box-shadow: 0 0 16px rgb(246 200 88 / 65%); opacity: .35; animation: notice-float var(--duration) ease-in-out var(--delay) infinite; }
-  .notice-topbar { @apply relative z-20 border-b border-white/10 bg-white/5 backdrop-blur-md; }
-  .notice-shell { @apply mx-auto w-full max-w-[860px] px-5 sm:px-8; }
-  .notice-back-link { @apply inline-flex min-h-10 items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 text-sm font-semibold text-white/75 transition hover:border-white/30 hover:bg-white/10 hover:text-white; }
-  .notice-paper { @apply relative overflow-hidden rounded-[1.75rem] border border-white/70 bg-white p-6 shadow-[0_30px_90px_rgb(0_0_0/28%)] sm:p-10; }
-  .notice-paper::before { content: ''; position: absolute; inset: 0 0 auto; height: 5px; background: linear-gradient(90deg, #f6c858, #35b8a8 55%, #26708a); }
-  .notice-ribbon { @apply absolute right-0 top-0 grid min-w-28 justify-items-end rounded-bl-2xl bg-[linear-gradient(135deg,#fff6d6,#f6c858)] px-5 py-3 text-ink shadow-sm; }
-  .notice-ribbon span { @apply text-[11px] font-bold uppercase tracking-[0.12em] text-ink/55; }
-  .notice-ribbon strong { @apply font-heading text-2xl leading-none; }
-  .notice-meta { @apply flex flex-wrap items-center gap-3 pr-28 text-sm text-muted-foreground sm:pr-32; }
-  .notice-category { @apply inline-flex rounded-full px-3 py-1 text-xs font-bold uppercase tracking-[0.08em]; }
-  .notice-category-urgent { @apply bg-red-100 text-red-800; }
-  .notice-category-maintenance { @apply bg-blue-100 text-blue-800; }
-  .notice-category-event { @apply bg-amber-100 text-amber-900; }
-  .notice-category-action { @apply bg-emerald-100 text-emerald-800; }
-  .notice-category-community { @apply bg-violet-100 text-violet-800; }
-  .notice-paper h1 { @apply mt-8 max-w-3xl font-heading text-4xl font-semibold leading-[1.08] tracking-[-0.04em] text-ink sm:text-5xl; }
-  .notice-summary { @apply mt-5 border-l-4 border-sun pl-5 text-lg leading-8 text-muted-foreground; }
-  .notice-body { @apply mt-8 space-y-5 border-t border-border pt-7 text-base leading-8 text-foreground; }
-  .notice-facts { @apply mt-8 grid gap-3 rounded-2xl border border-teal/10 bg-[linear-gradient(145deg,#f3f9f7,#eef5f5)] p-4 sm:grid-cols-2 sm:p-5; }
-  .notice-facts > div { @apply grid gap-1 rounded-xl bg-white/70 p-3; }
-  .notice-facts dt { @apply flex items-center gap-2 text-xs font-bold uppercase tracking-[0.09em] text-muted-foreground; }
-  .notice-facts dt svg { @apply size-4 text-teal; }
-  .notice-facts dd { @apply m-0 text-sm font-semibold text-ink; }
-  .notice-actions { @apply mt-6 flex flex-col gap-3 sm:flex-row sm:items-center; }
-  .share-button { @apply inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-[linear-gradient(135deg,#f8d36f,#f4bd3f)] px-5 text-sm font-bold text-ink shadow-[0_8px_24px_rgb(246_200_88/25%)] transition hover:-translate-y-0.5 hover:shadow-[0_12px_30px_rgb(246_200_88/35%)] sm:w-auto; }
+  .notice-layout { @apply grid gap-7 lg:grid-cols-[minmax(0,1fr)_340px] lg:gap-12; }
+  .notice-article { @apply rounded-[1.75rem] border border-border bg-white p-6 shadow-[0_16px_48px_rgb(16_45_54/6%)] sm:p-10 lg:p-12; }
+  .notice-article h1 { @apply mt-6 max-w-3xl font-heading text-4xl font-semibold leading-[1.08] tracking-[-0.04em] text-ink sm:text-6xl; }
+  .notice-summary { @apply mt-6 max-w-3xl border-l-4 border-sun pl-5 text-lg leading-8 text-muted-foreground sm:text-xl; }
+  .notice-body { @apply mt-9 max-w-3xl space-y-5 text-base leading-8 text-foreground; }
+  .notice-sidebar { @apply h-fit rounded-[1.5rem] bg-ink p-6 text-white shadow-[0_16px_48px_rgb(16_45_54/14%)] lg:sticky lg:top-7; }
+  .notice-sidebar h2 { @apply font-heading text-2xl font-semibold; }
+  .info-row { @apply mt-6 flex items-start gap-3 border-t border-white/10 pt-5 text-sm leading-6 text-white/85; }
+  .info-row > svg { @apply mt-1 size-5 shrink-0 text-sun; }
+  .info-row span { @apply grid; }
+  .info-row small { @apply text-xs font-bold uppercase tracking-[0.1em] text-white/50; }
+  .share-button { @apply inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-sun px-4 text-sm font-bold text-ink transition hover:bg-[#ffd872]; }
   .primary-action { @apply inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-primary px-5 text-sm font-bold text-primary-foreground transition hover:bg-[#095f57]; }
   .admin-gate { @apply grid min-h-screen place-items-center bg-ink p-5; background-image: radial-gradient(circle at 20% 15%, rgba(14,117,107,.32), transparent 30%), radial-gradient(circle at 85% 80%, rgba(246,200,88,.18), transparent 28%); }
   .admin-gate-card { @apply w-full max-w-xl rounded-[2rem] border border-white/10 bg-white p-7 text-center shadow-2xl sm:p-12; }
@@ -190,9 +170,4 @@
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; }
-}
-
-@keyframes notice-float {
-  0%, 100% { transform: translate3d(0, 12px, 0) scale(.8); opacity: .2; }
-  50% { transform: translate3d(var(--drift), -34px, 0) scale(1.15); opacity: .75; }
 }
