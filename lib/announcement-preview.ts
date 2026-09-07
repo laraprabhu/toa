@@ -65,90 +65,69 @@ export function generateAnnouncementPreview(announcement: Announcement) {
 
   const background = context.createLinearGradient(0, 0, WIDTH, HEIGHT);
   background.addColorStop(0, '#102f3f');
-  background.addColorStop(0.58, '#164d57');
-  background.addColorStop(1, '#11606a');
+  background.addColorStop(0.62, '#164853');
+  background.addColorStop(1, '#0f5d66');
   context.fillStyle = background;
   context.fillRect(0, 0, WIDTH, HEIGHT);
 
-  const glow = context.createRadialGradient(1040, 60, 20, 1040, 60, 470);
-  glow.addColorStop(0, 'rgba(245, 190, 79, 0.34)');
+  const glow = context.createRadialGradient(1140, 40, 20, 1140, 40, 540);
+  glow.addColorStop(0, 'rgba(245, 190, 79, 0.22)');
   glow.addColorStop(1, 'rgba(245, 190, 79, 0)');
   context.fillStyle = glow;
-  context.fillRect(570, 0, 630, 530);
-
-  context.strokeStyle = 'rgba(255, 255, 255, 0.055)';
-  context.lineWidth = 1;
-  for (let x = 0; x <= WIDTH; x += 60) {
-    context.beginPath();
-    context.moveTo(x, 0);
-    context.lineTo(x, HEIGHT);
-    context.stroke();
-  }
-  for (let y = 0; y <= HEIGHT; y += 60) {
-    context.beginPath();
-    context.moveTo(0, y);
-    context.lineTo(WIDTH, y);
-    context.stroke();
-  }
+  context.fillRect(600, 0, 600, 580);
 
   context.fillStyle = '#f5be4f';
-  roundedRect(context, 72, 62, 70, 70, 19);
+  roundedRect(context, 72, 58, 58, 58, 16);
   context.fill();
   context.fillStyle = '#102f3f';
-  context.font = '700 30px Georgia, serif';
+  context.font = '700 24px Georgia, serif';
   context.textAlign = 'center';
   context.textBaseline = 'middle';
-  context.fillText('TOA', 107, 98);
+  context.fillText('TOA', 101, 88);
 
   context.textAlign = 'left';
   context.fillStyle = '#ffffff';
-  context.font = '700 27px "Segoe UI", Arial, sans-serif';
-  context.fillText('TOA NOTICEBOARD', 162, 87);
-  context.fillStyle = 'rgba(255,255,255,0.7)';
-  context.font = '500 19px "Segoe UI", Arial, sans-serif';
-  context.fillText('Official resident communication', 162, 119);
+  context.font = '700 25px "Segoe UI", Arial, sans-serif';
+  context.textBaseline = 'alphabetic';
+  context.fillText('TOA NOTICEBOARD', 151, 96);
 
+  context.font = '700 17px "Segoe UI", Arial, sans-serif';
+  const numberLabel = `ANNOUNCEMENT  #${announcement.number}`;
+  const numberWidth = context.measureText(numberLabel).width + 44;
+  context.fillStyle = '#f5be4f';
+  roundedRect(context, WIDTH - numberWidth - 72, 65, numberWidth, 45, 23);
+  context.fill();
+  context.fillStyle = '#102f3f';
+  context.textAlign = 'center';
+  context.fillText(numberLabel, WIDTH - 72 - numberWidth / 2, 94);
+
+  context.textAlign = 'left';
   context.font = '700 18px "Segoe UI", Arial, sans-serif';
   const category = categoryLabels[announcement.category];
   const badgeWidth = context.measureText(category).width + 42;
   context.fillStyle = 'rgba(255,255,255,0.12)';
-  roundedRect(context, 72, 186, badgeWidth, 43, 22);
+  roundedRect(context, 72, 163, badgeWidth, 42, 21);
   context.fill();
   context.fillStyle = '#f7cf79';
-  context.textBaseline = 'alphabetic';
-  context.fillText(category, 93, 215);
+  context.fillText(category, 93, 191);
+
+  context.strokeStyle = 'rgba(255,255,255,0.14)';
+  context.lineWidth = 1;
+  context.beginPath();
+  context.moveTo(72, 231);
+  context.lineTo(1128, 231);
+  context.stroke();
 
   context.fillStyle = '#ffffff';
-  context.font = '700 58px Georgia, "Times New Roman", serif';
-  const titleLines = fitLines(context, announcement.title, 870, 3);
-  titleLines.forEach((line, index) => context.fillText(line, 72, 300 + index * 68));
+  context.font = '700 60px Georgia, "Times New Roman", serif';
+  const titleLines = fitLines(context, announcement.title, 990, 3);
+  titleLines.forEach((line, index) => context.fillText(line, 72, 301 + index * 70));
 
-  const summaryY = 318 + titleLines.length * 68;
-  context.fillStyle = 'rgba(255,255,255,0.78)';
+  const summaryY = 362 + (titleLines.length - 1) * 70;
+  context.fillStyle = 'rgba(255,255,255,0.76)';
   context.font = '400 24px "Segoe UI", Arial, sans-serif';
-  const summaryLines = fitLines(context, announcement.summary, 880, Math.max(1, Math.min(2, Math.floor((536 - summaryY) / 32))));
-  summaryLines.forEach((line, index) => context.fillText(line, 72, summaryY + index * 32));
-
-  context.fillStyle = '#f5be4f';
-  context.beginPath();
-  context.arc(1050, 315, 104, 0, Math.PI * 2);
-  context.fill();
-  context.fillStyle = '#102f3f';
-  context.textAlign = 'center';
-  context.font = '700 18px "Segoe UI", Arial, sans-serif';
-  context.fillText('ANNOUNCEMENT', 1050, 292);
-  context.font = '700 72px Georgia, serif';
-  context.fillText(`#${announcement.number}`, 1050, 365);
-
-  context.fillStyle = 'rgba(4, 27, 36, 0.42)';
-  context.fillRect(0, 565, WIDTH, 65);
-  context.textAlign = 'left';
-  context.fillStyle = 'rgba(255,255,255,0.72)';
-  context.font = '600 18px "Segoe UI", Arial, sans-serif';
-  context.fillText('READ THE COMPLETE UPDATE ON TOA NOTICEBOARD', 72, 604);
-  context.textAlign = 'right';
-  context.fillStyle = '#f7cf79';
-  context.fillText('Residents first · Clear and timely', 1128, 604);
+  const summaryLines = fitLines(context, announcement.summary, 990, Math.max(1, Math.min(2, Math.floor((575 - summaryY) / 34))));
+  summaryLines.forEach((line, index) => context.fillText(line, 72, summaryY + index * 34));
 
   const dataUrl = canvas.toDataURL('image/png');
   const encoded = dataUrl.split(',')[1];
