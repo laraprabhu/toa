@@ -1,6 +1,6 @@
 'use client';
 
-import { useSyncExternalStore } from 'react';
+import { useEffect, useState } from 'react';
 import { ArrowLeft, Building2, CalendarDays, Clock3, ExternalLink, MapPin, UserRound } from 'lucide-react';
 import type { Announcement } from '@/lib/announcements';
 import { ShareButton } from '@/components/share-button';
@@ -10,16 +10,18 @@ function formatDate(value: string) {
   return new Intl.DateTimeFormat('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(value));
 }
 
-const subscribeToLocation = () => () => undefined;
-
 export function NoticeView({ announcements }: { announcements: Announcement[] }) {
-  const slug = useSyncExternalStore(
-    subscribeToLocation,
-    () => new URLSearchParams(window.location.search).get('slug'),
-    () => '',
-  );
+  const [slug, setSlug] = useState<string | null>();
 
-  if (slug === '') {
+  useEffect(() => {
+    const frame = window.requestAnimationFrame(() => {
+      setSlug(new URLSearchParams(window.location.search).get('slug'));
+    });
+
+    return () => window.cancelAnimationFrame(frame);
+  }, []);
+
+  if (slug === undefined) {
     return <main className="grid min-h-screen place-items-center bg-background text-muted-foreground">Loading update…</main>;
   }
 
