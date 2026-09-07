@@ -1,7 +1,7 @@
 import type { Announcement } from '@/lib/announcements';
 
 export const ANNOUNCEMENT_PREVIEW_WIDTH = 1200;
-export const ANNOUNCEMENT_PREVIEW_HEIGHT = 720;
+export const ANNOUNCEMENT_PREVIEW_HEIGHT = 800;
 
 const categoryLabels: Record<Announcement['category'], string> = {
   urgent: 'URGENT UPDATE',
@@ -96,51 +96,51 @@ export function generateAnnouncementPreview(announcement: Announcement) {
 
   context.textAlign = 'left';
   context.fillStyle = '#f7c65b';
-  context.font = '700 48px Georgia, "Times New Roman", serif';
+  context.font = '700 56px Georgia, "Times New Roman", serif';
   context.textBaseline = 'alphabetic';
-  context.fillText(`TOA Announcement #${announcement.number}`, 72, 120);
+  context.fillText(`TOA Announcement #${announcement.number}`, 72, 128);
 
-  context.font = '700 22px "Segoe UI", Arial, sans-serif';
+  context.font = '700 26px "Segoe UI", Arial, sans-serif';
   const category = categoryLabels[announcement.category];
-  const categoryWidth = context.measureText(category).width + 50;
+  const categoryWidth = context.measureText(category).width + 56;
   const categoryX = ANNOUNCEMENT_PREVIEW_WIDTH - categoryWidth - 72;
   context.fillStyle = 'rgba(119, 232, 221, 0.17)';
-  roundedRect(context, categoryX, 67, categoryWidth, 58, 29);
+  roundedRect(context, categoryX, 72, categoryWidth, 64, 32);
   context.fill();
   context.strokeStyle = 'rgba(172, 255, 247, 0.38)';
   context.lineWidth = 1.5;
   context.stroke();
   context.fillStyle = '#b9fff5';
   context.textAlign = 'center';
-  context.fillText(category, categoryX + categoryWidth / 2, 105);
+  context.fillText(category, categoryX + categoryWidth / 2, 114);
 
   context.textAlign = 'left';
   context.strokeStyle = 'rgba(255,255,255,0.14)';
   context.lineWidth = 1;
   context.beginPath();
-  context.moveTo(72, 166);
-  context.lineTo(1128, 166);
+  context.moveTo(72, 180);
+  context.lineTo(1128, 180);
   context.stroke();
 
   context.fillStyle = '#ffffff';
-  context.font = '700 84px Georgia, "Times New Roman", serif';
+  context.font = '700 96px Georgia, "Times New Roman", serif';
   const titleLines = fitLines(context, announcement.title, 1056, 3);
 
-  context.font = '400 34px "Segoe UI", Arial, sans-serif';
+  context.font = '400 40px "Segoe UI", Arial, sans-serif';
   const summaryLines = fitLines(context, announcement.summary, 1056, 3);
-  const titleLineHeight = 90;
-  const summaryLineHeight = 46;
-  const contentHeight = titleLines.length * titleLineHeight + 28 + summaryLines.length * summaryLineHeight;
-  const contentTop = 184 + Math.max(0, (506 - contentHeight) / 2);
-  const titleStartY = contentTop + 72;
+  const titleLineHeight = 104;
+  const summaryLineHeight = 53;
+  const contentHeight = titleLines.length * titleLineHeight + 32 + summaryLines.length * summaryLineHeight;
+  const contentTop = 200 + Math.max(0, (548 - contentHeight) / 2);
+  const titleStartY = contentTop + 82;
 
   context.fillStyle = '#ffffff';
-  context.font = '700 84px Georgia, "Times New Roman", serif';
+  context.font = '700 96px Georgia, "Times New Roman", serif';
   titleLines.forEach((line, index) => context.fillText(line, 72, titleStartY + index * titleLineHeight));
 
-  const summaryY = contentTop + titleLines.length * titleLineHeight + 58;
+  const summaryY = contentTop + titleLines.length * titleLineHeight + 66;
   context.fillStyle = 'rgba(255,255,255,0.82)';
-  context.font = '400 34px "Segoe UI", Arial, sans-serif';
+  context.font = '400 40px "Segoe UI", Arial, sans-serif';
   summaryLines.forEach((line, index) => context.fillText(line, 72, summaryY + index * summaryLineHeight));
 
   const dataUrl = canvas.toDataURL('image/png');
