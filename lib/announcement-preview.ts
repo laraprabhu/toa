@@ -96,11 +96,11 @@ export function generateAnnouncementPreview(announcement: Announcement) {
 
   context.textAlign = 'left';
   context.fillStyle = '#f7c65b';
-  context.font = '700 56px Georgia, "Times New Roman", serif';
+  context.font = '700 48px Georgia, "Times New Roman", serif';
   context.textBaseline = 'alphabetic';
   context.fillText(`TOA Announcement #${announcement.number}`, 72, 128);
 
-  context.font = '700 26px "Segoe UI", Arial, sans-serif';
+  context.font = '700 22px "Segoe UI", Arial, sans-serif';
   const category = categoryLabels[announcement.category];
   const categoryWidth = context.measureText(category).width + 56;
   const categoryX = ANNOUNCEMENT_PREVIEW_WIDTH - categoryWidth - 72;
