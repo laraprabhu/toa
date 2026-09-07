@@ -1,14 +1,17 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import Image from 'next/image';
 import {
   ArrowLeft,
   Check,
   Clipboard,
   Cloud,
   FilePenLine,
+  ImageIcon,
   LogOut,
   Plus,
+  RotateCcw,
   Save,
   ShieldAlert,
   ShieldCheck,
@@ -61,6 +64,7 @@ declare global {
 type AuthState = 'loading' | 'signed-out' | 'authorized' | 'denied' | 'misconfigured';
 type ApiResult = { announcements: Announcement[]; admin?: { email: string; name?: string } };
 type FormState = Omit<Announcement, 'publishedAt' | 'expiresAt'> & { publishedAt: string; expiresAt: string };
+const demoStorageKey = 'toa-noticeboard-public-admin-demo-v1';
 
 const emptyForm = (): FormState => ({
   number: 0,
@@ -121,12 +125,22 @@ function formToAnnouncement(form: FormState): Announcement {
   };
 }
 
-export function AdminConsole({ apiUrl, googleClientId }: { apiUrl: string; googleClientId: string }) {
-  const [authState, setAuthState] = useState<AuthState>(() => !apiUrl || !googleClientId ? 'misconfigured' : 'loading');
+export function AdminConsole({
+  apiUrl,
+  googleClientId,
+  initialAnnouncements,
+}: {
+  apiUrl: string;
+  googleClientId: string;
+  initialAnnouncements: Announcement[];
+}) {
+  const demoMode = !apiUrl || !googleClientId;
+  const [authState, setAuthState] = useState<AuthState>(() => demoMode ? 'authorized' : 'loading');
   const [credential, setCredential] = useState('');
-  const [admin, setAdmin] = useState<{ email: string; name?: string } | null>(null);
-  const [announcements, setAnnouncements] = useState<Announcement[]>([]);
+  const [admin, setAdmin] = useState<{ email: string; name?: string } | null>(() => demoMode ? { email: 'Public test session', name: 'Guest tester' } : null);
+  const [announcements, setAnnouncements] = useState<Announcement[]>(() => demoMode ? initialAnnouncements : []);
   const [form, setForm] = useState<FormState>(emptyForm);
+  const [previewImage, setPreviewImage] = useState('');
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState('');
   const [copied, setCopied] = useState(false);
@@ -153,6 +167,29 @@ export function AdminConsole({ apiUrl, googleClientId }: { apiUrl: string; googl
       body: JSON.stringify({ imageBase64 }),
     });
   }, [apiRequest]);
+
+  const storeDemoAnnouncements = useCallback((items: Announcement[]) => {
+    setAnnouncements(items);
+    window.localStorage.setItem(demoStorageKey, JSON.stringify(items));
+  }, []);
+
+  useEffect(() => {
+    if (!demoMode) return;
+    let restoreTimer: number | undefined;
+    try {
+      const saved = window.localStorage.getItem(demoStorageKey);
+      if (!saved) return;
+      const parsed = JSON.parse(saved) as unknown;
+      if (Array.isArray(parsed)) {
+        restoreTimer = window.setTimeout(() => setAnnouncements(parsed as Announcement[]), 0);
+      }
+    } catch {
+      window.localStorage.removeItem(demoStorageKey);
+    }
+    return () => {
+      if (restoreTimer !== undefined) window.clearTimeout(restoreTimer);
+    };
+  }, [demoMode]);
 
   const authorize = useCallback(async (token: string) => {
     try {
@@ -290,7 +327,29 @@ export function AdminConsole({ apiUrl, googleClientId }: { apiUrl: string; googl
     setBusy(true);
     setNotice('');
     try {
-      const announcement = formToAnnouncement(form);
+      let announcement = formToAnnouncement(form);
+      if (demoMode) {
+        if (!selectedId) {
+          announcement = {
+            ...announcement,
+            number: Math.max(0, ...announcements.map((item) => item.number)) + 1,
+          };
+        }
+        const imageBase64 = generateAnnouncementPreview(announcement);
+        const completed: Announcement = {
+          ...announcement,
+          previewVersion: `demo-${Date.now().toString(36)}`,
+        };
+        const next = selectedId
+          ? announcements.map((item) => item.id === selectedId ? completed : item)
+          : [completed, ...announcements];
+        storeDemoAnnouncements(next);
+        setForm(announcementToForm(completed));
+        setPreviewImage(`data:image/png;base64,${imageBase64}`);
+        setNotice('Saved in this browser for testing. The live noticeboard and GitHub repository were not changed.');
+        return;
+      }
+
       const method = selectedId ? 'PUT' : 'POST';
       const path = selectedId ? `/api/announcements/${encodeURIComponent(selectedId)}` : '/api/announcements';
       const result = await apiRequest(path, credential, { method, body: JSON.stringify(announcement) });
@@ -323,6 +382,13 @@ export function AdminConsole({ apiUrl, googleClientId }: { apiUrl: string; googl
     setBusy(true);
     setNotice('');
     try {
+      if (demoMode) {
+        storeDemoAnnouncements(announcements.filter((item) => item.id !== selectedId));
+        setForm(emptyForm());
+        setPreviewImage('');
+        setNotice('Removed from this browser’s test data. The live noticeboard was not changed.');
+        return;
+      }
       const result = await apiRequest(`/api/announcements/${encodeURIComponent(selectedId)}`, credential, { method: 'DELETE' });
       setAnnouncements(result.announcements);
       setForm(emptyForm());
@@ -336,6 +402,14 @@ export function AdminConsole({ apiUrl, googleClientId }: { apiUrl: string; googl
 
   async function copyForWhatsApp() {
     const announcement = formToAnnouncement(form);
+    if (demoMode) {
+      const numberLabel = announcement.number > 0 ? `Announcement #${announcement.number}: ` : '';
+      const text = `*TEST PREVIEW — ${numberLabel}${announcement.title}*\n\n${announcement.summary}\n\nThis test announcement has not been published.`;
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1800);
+      return;
+    }
     const noticeUrl = new URL(`${sitePath}/notice/${encodeURIComponent(announcement.slug)}/`, window.location.origin).href;
     const versionedNoticeUrl = new URL(noticeUrl);
     if (announcement.number > 0) versionedNoticeUrl.searchParams.set('v', announcement.previewVersion ?? `${announcement.number}-banner-1`);
@@ -354,6 +428,27 @@ export function AdminConsole({ apiUrl, googleClientId }: { apiUrl: string; googl
     setForm(emptyForm());
     setAuthState('signed-out');
     setNotice('');
+  }
+
+  function previewBanner() {
+    if (!form.title.trim() || !form.summary.trim()) {
+      setNotice('Add a title and short summary before generating the banner preview.');
+      return;
+    }
+    const candidate = formToAnnouncement({
+      ...form,
+      number: form.number || Math.max(0, ...announcements.map((item) => item.number)) + 1,
+    });
+    setPreviewImage(`data:image/png;base64,${generateAnnouncementPreview(candidate)}`);
+    setNotice('Banner preview generated locally. Save the announcement to keep this test in your browser.');
+  }
+
+  function resetDemo() {
+    window.localStorage.removeItem(demoStorageKey);
+    setAnnouncements(initialAnnouncements);
+    setForm(emptyForm());
+    setPreviewImage('');
+    setNotice('Public test data reset to the current live announcements.');
   }
 
   if (authState !== 'authorized') {
@@ -387,22 +482,31 @@ export function AdminConsole({ apiUrl, googleClientId }: { apiUrl: string; googl
           </div>
           <div className="flex items-center gap-2">
             <a href={siteHref('/')} className="admin-toolbar-link"><ArrowLeft aria-hidden="true" /> View site</a>
-            <Button variant="outline" size="lg" onClick={signOut}><LogOut aria-hidden="true" /> Sign out</Button>
+            {demoMode ? (
+              <Button variant="outline" size="lg" onClick={resetDemo}><RotateCcw aria-hidden="true" /> Reset test data</Button>
+            ) : (
+              <Button variant="outline" size="lg" onClick={signOut}><LogOut aria-hidden="true" /> Sign out</Button>
+            )}
           </div>
         </div>
       </header>
 
       <div className="page-shell py-6 sm:py-9">
-        <div className="admin-status">
-          <span><Cloud size={17} aria-hidden="true" /> Repository connected</span>
-          <span className="hidden text-muted-foreground sm:inline">Signed in as {admin?.name || admin?.email}</span>
+        <div className={demoMode ? 'admin-status border-amber-300 bg-amber-50' : 'admin-status'}>
+          <span className={demoMode ? '!text-amber-900' : ''}>
+            {demoMode ? <ShieldAlert size={17} aria-hidden="true" /> : <Cloud size={17} aria-hidden="true" />}
+            {demoMode ? 'Public test mode' : 'Repository connected'}
+          </span>
+          <span className="text-right text-muted-foreground">
+            {demoMode ? 'Changes stay in this browser and are not published.' : `Signed in as ${admin?.name || admin?.email}`}
+          </span>
         </div>
 
         <div className="admin-layout">
           <aside className="announcement-list">
             <div className="flex items-center justify-between gap-3 border-b border-border p-4">
               <div><h2>Announcements</h2><p>{announcements.length} total</p></div>
-              <Button size="lg" onClick={() => { setForm(emptyForm()); setNotice(''); }}><Plus aria-hidden="true" /> New</Button>
+              <Button size="lg" onClick={() => { setForm(emptyForm()); setPreviewImage(''); setNotice(''); }}><Plus aria-hidden="true" /> New</Button>
             </div>
             <div className="max-h-[calc(100vh-240px)] overflow-y-auto p-2">
               {sortedAnnouncements.map((announcement) => (
@@ -411,7 +515,7 @@ export function AdminConsole({ apiUrl, googleClientId }: { apiUrl: string; googl
                   type="button"
                   aria-label={`Edit ${announcement.title}`}
                   className={selectedId === announcement.id ? 'announcement-list-item active' : 'announcement-list-item'}
-                  onClick={() => { setForm(announcementToForm(announcement)); setNotice(''); }}
+                  onClick={() => { setForm(announcementToForm(announcement)); setPreviewImage(''); setNotice(''); }}
                 >
                   <span className={`status-dot ${announcement.status}`} />
                   <span><strong>#{announcement.number} · {announcement.title}</strong><small>{announcement.status} · {announcement.category}</small></span>
@@ -488,8 +592,33 @@ export function AdminConsole({ apiUrl, googleClientId }: { apiUrl: string; googl
               </FormField>
             </div>
 
+            {demoMode && previewImage && (
+              <div className="border-t border-border bg-slate-50 p-5 sm:p-7">
+                <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+                  <div>
+                    <strong className="text-sm text-ink">WhatsApp banner preview</strong>
+                    <p className="text-xs text-muted-foreground">Generated at 1200 × 630 pixels</p>
+                  </div>
+                  <a className="text-sm font-semibold text-teal underline-offset-4 hover:underline" href={previewImage} download={`announcement-${form.number || 'preview'}.png`}>Download PNG</a>
+                </div>
+                <Image
+                  className="h-auto w-full rounded-xl border border-border shadow-sm"
+                  src={previewImage}
+                  width={1200}
+                  height={630}
+                  unoptimized
+                  alt="Generated announcement banner preview"
+                />
+              </div>
+            )}
+
             <div className="editor-actions">
               <Button className="h-11 px-5" onClick={saveAnnouncement} disabled={busy}><Save aria-hidden="true" /> {busy ? 'Saving…' : 'Save announcement'}</Button>
+              {demoMode && (
+                <Button className="h-11" variant="outline" onClick={previewBanner} disabled={!form.title || !form.summary}>
+                  <ImageIcon aria-hidden="true" /> Preview banner
+                </Button>
+              )}
               <Button className="h-11" variant="outline" onClick={copyForWhatsApp} disabled={!form.title || !form.summary}>
                 {copied ? <Check aria-hidden="true" /> : <Clipboard aria-hidden="true" />}{copied ? 'Copied' : 'Copy for WhatsApp'}
               </Button>
@@ -502,7 +631,7 @@ export function AdminConsole({ apiUrl, googleClientId }: { apiUrl: string; googl
                     <AlertDialogHeader>
                       <AlertDialogMedia><Trash2 aria-hidden="true" /></AlertDialogMedia>
                       <AlertDialogTitle>Delete this announcement?</AlertDialogTitle>
-                      <AlertDialogDescription>This removes it from the repository and the public site after the next build.</AlertDialogDescription>
+                      <AlertDialogDescription>{demoMode ? 'This removes it from this browser’s test data only.' : 'This removes it from the repository and the public site after the next build.'}</AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                       <AlertDialogCancel>Cancel</AlertDialogCancel>

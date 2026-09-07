@@ -27,6 +27,8 @@ Requirements: Node.js 22 or newer.
 
 The resident hub works without the Worker. The Worker is only needed for the admin console.
 
+Until Google and the Worker settings are provided, `/admin/` automatically runs as a public test workspace. Test changes and generated banner previews stay in each visitor's browser and never update GitHub or the live noticeboard. Configuring both `GOOGLE_CLIENT_ID` and `ADMIN_API_URL` automatically replaces this temporary mode with authenticated repository-backed administration.
+
 ## Add administrators
 
 Avoid committing plain email addresses when the repository is public. Generate a lowercase email hash:
