@@ -98,26 +98,17 @@ export function generateAnnouncementPreview(announcement: Announcement) {
   context.fillStyle = '#ffffff';
   context.font = '700 36px Georgia, "Times New Roman", serif';
   context.textBaseline = 'alphabetic';
-  context.fillText('TOA Noticeboard', 72, 104);
+  context.fillText(`TOA Announcement #${announcement.number}`, 72, 104);
 
   context.font = '700 16px "Segoe UI", Arial, sans-serif';
-  const numberLabel = `ANNOUNCEMENT  #${announcement.number}`;
-  const numberWidth = context.measureText(numberLabel).width + 40;
-  const numberX = ANNOUNCEMENT_PREVIEW_WIDTH - numberWidth - 72;
-  context.fillStyle = '#f5be4f';
-  roundedRect(context, numberX, 65, numberWidth, 45, 23);
-  context.fill();
-  context.fillStyle = '#102f3f';
-  context.textAlign = 'center';
-  context.fillText(numberLabel, numberX + numberWidth / 2, 94);
-
   const category = categoryLabels[announcement.category];
   const categoryWidth = context.measureText(category).width + 38;
-  const categoryX = numberX - categoryWidth - 12;
+  const categoryX = ANNOUNCEMENT_PREVIEW_WIDTH - categoryWidth - 72;
   context.fillStyle = 'rgba(255,255,255,0.13)';
   roundedRect(context, categoryX, 65, categoryWidth, 45, 23);
   context.fill();
   context.fillStyle = '#ffffff';
+  context.textAlign = 'center';
   context.fillText(category, categoryX + categoryWidth / 2, 94);
 
   context.textAlign = 'left';
