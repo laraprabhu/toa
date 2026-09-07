@@ -1,0 +1,9 @@
+{
+  "admins": [
+    {
+      "emailSha256": "replace-with-the-output-of-npm-run-admin-hash",
+      "name": "Primary administrator",
+      "active": true
+    }
+  ]
+}

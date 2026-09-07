@@ -1,0 +1,44 @@
+name: Deploy admin API
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'worker/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/deploy-admin-api.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Deploy stateless admin service
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          GOOGLE_CLIENT_ID: ${{ vars.GOOGLE_CLIENT_ID }}
+          SITE_ORIGIN: ${{ vars.SITE_ORIGIN }}
+        run: >
+          npx wrangler deploy worker/src/index.ts
+          --config worker/wrangler.toml
+          --var GOOGLE_CLIENT_ID:${GOOGLE_CLIENT_ID}
+          --var GITHUB_REPO:${GITHUB_REPOSITORY}
+          --var GITHUB_BRANCH:main
+          --var ALLOWED_ORIGINS:${SITE_ORIGIN}
+      - name: Update repository credential
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          WORKER_GITHUB_TOKEN: ${{ secrets.WORKER_GITHUB_TOKEN }}
+        run: echo "${WORKER_GITHUB_TOKEN}" | npx wrangler secret put GITHUB_TOKEN --config worker/wrangler.toml

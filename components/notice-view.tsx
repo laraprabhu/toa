@@ -1,0 +1,75 @@
+'use client';
+
+import { useSearchParams } from 'next/navigation';
+import { ArrowLeft, Building2, CalendarDays, Clock3, ExternalLink, MapPin, UserRound } from 'lucide-react';
+import type { Announcement } from '@/lib/announcements';
+import { ShareButton } from '@/components/share-button';
+import { siteHref } from '@/lib/site-path';
+
+function formatDate(value: string) {
+  return new Intl.DateTimeFormat('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(value));
+}
+
+export function NoticeView({ announcements }: { announcements: Announcement[] }) {
+  const slug = useSearchParams().get('slug');
+  const announcement = announcements.find((item) => item.slug === slug);
+
+  if (!announcement) {
+    return (
+      <main className="grid min-h-screen place-items-center bg-background p-6 text-center">
+        <div>
+          <p className="eyebrow justify-center">Notice unavailable</p>
+          <h1 className="mt-4 font-heading text-5xl font-semibold tracking-tight text-ink">This update could not be found.</h1>
+          <p className="mx-auto mt-4 max-w-lg text-muted-foreground">It may have been removed or replaced with a newer announcement.</p>
+          <a className="primary-action mt-7" href={siteHref('/')}>Return to all updates</a>
+        </div>
+      </main>
+    );
+  }
+
+  return (
+    <main className="min-h-screen bg-background">
+      <header className="border-b border-white/10 bg-ink text-white">
+        <div className="page-shell flex min-h-20 items-center justify-between gap-4 py-4">
+          <a href={siteHref('/')} className="flex items-center gap-3">
+            <span className="grid size-10 place-items-center rounded-xl bg-sun text-ink"><Building2 size={21} aria-hidden="true" /></span>
+            <strong className="font-heading text-lg">TOA Noticeboard</strong>
+          </a>
+          <a className="admin-link" href={siteHref('/')}><ArrowLeft size={16} aria-hidden="true" /> All updates</a>
+        </div>
+      </header>
+
+      <article className="page-shell py-8 sm:py-14">
+        <div className="notice-layout">
+          <div className="notice-article">
+            <div className="flex flex-wrap items-center gap-3">
+              <span className={`category-label category-${announcement.category}`}>{announcement.category === 'action' ? 'Action required' : announcement.category}</span>
+              <span className="text-sm text-muted-foreground">Published {formatDate(announcement.publishedAt)}</span>
+            </div>
+            <h1>{announcement.title}</h1>
+            <p className="notice-summary">{announcement.summary}</p>
+            <div className="notice-body">
+              {announcement.body.split('\n').map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+            </div>
+            {announcement.actionUrl && (
+              <a className="primary-action mt-8" href={announcement.actionUrl} target="_blank" rel="noreferrer">
+                {announcement.actionLabel ?? 'Open link'} <ExternalLink size={16} aria-hidden="true" />
+              </a>
+            )}
+          </div>
+
+          <aside className="notice-sidebar" aria-label="Notice information">
+            <h2>At a glance</h2>
+            {announcement.eventDate && <div className="info-row"><Clock3 aria-hidden="true" /><span><small>When</small>{announcement.eventDate}</span></div>}
+            {announcement.location && <div className="info-row"><MapPin aria-hidden="true" /><span><small>Where</small>{announcement.location}</span></div>}
+            {announcement.expiresAt && <div className="info-row"><CalendarDays aria-hidden="true" /><span><small>Current until</small>{formatDate(announcement.expiresAt)}</span></div>}
+            {announcement.contact && <div className="info-row"><UserRound aria-hidden="true" /><span><small>Contact</small>{announcement.contact}</span></div>}
+            <div className="mt-6 border-t border-white/10 pt-6">
+              <ShareButton title={announcement.title} summary={announcement.summary} />
+            </div>
+          </aside>
+        </div>
+      </article>
+    </main>
+  );
+}

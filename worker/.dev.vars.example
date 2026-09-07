@@ -1,0 +1,5 @@
+GOOGLE_CLIENT_ID=your-google-oauth-client-id.apps.googleusercontent.com
+GITHUB_REPO=owner/toa-noticeboard
+GITHUB_BRANCH=main
+ALLOWED_ORIGINS=http://localhost:3000,https://owner.github.io
+GITHUB_TOKEN=github-fine-grained-token

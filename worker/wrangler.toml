@@ -1,0 +1,12 @@
+name = "toa-noticeboard-admin"
+main = "src/index.ts"
+compatibility_date = "2026-08-28"
+
+[vars]
+GITHUB_BRANCH = "main"
+
+# Set these values for local development in worker/.dev.vars:
+# GOOGLE_CLIENT_ID=
+# GITHUB_REPO=owner/repository
+# ALLOWED_ORIGINS=http://localhost:3000,https://owner.github.io
+# GITHUB_TOKEN=
