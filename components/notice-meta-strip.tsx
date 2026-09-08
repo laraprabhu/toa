@@ -56,31 +56,41 @@ export function NoticeMetaStrip({
     if (!viewApiUrl) return;
 
     const controller = new AbortController();
-    void fetch(
-      `${viewApiUrl.replace(/\/$/, '')}/api/views/${announcement.number}`,
-      {
-        method: 'POST',
-        credentials: 'omit',
-        signal: controller.signal,
-      },
-    )
-      .then(async (response) => {
-        if (!response.ok) throw new Error('Unable to record view.');
-        return response.json() as Promise<{ views?: unknown }>;
-      })
-      .then(({ views }) => {
-        if (
-          typeof views === 'number' &&
-          Number.isSafeInteger(views) &&
-          views >= 0
-        ) {
-          setViewCount(views);
+    const counterUrl = `${viewApiUrl.replace(/\/$/, '')}/api/views/${announcement.number}`;
+
+    async function recordView() {
+      for (let attempt = 0; attempt < 3; attempt += 1) {
+        try {
+          const response = await fetch(counterUrl, {
+            method: 'POST',
+            credentials: 'omit',
+            signal: controller.signal,
+          });
+          if (!response.ok) throw new Error('Unable to record view.');
+
+          const { views } = (await response.json()) as { views?: unknown };
+          if (
+            typeof views === 'number' &&
+            Number.isSafeInteger(views) &&
+            views >= 0
+          ) {
+            setViewCount(views);
+          }
+          return;
+        } catch (error) {
+          if (controller.signal.aborted) return;
+          if (attempt === 2) {
+            console.warn(error);
+            return;
+          }
+          await new Promise((resolve) =>
+            setTimeout(resolve, 400 * 2 ** attempt),
+          );
         }
-      })
-      .catch((error: unknown) => {
-        if (!(error instanceof DOMException && error.name === 'AbortError'))
-          console.warn(error);
-      });
+      }
+    }
+
+    void recordView();
 
     return () => controller.abort();
   }, [announcement.number, viewApiUrl]);
@@ -103,7 +113,8 @@ export function NoticeMetaStrip({
           }
         >
           <Eye aria-hidden="true" />
-          Views {viewCount === null ? '…' : viewCount.toLocaleString('en-IN')}
+          Views
+          {viewCount === null ? '' : ` ${viewCount.toLocaleString('en-IN')}`}
         </span>
         <span className="notice-meta-separator" aria-hidden="true">
           ·
