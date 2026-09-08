@@ -7,6 +7,14 @@ function formatDate(value: string) {
   return new Intl.DateTimeFormat('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(value));
 }
 
+const categoryLabels: Record<Announcement['category'], string> = {
+  urgent: 'Urgent update',
+  maintenance: 'Maintenance',
+  event: 'Community event',
+  action: 'Action required',
+  community: 'Community update',
+};
+
 export function NoticeView({ announcement }: { announcement: Announcement }) {
   return (
     <main className="min-h-screen bg-background">
@@ -23,10 +31,15 @@ export function NoticeView({ announcement }: { announcement: Announcement }) {
       <article className="page-shell py-8 sm:py-14">
         <div className="notice-layout">
           <div className="notice-article">
-            <div className="flex flex-wrap items-center gap-3">
-              <span className={`category-label category-${announcement.category}`}>{announcement.category === 'action' ? 'Action required' : announcement.category}</span>
-              <strong className="text-sm text-teal">Announcement #{announcement.number}</strong>
-              <span className="text-sm text-muted-foreground">Published {formatDate(announcement.publishedAt)}</span>
+            <div className="notice-meta">
+              <span className="notice-meta-category">
+                <span className={`notice-meta-dot notice-meta-dot-${announcement.category}`} aria-hidden="true" />
+                {categoryLabels[announcement.category]}
+              </span>
+              <span className="notice-meta-separator" aria-hidden="true">·</span>
+              <span>Announcement #{announcement.number}</span>
+              <span className="notice-meta-separator" aria-hidden="true">·</span>
+              <span>Published <time dateTime={announcement.publishedAt}>{formatDate(announcement.publishedAt)}</time></span>
             </div>
             <h1>{announcement.title}</h1>
             <p className="notice-summary">{announcement.summary}</p>
