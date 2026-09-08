@@ -121,7 +121,9 @@
   .empty-state h2 { @apply mt-2 font-heading text-2xl font-semibold text-ink; }
   .notice-layout { @apply grid gap-7 lg:grid-cols-[minmax(0,1fr)_340px] lg:gap-12; }
   .notice-article { @apply rounded-[1.75rem] border border-border bg-white p-6 shadow-[0_16px_48px_rgb(16_45_54/6%)] sm:p-10 lg:p-12; }
-  .notice-meta-strip { @apply -mx-6 -mb-6 mt-10 flex flex-wrap items-center gap-x-2 gap-y-1 rounded-b-[1.75rem] border-t border-border bg-background/75 px-6 py-4 text-xs font-medium tracking-[0.01em] text-muted-foreground sm:-mx-10 sm:-mb-10 sm:px-10 lg:-mx-12 lg:-mb-12 lg:px-12; }
+  .notice-meta-strip { @apply -mx-6 -mb-6 mt-10 flex flex-nowrap items-center gap-x-2 overflow-x-auto overscroll-x-contain rounded-b-[1.75rem] border-t border-border bg-background/75 px-6 py-4 text-xs font-medium whitespace-nowrap tracking-[0.01em] text-muted-foreground sm:-mx-10 sm:-mb-10 sm:px-10 lg:-mx-12 lg:-mb-12 lg:px-12; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .notice-meta-strip::-webkit-scrollbar { display: none; }
+  .notice-meta-strip > * { @apply shrink-0; }
   .notice-meta-category { @apply inline-flex items-center gap-2; }
   .notice-meta-dot { @apply size-1.5 shrink-0 rounded-full; }
   .notice-meta-dot-urgent { @apply bg-red-500; }
