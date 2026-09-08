@@ -44,7 +44,7 @@ export default function Home() {
 
       <footer className="border-t border-border bg-white">
         <div className="page-shell flex flex-col gap-2 py-7 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
-          <p>TOA Noticeboard · Managed by Tejomaya Owners Association</p>
+          <p>TOA Noticeboard · Managed by TOA</p>
         </div>
       </footer>
     </main>
