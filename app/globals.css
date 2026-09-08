@@ -254,6 +254,12 @@
   .notice-meta-strip > * {
     @apply shrink-0;
   }
+  .notice-meta-views {
+    @apply inline-flex items-center gap-1.5 text-teal;
+  }
+  .notice-meta-views > svg {
+    @apply size-3.5;
+  }
   .notice-meta-category {
     @apply inline-flex items-center gap-2;
   }

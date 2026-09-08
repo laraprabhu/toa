@@ -8,6 +8,14 @@ GITHUB_REPO = "laraprabhu/toa"
 GOOGLE_CLIENT_ID = "352916246680-s4v2g316r5ljj2gabnrr4gneddv17v5a.apps.googleusercontent.com"
 ALLOWED_ORIGINS = "https://laraprabhu.github.io"
 
+[[durable_objects.bindings]]
+name = "ANNOUNCEMENT_VIEWS"
+class_name = "AnnouncementViewCounter"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["AnnouncementViewCounter"]
+
 # Set these values for local development in worker/.dev.vars:
 # GOOGLE_CLIENT_ID=
 # GITHUB_REPO=owner/repository

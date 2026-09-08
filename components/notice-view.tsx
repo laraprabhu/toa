@@ -58,7 +58,10 @@ export function NoticeView({ announcement }: { announcement: Announcement }) {
                 <ExternalLink size={16} aria-hidden="true" />
               </a>
             )}
-            <NoticeMetaStrip announcement={announcement} />
+            <NoticeMetaStrip
+              announcement={announcement}
+              viewApiUrl={process.env.NEXT_PUBLIC_ADMIN_API_URL ?? ''}
+            />
           </div>
 
           <aside className="notice-sidebar" aria-label="Notice information">

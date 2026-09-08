@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { Eye } from 'lucide-react';
 import type { Announcement } from '@/lib/announcements';
 
 const categoryLabels: Record<Announcement['category'], string> = {
@@ -21,11 +22,14 @@ function formatDate(value: string) {
 
 export function NoticeMetaStrip({
   announcement,
+  viewApiUrl,
 }: {
   announcement: Announcement;
+  viewApiUrl: string;
 }) {
   const stripRef = useRef<HTMLElement>(null);
   const [hasMoreContent, setHasMoreContent] = useState(false);
+  const [viewCount, setViewCount] = useState<number | null>(null);
 
   const updateScrollShadow = useCallback(() => {
     const strip = stripRef.current;
@@ -48,6 +52,39 @@ export function NoticeMetaStrip({
     return () => observer.disconnect();
   }, [updateScrollShadow]);
 
+  useEffect(() => {
+    if (!viewApiUrl) return;
+
+    const controller = new AbortController();
+    void fetch(
+      `${viewApiUrl.replace(/\/$/, '')}/api/views/${announcement.number}`,
+      {
+        method: 'POST',
+        credentials: 'omit',
+        signal: controller.signal,
+      },
+    )
+      .then(async (response) => {
+        if (!response.ok) throw new Error('Unable to record view.');
+        return response.json() as Promise<{ views?: unknown }>;
+      })
+      .then(({ views }) => {
+        if (
+          typeof views === 'number' &&
+          Number.isSafeInteger(views) &&
+          views >= 0
+        ) {
+          setViewCount(views);
+        }
+      })
+      .catch((error: unknown) => {
+        if (!(error instanceof DOMException && error.name === 'AbortError'))
+          console.warn(error);
+      });
+
+    return () => controller.abort();
+  }, [announcement.number, viewApiUrl]);
+
   return (
     <div
       className="notice-meta-strip-shell"
@@ -59,6 +96,18 @@ export function NoticeMetaStrip({
         onScroll={updateScrollShadow}
         aria-label="Announcement details"
       >
+        <span
+          className="notice-meta-views"
+          aria-label={
+            viewCount === null ? 'View count loading' : `${viewCount} views`
+          }
+        >
+          <Eye aria-hidden="true" />
+          Views {viewCount === null ? '…' : viewCount.toLocaleString('en-IN')}
+        </span>
+        <span className="notice-meta-separator" aria-hidden="true">
+          ·
+        </span>
         <span>Announcement #{announcement.number}</span>
         <span className="notice-meta-separator" aria-hidden="true">
           ·
