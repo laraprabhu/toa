@@ -42,14 +42,14 @@ export function NoticeView({ announcement }: { announcement: Announcement }) {
               </a>
             )}
             <footer className="notice-meta-strip">
+              <span>Announcement #{announcement.number}</span>
+              <span className="notice-meta-separator" aria-hidden="true">·</span>
+              <span>Published <time dateTime={announcement.publishedAt}>{formatDate(announcement.publishedAt)}</time></span>
+              <span className="notice-meta-separator" aria-hidden="true">·</span>
               <span className="notice-meta-category">
                 <span className={`notice-meta-dot notice-meta-dot-${announcement.category}`} aria-hidden="true" />
                 {categoryLabels[announcement.category]}
               </span>
-              <span className="notice-meta-separator" aria-hidden="true">·</span>
-              <span>Announcement #{announcement.number}</span>
-              <span className="notice-meta-separator" aria-hidden="true">·</span>
-              <span>Published <time dateTime={announcement.publishedAt}>{formatDate(announcement.publishedAt)}</time></span>
             </footer>
           </div>
 
