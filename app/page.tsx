@@ -10,13 +10,21 @@ export default function Home() {
     <main className="min-h-screen bg-background text-foreground">
       <header className="border-b border-white/10 bg-ink text-white">
         <div className="page-shell flex min-h-20 items-center justify-between gap-4 py-4">
-          <a href={siteHref('/')} className="flex items-center gap-3" aria-label="TOA Noticeboard home">
+          <a
+            href={siteHref('/')}
+            className="flex items-center gap-3"
+            aria-label="TOA Noticeboard home"
+          >
             <span className="grid size-11 place-items-center rounded-2xl bg-sun text-ink shadow-sm">
               <Building2 aria-hidden="true" size={23} strokeWidth={2.2} />
             </span>
             <span>
-              <strong className="block font-heading text-lg leading-tight tracking-tight">TOA Noticeboard</strong>
-              <span className="text-sm text-slate-300">Resident communication hub</span>
+              <strong className="block font-heading text-lg leading-tight tracking-tight">
+                TOA Noticeboard
+              </strong>
+              <span className="text-sm text-slate-300">
+                Resident communication hub
+              </span>
             </span>
           </a>
           <a className="admin-link" href={siteHref('/admin')}>
@@ -27,17 +35,9 @@ export default function Home() {
       </header>
 
       <section className="page-shell py-8 sm:py-12">
-        <div className="mb-8 grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-end">
-          <div>
-            <div className="eyebrow"><BellRing size={15} aria-hidden="true" /> Community updates</div>
-            <h1 className="mt-4 max-w-3xl font-heading text-4xl font-semibold leading-[1.06] tracking-[-0.04em] text-ink sm:text-6xl">
-              Everything important,<br />without the message overload.
-            </h1>
-          </div>
-          <p className="max-w-md text-base leading-7 text-muted-foreground lg:pb-1">
-            Timely updates about events, maintenance and resident actions—organized in one calm, searchable place.
-          </p>
-        </div>
+        <h1 className="eyebrow mb-8">
+          <BellRing size={15} aria-hidden="true" /> TEJOMAYA COMMUNITY UPDATES
+        </h1>
 
         <AnnouncementsFeed announcements={announcements} />
       </section>
