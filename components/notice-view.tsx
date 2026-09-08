@@ -31,16 +31,6 @@ export function NoticeView({ announcement }: { announcement: Announcement }) {
       <article className="page-shell py-8 sm:py-14">
         <div className="notice-layout">
           <div className="notice-article">
-            <div className="notice-meta">
-              <span className="notice-meta-category">
-                <span className={`notice-meta-dot notice-meta-dot-${announcement.category}`} aria-hidden="true" />
-                {categoryLabels[announcement.category]}
-              </span>
-              <span className="notice-meta-separator" aria-hidden="true">·</span>
-              <span>Announcement #{announcement.number}</span>
-              <span className="notice-meta-separator" aria-hidden="true">·</span>
-              <span>Published <time dateTime={announcement.publishedAt}>{formatDate(announcement.publishedAt)}</time></span>
-            </div>
             <h1>{announcement.title}</h1>
             <p className="notice-summary">{announcement.summary}</p>
             <div className="notice-body">
@@ -51,6 +41,16 @@ export function NoticeView({ announcement }: { announcement: Announcement }) {
                 {announcement.actionLabel ?? 'Open link'} <ExternalLink size={16} aria-hidden="true" />
               </a>
             )}
+            <footer className="notice-meta-strip">
+              <span className="notice-meta-category">
+                <span className={`notice-meta-dot notice-meta-dot-${announcement.category}`} aria-hidden="true" />
+                {categoryLabels[announcement.category]}
+              </span>
+              <span className="notice-meta-separator" aria-hidden="true">·</span>
+              <span>Announcement #{announcement.number}</span>
+              <span className="notice-meta-separator" aria-hidden="true">·</span>
+              <span>Published <time dateTime={announcement.publishedAt}>{formatDate(announcement.publishedAt)}</time></span>
+            </footer>
           </div>
 
           <aside className="notice-sidebar" aria-label="Notice information">
