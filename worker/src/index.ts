@@ -76,7 +76,7 @@ const worker = {
       const viewMatch = url.pathname.match(/^\/api\/views\/(\d+)\/?$/);
 
       if (viewMatch) {
-        if (request.method !== 'POST')
+        if (!['GET', 'POST'].includes(request.method))
           return json({ error: 'Method not allowed.' }, 405, corsHeaders);
 
         const announcementNumber = Number(viewMatch[1]);
@@ -95,8 +95,8 @@ const worker = {
           String(announcementNumber),
         );
         const counterResponse = await counter.fetch(
-          'https://announcement-views/increment',
-          { method: 'POST' },
+          'https://announcement-views/count',
+          { method: request.method },
         );
         const result = (await counterResponse.json()) as { views: number };
         return json(result, 200, corsHeaders);
@@ -226,15 +226,21 @@ export default worker;
 export class AnnouncementViewCounter extends DurableObject<Env> {
   async fetch(request: Request): Promise<Response> {
     const url = new URL(request.url);
-    if (request.method !== 'POST' || url.pathname !== '/increment') {
+    if (
+      !['GET', 'POST'].includes(request.method) ||
+      url.pathname !== '/count'
+    ) {
       return Response.json({ error: 'Not found.' }, { status: 404 });
     }
 
-    const views = await this.ctx.storage.transaction(async (transaction) => {
-      const next = ((await transaction.get<number>('views')) ?? 0) + 1;
-      await transaction.put('views', next);
-      return next;
-    });
+    const views =
+      request.method === 'POST'
+        ? await this.ctx.storage.transaction(async (transaction) => {
+            const next = ((await transaction.get<number>('views')) ?? 0) + 1;
+            await transaction.put('views', next);
+            return next;
+          })
+        : ((await this.ctx.storage.get<number>('views')) ?? 0);
 
     return Response.json({ views });
   }

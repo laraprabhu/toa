@@ -57,12 +57,20 @@ export function NoticeMetaStrip({
 
     const controller = new AbortController();
     const counterUrl = `${viewApiUrl.replace(/\/$/, '')}/api/views/${announcement.number}`;
+    const deviceViewKey = `toa:viewed-announcement:${announcement.number}`;
+    let hasViewed = false;
+
+    try {
+      hasViewed = window.localStorage.getItem(deviceViewKey) === '1';
+    } catch {
+      // Browsers with storage disabled still receive a working view counter.
+    }
 
     async function recordView() {
       for (let attempt = 0; attempt < 3; attempt += 1) {
         try {
           const response = await fetch(counterUrl, {
-            method: 'POST',
+            method: hasViewed ? 'GET' : 'POST',
             credentials: 'omit',
             signal: controller.signal,
           });
@@ -75,6 +83,13 @@ export function NoticeMetaStrip({
             views >= 0
           ) {
             setViewCount(views);
+            if (!hasViewed) {
+              try {
+                window.localStorage.setItem(deviceViewKey, '1');
+              } catch {
+                // The count is still useful when storage is unavailable.
+              }
+            }
           }
           return;
         } catch (error) {
