@@ -5,7 +5,7 @@
     "slug": "removal-of-cycles-flower-pots-etc-from-corridors",
     "title": "Removal of Cycles, Flower Pots, etc..  from Corridors",
     "summary": "All tower residents are requested to remove their belongings from the corridors on their respective floors by tomorrow. Any items left behind will be removed.",
-    "image": "/announcement-preview.png",
+    "image": "/previews/announcement-3.png",
     "body": "Removal of Cycles, Flower Pots & Other Items from Corridors (All Towers)\n\nDear Residents,\n\nIt has been observed that cycles, flower pots, and other personal items are being kept in the common corridors, obstructing free movement and posing a safety/fire-hazard risk to residents. All residents are requested to remove such items from the corridors on or before 10th September 2026.\n\nPlease note:\n-⁠ Residents are requested to keep their belongings within their respective foyer area and not in common corridors.\n-⁠ With effect from 10th September 2026, Housekeeping staff will remove all items left in the corridors, including cycles, flower pots, footwear racks, and any other personal belongings.\n- The Association will not be responsible for any damage to items removed under this drive.\n\nWe seek your cooperation in keeping the corridors clear for the safety and convenience of all residents.\n\nRegards,\nTOA.",
     "category": "action",
     "priority": "high",
@@ -13,7 +13,9 @@
     "publishedAt": "2026-09-09T05:23:00.000Z",
     "eventDate": "Before 10th September 2026",
     "location": "All 3 Towers",
-    "contact": "TOA Manager"
+    "contact": "TOA Manager",
+    "previewVersion": "3-mttnmmsh",
+    "previewHeight": 800
   },
   {
     "number": 2,
