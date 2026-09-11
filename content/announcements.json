@@ -1,5 +1,20 @@
 [
   {
+    "number": 4,
+    "id": "9ff2aa0b-6420-439b-8d3a-426d6bcf0ca2",
+    "slug": "keep-your-vehicles-away-from-your-parking-until-further-notice",
+    "title": "External painting work is still ongoing!",
+    "summary": "Owners of open parking spots in Tower A - West Side, Tower C - South Extreme End, and Stilt Level - South Side are requested to move their vehicles to a safer spot.",
+    "image": "/announcement-preview.png",
+    "body": "Dear Residents,\n\nKindly move your parked vehicles from the specified areas until further notice. We have received an update from ERL that external painting work is still ongoing on their side. If you have already moved your vehicle, please continue parking it there until you hear back from us.\n\nWork Details & Schedule:\n- Timings: Daily from 9:00 AM to 6:00 PM until the work is completed\n- Areas: Tower A - West Side, Tower C - South Side Extreme End, and Stilt Level - South Side\n\nPlease move your vehicles at the earliest to avoid accidental paint splashes. Extremely sorry for all the inconvenience.\n\nRegards,\nTOA.",
+    "category": "action",
+    "priority": "high",
+    "status": "published",
+    "publishedAt": "2026-09-11T05:06:00.000Z",
+    "location": "Tower A - West Side, Tower C - South Side Extreme End, and Stilt Level - South Side",
+    "contact": "TOA Manager"
+  },
+  {
     "number": 3,
     "id": "8af03bce-ac56-4212-8884-98aaadc85240",
     "slug": "removal-of-cycles-flower-pots-etc-from-corridors",
