@@ -129,7 +129,7 @@ export function AnnouncementsFeed({
       </div>
 
       {featured ? (
-        <div className="mt-7 grid gap-5 lg:grid-cols-[minmax(0,1.3fr)_minmax(300px,.7fr)]">
+        <div className="mt-7 grid items-start gap-5 lg:grid-cols-[minmax(0,1.3fr)_minmax(300px,.7fr)]">
           <FeaturedCard announcement={featured} />
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
             {rest.slice(0, 2).map((announcement) => (
@@ -184,7 +184,7 @@ function FeaturedCard({ announcement }: { announcement: Announcement }) {
             {formatDate(announcement.publishedAt)}
           </span>
         </div>
-        <div className="mt-auto pt-20 sm:pt-28">
+        <div className="mt-12 sm:mt-16">
           <h2 className="max-w-2xl font-heading text-3xl font-semibold leading-tight tracking-[-0.03em] sm:text-5xl">
             {announcement.title}
           </h2>
