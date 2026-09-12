@@ -904,9 +904,7 @@ export function AdminConsole({
       `${sitePath}/${announcement.number}/`,
       window.location.origin,
     ).href;
-    const numberLabel =
-      announcement.number > 0 ? `Announcement #${announcement.number}: ` : '';
-    const text = `*${numberLabel}${announcement.title}*\n\n${announcement.summary}\n\nRead the complete update: ${noticeUrl}`;
+    const text = `Read more: ${noticeUrl}`;
     await navigator.clipboard.writeText(text);
     setCopied(true);
     window.setTimeout(() => setCopied(false), 1800);
