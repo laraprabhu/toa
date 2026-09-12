@@ -20,6 +20,19 @@ function formatDate(value: string) {
   }).format(new Date(value));
 }
 
+function formatBody(value: string) {
+  return value
+    .trim()
+    .split(/\n\s*\n+/)
+    .map((paragraph) =>
+      paragraph
+        .split('\n')
+        .map((line) => line.trim())
+        .filter(Boolean),
+    )
+    .filter((paragraph) => paragraph.length > 0);
+}
+
 export function NoticeView({ announcement }: { announcement: Announcement }) {
   return (
     <main className="min-h-screen bg-background">
@@ -43,9 +56,17 @@ export function NoticeView({ announcement }: { announcement: Announcement }) {
             <h1>{announcement.title}</h1>
             <p className="notice-summary">{announcement.summary}</p>
             <div className="notice-body">
-              {announcement.body.split('\n').map((paragraph) => (
-                <p key={paragraph}>{paragraph}</p>
-              ))}
+              {formatBody(announcement.body).map(
+                (paragraph, paragraphIndex) => (
+                  <p key={paragraphIndex}>
+                    {paragraph.map((line, lineIndex) => (
+                      <span className="block" key={lineIndex}>
+                        {line}
+                      </span>
+                    ))}
+                  </p>
+                ),
+              )}
             </div>
             {announcement.actionUrl && (
               <a
