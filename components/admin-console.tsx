@@ -7,6 +7,7 @@ import {
   Check,
   Clipboard,
   Cloud,
+  Eye,
   FilePenLine,
   ImageIcon,
   ImagePlus,
@@ -52,6 +53,7 @@ import {
   ANNOUNCEMENT_PREVIEW_WIDTH,
   generateAnnouncementPreview,
 } from '@/lib/announcement-preview';
+import { AdminNoticePreview } from '@/components/admin-notice-preview';
 
 type GoogleCredentialResponse = { credential: string };
 type GoogleAccounts = {
@@ -319,6 +321,7 @@ export function AdminConsole({
   const [removedImageSources, setRemovedImageSources] = useState<string[]>([]);
   const [processingImages, setProcessingImages] = useState(false);
   const [previewImage, setPreviewImage] = useState('');
+  const [noticePreview, setNoticePreview] = useState<Announcement | null>(null);
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState('');
   const [copied, setCopied] = useState(false);
@@ -945,6 +948,32 @@ export function AdminConsole({
     );
   }
 
+  function previewNotice() {
+    if (!form.title.trim() || !form.summary.trim() || !form.body.trim()) {
+      setNotice(
+        'Add a title, short summary and complete message before previewing the notice.',
+      );
+      return;
+    }
+    try {
+      const announcement = formToAnnouncement(form);
+      announcement.images = [
+        ...form.images,
+        ...pendingImages.map((image) => ({
+          src: image.previewUrl,
+          alt: image.alt,
+          width: image.width,
+          height: image.height,
+        })),
+      ];
+      if (announcement.images.length === 0) announcement.images = undefined;
+      setNoticePreview(announcement);
+      setNotice('');
+    } catch {
+      setNotice('Check the notice dates before opening the preview.');
+    }
+  }
+
   async function retryPublicationCheck() {
     if (!form.id || form.status !== 'published' || !form.previewVersion) return;
     void monitorPublication(formToAnnouncement(form));
@@ -1420,6 +1449,14 @@ export function AdminConsole({
               <Button
                 className="h-11"
                 variant="outline"
+                onClick={previewNotice}
+                disabled={busy || processingImages}
+              >
+                <Eye aria-hidden="true" /> Preview notice
+              </Button>
+              <Button
+                className="h-11"
+                variant="outline"
                 onClick={previewBanner}
                 disabled={
                   busy || processingImages || !form.title || !form.summary
@@ -1497,6 +1534,12 @@ export function AdminConsole({
           </section>
         </div>
       </div>
+      {noticePreview && (
+        <AdminNoticePreview
+          announcement={noticePreview}
+          onClose={() => setNoticePreview(null)}
+        />
+      )}
     </main>
   );
 }

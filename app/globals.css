@@ -400,6 +400,42 @@
   .admin-toolbar-link svg {
     @apply size-4;
   }
+  .admin-notice-preview {
+    @apply fixed inset-0 z-[80] m-0 h-screen max-h-none w-screen max-w-none overflow-hidden border-0 bg-background p-0 text-foreground outline-none;
+  }
+  .admin-preview-toolbar {
+    @apply relative z-[81] flex min-h-20 items-center justify-between gap-4 border-b border-white/10 bg-ink px-5 py-3 text-white shadow-lg sm:px-8;
+  }
+  .admin-preview-toolbar > div {
+    @apply grid gap-1;
+  }
+  .admin-preview-toolbar small {
+    @apply text-xs text-white/60;
+  }
+  .admin-preview-lock {
+    @apply inline-flex items-center gap-2 text-sm font-bold uppercase tracking-[0.13em] text-sun;
+  }
+  .admin-preview-lock > svg {
+    @apply size-4;
+  }
+  .admin-preview-toolbar > button {
+    @apply inline-flex min-h-11 shrink-0 items-center gap-2 rounded-full border border-white/20 px-4 text-sm font-semibold transition hover:border-white/40 hover:bg-white/10;
+  }
+  .admin-preview-toolbar > button > svg {
+    @apply size-4;
+  }
+  .admin-preview-toolbar > button > span {
+    @apply hidden sm:inline;
+  }
+  .admin-preview-scroll {
+    @apply h-[calc(100vh-5rem)] overflow-y-auto overscroll-contain;
+  }
+  .admin-preview-share-note {
+    @apply mt-6 flex items-center gap-2 border-t border-white/10 pt-6 text-sm leading-6 text-white/65;
+  }
+  .admin-preview-share-note > svg {
+    @apply size-4 shrink-0 text-sun;
+  }
   .admin-status {
     @apply mb-4 flex items-center justify-between rounded-xl border border-border bg-white px-4 py-3 text-sm;
   }

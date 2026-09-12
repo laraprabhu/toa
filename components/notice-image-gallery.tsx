@@ -8,8 +8,10 @@ import { siteHref } from '@/lib/site-path';
 
 export function NoticeImageGallery({
   images,
+  resolveSrc = siteHref,
 }: {
   images: AnnouncementImage[];
+  resolveSrc?: (src: string) => string;
 }) {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -72,7 +74,7 @@ export function NoticeImageGallery({
             aria-label={`Open image ${index + 1} of ${images.length}`}
           >
             <Image
-              src={siteHref(image.src)}
+              src={resolveSrc(image.src)}
               alt={image.alt}
               width={image.width}
               height={image.height}
@@ -111,7 +113,7 @@ export function NoticeImageGallery({
             </button>
           )}
           <Image
-            src={siteHref(images[activeIndex].src)}
+            src={resolveSrc(images[activeIndex].src)}
             alt={images[activeIndex].alt}
             width={images[activeIndex].width}
             height={images[activeIndex].height}

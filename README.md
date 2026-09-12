@@ -96,7 +96,7 @@ Announcements support:
 - timing, location and contact information;
 - optional action label and URL.
 
-The admin console can create, edit and delete announcements, generate a WhatsApp-ready summary, and keeps every change—including generated preview images—in Git history. Editing an announcement regenerates the same numbered image and changes its preview version so newly shared links do not reuse stale WhatsApp metadata.
+The admin console can create, edit and delete announcements, generate a WhatsApp-ready summary, and keeps every change—including generated preview images—in Git history. Its private notice preview renders unsaved text and images entirely in the administrator's browser, so a notice can be reviewed without saving, reserving a number, or making it available to residents. Editing an announcement regenerates the same numbered image and changes its preview version so newly shared links do not reuse stale WhatsApp metadata.
 
 ## Security notes
 
