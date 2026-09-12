@@ -8,6 +8,7 @@ import {
   UserRound,
 } from 'lucide-react';
 import type { Announcement } from '@/lib/announcements';
+import { NoticeImageGallery } from '@/components/notice-image-gallery';
 import { NoticeMetaStrip } from '@/components/notice-meta-strip';
 import { ShareButton } from '@/components/share-button';
 import { siteHref } from '@/lib/site-path';
@@ -55,6 +56,9 @@ export function NoticeView({ announcement }: { announcement: Announcement }) {
           <div className="notice-article">
             <h1>{announcement.title}</h1>
             <p className="notice-summary">{announcement.summary}</p>
+            {announcement.images && announcement.images.length > 0 && (
+              <NoticeImageGallery images={announcement.images} />
+            )}
             <div className="notice-body">
               {formatBody(announcement.body).map(
                 (paragraph, paragraphIndex) => (

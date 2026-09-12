@@ -290,6 +290,51 @@
   .notice-summary {
     @apply mt-6 max-w-3xl border-l-4 border-sun pl-5 text-lg leading-8 text-muted-foreground sm:text-xl;
   }
+  .notice-image-gallery {
+    @apply mt-8 max-w-3xl;
+  }
+  .notice-image-masonry {
+    @apply columns-2 gap-3 sm:gap-4 md:columns-3;
+  }
+  .notice-image-button {
+    @apply block w-full overflow-hidden rounded-2xl border border-border bg-background text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md focus-visible:z-10;
+  }
+  .notice-image-masonry .notice-image-button {
+    @apply mb-3 break-inside-avoid sm:mb-4;
+  }
+  .notice-image-button img {
+    @apply h-auto w-full object-contain;
+  }
+  .notice-lightbox {
+    @apply fixed inset-0 z-[100] m-0 grid h-screen max-h-none w-screen max-w-none place-items-center border-0 bg-black/92 p-4 outline-none sm:p-10;
+  }
+  .notice-lightbox > img {
+    @apply max-h-[calc(100vh-5rem)] max-w-full object-contain shadow-2xl;
+    width: auto;
+    height: auto;
+  }
+  .notice-lightbox-close,
+  .notice-lightbox-previous,
+  .notice-lightbox-next {
+    @apply fixed z-[101] grid size-11 place-items-center rounded-full border border-white/20 bg-black/45 text-white backdrop-blur transition hover:bg-white/15;
+  }
+  .notice-lightbox-close {
+    @apply right-4 top-4 sm:right-7 sm:top-7;
+  }
+  .notice-lightbox-previous {
+    @apply left-3 top-1/2 -translate-y-1/2 sm:left-7;
+  }
+  .notice-lightbox-next {
+    @apply right-3 top-1/2 -translate-y-1/2 sm:right-7;
+  }
+  .notice-lightbox-close > svg,
+  .notice-lightbox-previous > svg,
+  .notice-lightbox-next > svg {
+    @apply size-5;
+  }
+  .notice-lightbox-count {
+    @apply fixed bottom-4 left-1/2 -translate-x-1/2 rounded-full bg-black/55 px-3 py-1.5 text-xs font-semibold text-white/85 backdrop-blur;
+  }
   .notice-body {
     @apply mt-9 max-w-3xl space-y-4 text-base leading-7 text-foreground;
   }
@@ -423,6 +468,46 @@
   }
   .admin-textarea {
     @apply rounded-xl p-3 leading-6;
+  }
+  .admin-image-uploader {
+    @apply rounded-xl border border-dashed border-teal/35 bg-secondary/35 p-3;
+  }
+  .admin-image-add {
+    @apply flex min-h-24 cursor-pointer flex-col items-center justify-center gap-1 rounded-lg px-4 py-3 text-center text-teal transition hover:bg-white/70;
+  }
+  .admin-image-add > svg {
+    @apply mb-1 size-6;
+  }
+  .admin-image-add > strong {
+    @apply text-sm;
+  }
+  .admin-image-add > small {
+    @apply text-xs font-normal text-muted-foreground;
+  }
+  .admin-image-grid {
+    @apply grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4;
+  }
+  .admin-image-tile {
+    @apply relative aspect-square overflow-hidden rounded-xl border border-border bg-background shadow-sm;
+  }
+  .admin-image-tile > img {
+    @apply size-full object-cover;
+  }
+  .admin-image-tile > span,
+  .admin-image-tile > em {
+    @apply absolute bottom-2 rounded-full bg-black/65 px-2 py-1 text-[10px] font-bold not-italic text-white backdrop-blur;
+  }
+  .admin-image-tile > span {
+    @apply left-2;
+  }
+  .admin-image-tile > em {
+    @apply right-2 bg-teal;
+  }
+  .admin-image-tile > button {
+    @apply absolute right-2 top-2 grid size-8 place-items-center rounded-full bg-black/65 text-white shadow backdrop-blur transition hover:bg-red-600;
+  }
+  .admin-image-tile > button > svg {
+    @apply size-4;
   }
   .form-field [data-slot='native-select'] {
     @apply h-11 rounded-xl px-3;

@@ -26,6 +26,7 @@ interface Announcement {
   image?: string;
   previewVersion?: string;
   previewHeight?: number;
+  images?: AnnouncementImage[];
   body: string;
   category: 'urgent' | 'maintenance' | 'event' | 'action' | 'community';
   priority: 'normal' | 'high';
@@ -37,6 +38,13 @@ interface Announcement {
   actionLabel?: string;
   actionUrl?: string;
   contact?: string;
+}
+
+interface AnnouncementImage {
+  src: string;
+  alt: string;
+  width: number;
+  height: number;
 }
 
 type GitHubFile<T> = { content: T; sha: string };
@@ -103,6 +111,74 @@ const worker = {
       }
 
       const admin = await requireAdmin(request, env);
+      const mediaMatch = url.pathname.match(
+        /^\/api\/announcements\/([^/]+)\/media\/?$/,
+      );
+
+      if (request.method === 'PUT' && mediaMatch) {
+        const id = decodeURIComponent(mediaMatch[1]);
+        const payload = validateMediaPayload(await request.json());
+        const { content } = await getRepoJson<Announcement[]>(
+          'content/announcements.json',
+          env,
+        );
+        const announcement = content.find((item) => item.id === id);
+        if (!announcement) throw new HttpError(404, 'Announcement not found.');
+
+        const existingImages = announcement.images ?? [];
+        const allowedPrefix = `/media/announcement-${announcement.number}/`;
+        for (const source of payload.removeSources) {
+          if (!source.startsWith(allowedPrefix)) {
+            throw new HttpError(
+              400,
+              'An image path does not belong to this announcement.',
+            );
+          }
+        }
+
+        const retainedImages = existingImages.filter(
+          (image) => !payload.removeSources.includes(image.src),
+        );
+        if (retainedImages.length + payload.images.length > 8) {
+          throw new HttpError(400, 'A notice can contain up to 8 images.');
+        }
+
+        const uploadedImages: AnnouncementImage[] = [];
+        for (const image of payload.images) {
+          const src = `${allowedPrefix}${image.id}.webp`;
+          await putRepoBase64(
+            `public${src}`,
+            image.imageBase64,
+            env,
+            `Add image to announcement #${announcement.number}`,
+          );
+          uploadedImages.push({
+            src,
+            alt: image.alt,
+            width: image.width,
+            height: image.height,
+          });
+        }
+
+        for (const source of payload.removeSources) {
+          await deleteRepoFile(
+            `public${source}`,
+            env,
+            `Remove image from announcement #${announcement.number}`,
+          );
+        }
+
+        const images = [...retainedImages, ...uploadedImages];
+        const result = await mutateAnnouncements(env, admin.email, (items) =>
+          items.map((item) =>
+            item.id === id
+              ? { ...item, images: images.length > 0 ? images : undefined }
+              : item,
+          ),
+        );
+        return json({ announcements: result, admin }, 200, corsHeaders);
+      }
+
       const previewMatch = url.pathname.match(
         /^\/api\/announcements\/([^/]+)\/preview\/?$/,
       );
@@ -460,7 +536,45 @@ async function putRepoBase64(
     };
     throw new HttpError(
       response.status,
-      details.message || 'GitHub rejected the preview image.',
+      details.message || 'GitHub rejected the image.',
+    );
+  }
+}
+
+async function deleteRepoFile(path: string, env: Env, message: string) {
+  const branch = env.GITHUB_BRANCH || 'main';
+  const existing = await githubFetch(
+    `/repos/${env.GITHUB_REPO}/contents/${path}?ref=${encodeURIComponent(branch)}`,
+    env,
+  );
+  if (existing.status === 404) return;
+  if (!existing.ok) {
+    throw new HttpError(
+      existing.status,
+      `Unable to inspect ${path} on GitHub.`,
+    );
+  }
+  const payload = (await existing.json()) as { sha?: string };
+  if (!payload.sha)
+    throw new HttpError(500, `GitHub returned an invalid ${path} response.`);
+
+  const response = await githubFetch(
+    `/repos/${env.GITHUB_REPO}/contents/${path}`,
+    env,
+    {
+      method: 'DELETE',
+      body: JSON.stringify({ message, sha: payload.sha, branch }),
+    },
+  );
+  if (response.status === 409)
+    throw new HttpError(409, 'Repository update conflict. Please save again.');
+  if (!response.ok) {
+    const details = (await response.json().catch(() => ({}))) as {
+      message?: string;
+    };
+    throw new HttpError(
+      response.status,
+      details.message || 'GitHub rejected the image removal.',
     );
   }
 }
@@ -545,6 +659,26 @@ function validateAnnouncement(input: unknown): Announcement {
   ) {
     throw new HttpError(400, 'Preview height is invalid.');
   }
+  if (value.images !== undefined) {
+    if (!Array.isArray(value.images) || value.images.length > 8) {
+      throw new HttpError(400, 'A notice can contain up to 8 images.');
+    }
+    const expectedPrefix = `/media/announcement-${Number(value.number)}/`;
+    const sources = new Set<string>();
+    for (const image of value.images) {
+      const validated = validateStoredImage(image);
+      if (!validated.src.startsWith(expectedPrefix)) {
+        throw new HttpError(
+          400,
+          'A notice image does not belong to this announcement.',
+        );
+      }
+      if (sources.has(validated.src)) {
+        throw new HttpError(400, 'Duplicate notice images are not allowed.');
+      }
+      sources.add(validated.src);
+    }
+  }
   if (value.actionUrl) {
     if (typeof value.actionUrl !== 'string')
       throw new HttpError(400, 'Action URL must be text.');
@@ -556,6 +690,99 @@ function validateAnnouncement(input: unknown): Announcement {
     }
   }
   return value as unknown as Announcement;
+}
+
+function validateStoredImage(input: unknown): AnnouncementImage {
+  if (!input || typeof input !== 'object')
+    throw new HttpError(400, 'Notice image data is invalid.');
+  const image = input as Record<string, unknown>;
+  if (
+    typeof image.src !== 'string' ||
+    !/^\/media\/announcement-\d+\/[a-zA-Z0-9-]{8,80}\.webp$/.test(image.src)
+  ) {
+    throw new HttpError(400, 'Notice image path is invalid.');
+  }
+  if (
+    typeof image.alt !== 'string' ||
+    !image.alt.trim() ||
+    image.alt.length > 160
+  ) {
+    throw new HttpError(400, 'Notice image description is invalid.');
+  }
+  if (
+    !Number.isInteger(image.width) ||
+    !Number.isInteger(image.height) ||
+    Number(image.width) < 1 ||
+    Number(image.height) < 1 ||
+    Number(image.width) > 8_000 ||
+    Number(image.height) > 8_000
+  ) {
+    throw new HttpError(400, 'Notice image dimensions are invalid.');
+  }
+  return image as unknown as AnnouncementImage;
+}
+
+function validateMediaPayload(input: unknown) {
+  if (!input || typeof input !== 'object')
+    throw new HttpError(400, 'Notice image data is required.');
+  const value = input as Record<string, unknown>;
+  if (!Array.isArray(value.images) || !Array.isArray(value.removeSources)) {
+    throw new HttpError(400, 'Notice image changes are invalid.');
+  }
+  if (value.images.length > 8 || value.removeSources.length > 8) {
+    throw new HttpError(400, 'A notice can contain up to 8 images.');
+  }
+
+  const images = value.images.map((item) => {
+    if (!item || typeof item !== 'object')
+      throw new HttpError(400, 'Notice image data is invalid.');
+    const image = item as Record<string, unknown>;
+    if (
+      typeof image.id !== 'string' ||
+      !/^[a-zA-Z0-9-]{8,80}$/.test(image.id)
+    ) {
+      throw new HttpError(400, 'Notice image ID is invalid.');
+    }
+    if (
+      typeof image.imageBase64 !== 'string' ||
+      image.imageBase64.length < 100 ||
+      image.imageBase64.length > 8_000_000 ||
+      !image.imageBase64.startsWith('UklGR') ||
+      !/^[A-Za-z0-9+/]+={0,2}$/.test(image.imageBase64)
+    ) {
+      throw new HttpError(400, 'A valid WebP notice image is required.');
+    }
+    const metadata = validateStoredImage({
+      src: `/media/announcement-1/${image.id}.webp`,
+      alt: image.alt,
+      width: image.width,
+      height: image.height,
+    });
+    return {
+      id: image.id,
+      imageBase64: image.imageBase64,
+      alt: metadata.alt,
+      width: metadata.width,
+      height: metadata.height,
+    };
+  });
+  if (new Set(images.map((image) => image.id)).size !== images.length) {
+    throw new HttpError(400, 'Duplicate notice image IDs are not allowed.');
+  }
+
+  const removeSources = value.removeSources.map((source) => {
+    if (
+      typeof source !== 'string' ||
+      !/^\/media\/announcement-\d+\/[a-zA-Z0-9-]{8,80}\.webp$/.test(source)
+    ) {
+      throw new HttpError(400, 'Notice image removal path is invalid.');
+    }
+    return source;
+  });
+  if (new Set(removeSources).size !== removeSources.length) {
+    throw new HttpError(400, 'Duplicate image removals are not allowed.');
+  }
+  return { images, removeSources };
 }
 
 function validatePngBase64(input: unknown) {
