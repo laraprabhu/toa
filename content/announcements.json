@@ -5,7 +5,7 @@
     "slug": "fire-mock-drill-in-front-of-b-block",
     "title": "🧑‍🚒 Fire Mock Drill in front of B Block",
     "summary": "Fire mock drill today at 10:00 AM in front of Tower B. Residents are requested to attend and follow SRC security team's instructions.",
-    "image": "/announcement-preview.png",
+    "image": "/previews/announcement-5.png",
     "body": "Dear Residents,\n\nThis is to inform you that a Fire Mock Drill will be conducted today at 10:00 AM in front of Tower B as part of our safety protocol.\n\nWe request your presence and active participation. Please follow instructions from SRC security team.\n\nRegards,\nTOA.",
     "category": "community",
     "priority": "normal",
@@ -13,7 +13,9 @@
     "publishedAt": "2026-09-12T03:03:00.000Z",
     "eventDate": "Today 10 AM",
     "location": "In front of B block",
-    "contact": "TOA Manager"
+    "contact": "TOA Manager",
+    "previewVersion": "5-mtxt341c",
+    "previewHeight": 800
   },
   {
     "number": 4,
