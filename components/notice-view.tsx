@@ -128,10 +128,7 @@ export function NoticeView({ announcement }: { announcement: Announcement }) {
               </div>
             )}
             <div className="mt-6 border-t border-white/10 pt-6">
-              <ShareButton
-                number={announcement.number}
-                previewVersion={announcement.previewVersion}
-              />
+              <ShareButton />
             </div>
           </aside>
         </div>

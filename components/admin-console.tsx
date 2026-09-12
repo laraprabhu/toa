@@ -901,11 +901,10 @@ export function AdminConsole({
     }
     const announcement = formToAnnouncement(form);
     const noticeUrl = new URL(
-      `${sitePath}/${announcement.number}/`,
+      `${sitePath}/${announcement.number}`,
       window.location.origin,
     ).href;
-    const text = `Read more: ${noticeUrl}`;
-    await navigator.clipboard.writeText(text);
+    await navigator.clipboard.writeText(noticeUrl);
     setCopied(true);
     window.setTimeout(() => setCopied(false), 1800);
   }
