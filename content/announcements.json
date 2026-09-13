@@ -1,5 +1,21 @@
 [
   {
+    "number": 9,
+    "id": "9114bea0-ca3d-4625-bddb-82cbf5bc4cd1",
+    "slug": "gym-closed-tomorrow",
+    "title": "Gym closed tomorrow! 🔒",
+    "summary": "As per our recently published holiday list, our Gym will be closed tomorrow on the occasion of \"Vinayagar Chathurthi\". Advance Chathurthi wishes to all! 🙏",
+    "image": "/announcement-preview.png",
+    "body": "Dear Residents,\n\nAs mentioned in our recently published holiday list, the gym will remain closed tomorrow on the occasion of Vinayagar Chathurthi.\n\nWe kindly request everyone to plan their workouts accordingly. Regular gym operations will resume after the holiday.\n\nThank you for your understanding and cooperation. Wishing you and your family a happy and blessed Vinayagar Chathurthi in advance! 🙏\n\nThanks,\nTOA.",
+    "category": "community",
+    "priority": "normal",
+    "status": "published",
+    "publishedAt": "2026-09-13T12:41:00.000Z",
+    "eventDate": "13 Sepember 2026",
+    "location": "Tejomaya Gym",
+    "contact": "TOA Gym Trainer"
+  },
+  {
     "number": 8,
     "id": "d9794f54-17fe-4da6-aae1-e104bd11ce4b",
     "slug": "drone-inspection-erl-s-external-wall-painting-job",
