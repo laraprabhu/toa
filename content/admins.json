@@ -4,6 +4,11 @@
       "emailSha256": "578e3320ab6158e9195f537598e9904d4921eab6fb66a41ad1718d078b65ba93",
       "name": "Prabhu",
       "active": true
+    },
+    {
+      "emailSha256": "f7c49c1484bc4517d3225a91df122c8106e882c817f3b0f82c6600f4ce98ed29",
+      "name": "Akshai Krish",
+      "active": true
     }
   ]
 }
