@@ -377,6 +377,9 @@ export function AdminConsole({
   const [pendingImages, setPendingImages] = useState<PreparedImage[]>([]);
   const [removedImageSources, setRemovedImageSources] = useState<string[]>([]);
   const [processingImages, setProcessingImages] = useState(false);
+  const [imagePreviewOverrides, setImagePreviewOverrides] = useState<
+    Record<string, string>
+  >({});
   const [pendingAttachments, setPendingAttachments] = useState<
     PreparedAttachment[]
   >([]);
@@ -869,6 +872,16 @@ export function AdminConsole({
       )
         return;
       publicationCheckTokensRef.current.delete(announcement.id);
+      if (ready) {
+        const imagePrefix = `/media/announcement-${announcement.number}/`;
+        setImagePreviewOverrides((current) =>
+          Object.fromEntries(
+            Object.entries(current).filter(
+              ([source]) => !source.startsWith(imagePrefix),
+            ),
+          ),
+        );
+      }
       setPublicationRecords((current) => ({
         ...current,
         [announcement.id]: {
@@ -951,6 +964,15 @@ export function AdminConsole({
             throw new Error(
               'Images were uploaded, but the announcement could not be reloaded.',
             );
+          setImagePreviewOverrides((current) => ({
+            ...current,
+            ...Object.fromEntries(
+              pendingImages.map((image) => [
+                `/media/announcement-${saved!.number}/${image.id}.webp`,
+                image.previewUrl,
+              ]),
+            ),
+          }));
           resetImageChanges();
         } catch (mediaError) {
           setAnnouncements(result.announcements);
@@ -1112,6 +1134,7 @@ export function AdminConsole({
     setForm(emptyForm());
     resetImageChanges();
     resetAttachmentChanges();
+    setImagePreviewOverrides({});
     setPreviewImage('');
     setDirty(false);
     setAuthState('signed-out');
@@ -1150,7 +1173,10 @@ export function AdminConsole({
     try {
       const announcement = formToAnnouncement(form);
       announcement.images = [
-        ...form.images,
+        ...form.images.map((image) => ({
+          ...image,
+          src: imagePreviewOverrides[image.src] ?? image.src,
+        })),
         ...pendingImages.map((image) => ({
           src: image.previewUrl,
           alt: image.alt,
@@ -1416,7 +1442,10 @@ export function AdminConsole({
                     {form.images.map((image, index) => (
                       <div className="admin-image-tile" key={image.src}>
                         <Image
-                          src={siteHref(image.src)}
+                          src={
+                            imagePreviewOverrides[image.src] ??
+                            siteHref(image.src)
+                          }
                           alt={image.alt}
                           width={image.width}
                           height={image.height}
