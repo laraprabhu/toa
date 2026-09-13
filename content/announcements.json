@@ -13,7 +13,15 @@
     "publishedAt": "2026-09-13T03:35:00.000Z",
     "eventDate": "July - August 2026",
     "location": "Tejomaya, Navalur",
-    "contact": "TOA Manager"
+    "contact": "TOA Manager",
+    "images": [
+      {
+        "src": "/media/announcement-6/f3cb6291-8414-434e-84b3-b826fb08206e.webp",
+        "alt": "final poster",
+        "width": 1122,
+        "height": 1402
+      }
+    ]
   },
   {
     "number": 5,
