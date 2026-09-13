@@ -134,6 +134,45 @@ const worker = {
       }
 
       const admin = await requireAdmin(request, env);
+      if (
+        request.method === 'GET' &&
+        url.pathname === '/api/publication-status'
+      ) {
+        const number = Number(url.searchParams.get('number'));
+        const previewVersion = url.searchParams.get('previewVersion') ?? '';
+        if (!Number.isSafeInteger(number) || number < 1) {
+          throw new HttpError(400, 'Announcement number is invalid.');
+        }
+        if (!/^[a-zA-Z0-9-]{3,100}$/.test(previewVersion)) {
+          throw new HttpError(400, 'Preview version is invalid.');
+        }
+
+        const [owner = '', repository = ''] = env.GITHUB_REPO.split('/');
+        if (!owner || !repository) {
+          throw new HttpError(500, 'The repository configuration is invalid.');
+        }
+        const basePath =
+          repository === `${owner}.github.io` ? '' : `/${repository}`;
+        const pageUrl = new URL(
+          `https://${owner}.github.io${basePath}/${number}/`,
+        );
+        pageUrl.searchParams.set(
+          '__toa_publish_check',
+          `${previewVersion}-${Date.now()}`,
+        );
+
+        try {
+          const response = await fetch(pageUrl, {
+            headers: { 'Cache-Control': 'no-cache' },
+          });
+          const ready =
+            response.ok && (await response.text()).includes(previewVersion);
+          return json({ ready }, 200, corsHeaders);
+        } catch {
+          return json({ ready: false }, 200, corsHeaders);
+        }
+      }
+
       const mediaMatch = url.pathname.match(
         /^\/api\/announcements\/([^/]+)\/media\/?$/,
       );

@@ -106,6 +106,7 @@ type PublicationRecord = {
 type ApiResult = {
   announcements: Announcement[];
   admin?: { email: string; name?: string };
+  ready?: boolean;
 };
 type FormState = Omit<
   Announcement,
@@ -803,81 +804,83 @@ export function AdminConsole({
     setProcessingAttachments(false);
   }
 
-  async function waitForPublishedVersion(
-    announcement: Announcement,
-    checkToken: string,
-    startedAt: number,
-  ) {
-    if (!announcement.previewVersion) return false;
-    const deadline = startedAt + PUBLICATION_TIMEOUT_MS;
+  const waitForPublishedVersion = useCallback(
+    async (
+      announcement: Announcement,
+      checkToken: string,
+      startedAt: number,
+    ) => {
+      if (!announcement.previewVersion) return false;
+      const previewVersion = announcement.previewVersion;
+      const deadline = startedAt + PUBLICATION_TIMEOUT_MS;
 
-    while (Date.now() < deadline) {
-      if (publicationCheckTokensRef.current.get(announcement.id) !== checkToken)
-        return null;
-      try {
-        const pageUrl = new URL(
-          `${sitePath}/${announcement.number}/`,
-          window.location.origin,
-        );
-        pageUrl.searchParams.set(
-          '__toa_publish_check',
-          `${announcement.previewVersion}-${Date.now()}`,
-        );
-        const response = await fetch(pageUrl, { cache: 'no-store' });
+      while (Date.now() < deadline) {
         if (
-          response.ok &&
-          (await response.text()).includes(announcement.previewVersion)
+          publicationCheckTokensRef.current.get(announcement.id) !== checkToken
         )
-          return true;
-      } catch {
-        // A page may be unavailable while GitHub Pages is replacing the deployment.
+          return null;
+        try {
+          const params = new URLSearchParams({
+            number: String(announcement.number),
+            previewVersion,
+            check: String(Date.now()),
+          });
+          const result = await apiRequest(
+            `/api/publication-status?${params.toString()}`,
+            credential,
+          );
+          if (result.ready) return true;
+        } catch {
+          // The service or page may be unavailable while GitHub Pages is deploying.
+        }
+        await new Promise((resolve) =>
+          window.setTimeout(resolve, PUBLICATION_POLL_INTERVAL_MS),
+        );
       }
-      await new Promise((resolve) =>
-        window.setTimeout(resolve, PUBLICATION_POLL_INTERVAL_MS),
+
+      return false;
+    },
+    [apiRequest, credential],
+  );
+
+  const monitorPublication = useCallback(
+    async (announcement: Announcement, startedAt = Date.now()) => {
+      if (!announcement.previewVersion) return;
+      const checkToken = crypto.randomUUID();
+      publicationCheckTokensRef.current.set(announcement.id, checkToken);
+      setPublicationRecords((current) => ({
+        ...current,
+        [announcement.id]: {
+          state: 'publishing',
+          previewVersion: announcement.previewVersion!,
+          slug: announcement.slug,
+          startedAt,
+        },
+      }));
+
+      const ready = await waitForPublishedVersion(
+        announcement,
+        checkToken,
+        startedAt,
       );
-    }
-
-    return false;
-  }
-
-  async function monitorPublication(
-    announcement: Announcement,
-    startedAt = Date.now(),
-  ) {
-    if (!announcement.previewVersion) return;
-    const checkToken = crypto.randomUUID();
-    publicationCheckTokensRef.current.set(announcement.id, checkToken);
-    setPublicationRecords((current) => ({
-      ...current,
-      [announcement.id]: {
-        state: 'publishing',
-        previewVersion: announcement.previewVersion!,
-        slug: announcement.slug,
-        startedAt,
-      },
-    }));
-
-    const ready = await waitForPublishedVersion(
-      announcement,
-      checkToken,
-      startedAt,
-    );
-    if (
-      publicationCheckTokensRef.current.get(announcement.id) !== checkToken ||
-      ready === null
-    )
-      return;
-    publicationCheckTokensRef.current.delete(announcement.id);
-    setPublicationRecords((current) => ({
-      ...current,
-      [announcement.id]: {
-        state: ready ? 'ready' : 'delayed',
-        previewVersion: announcement.previewVersion!,
-        slug: announcement.slug,
-        startedAt,
-      },
-    }));
-  }
+      if (
+        publicationCheckTokensRef.current.get(announcement.id) !== checkToken ||
+        ready === null
+      )
+        return;
+      publicationCheckTokensRef.current.delete(announcement.id);
+      setPublicationRecords((current) => ({
+        ...current,
+        [announcement.id]: {
+          state: ready ? 'ready' : 'delayed',
+          previewVersion: announcement.previewVersion!,
+          slug: announcement.slug,
+          startedAt,
+        },
+      }));
+    },
+    [waitForPublishedVersion],
+  );
 
   useEffect(() => {
     if (authState !== 'authorized') return;
@@ -891,7 +894,7 @@ export function AdminConsole({
         void monitorPublication(announcement, record.startedAt);
       }
     }
-  }, [announcements, authState, publicationRecords]);
+  }, [announcements, authState, monitorPublication, publicationRecords]);
 
   async function saveAnnouncement() {
     if (!form.title.trim() || !form.summary.trim() || !form.body.trim()) {
