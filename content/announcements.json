@@ -1,5 +1,21 @@
 [
   {
+    "number": 8,
+    "id": "d9794f54-17fe-4da6-aae1-e104bd11ce4b",
+    "slug": "drone-inspection-erl-s-external-wall-painting-job",
+    "title": "\"Drone Inspection\" - ERL's external wall painting job",
+    "summary": "We will be flying our 🚁 drones tomorrow between 10 a.m and 12 p.m. to inspect all the external walls of ABC Block. Please keep your curtains closed during this time.",
+    "image": "/announcement-preview.png",
+    "body": "Dear Residents,\n\nWe will be flying our drones around ABC Block tomorrow between 10:00 a.m. and 12:00 p.m. to inspect all the external walls of the building. This is just to ensure the quality of work delivered by ERL.\n\nAs the drones may fly close to windows and balconies during the inspection, we request all residents to keep their curtains closed throughout this period to maintain their privacy.\n\nPlease inform all members of your household about the inspection and take the necessary precautions. Your understanding and cooperation are greatly appreciated.\n\nThanks,\nTOA.",
+    "category": "community",
+    "priority": "normal",
+    "status": "published",
+    "publishedAt": "2026-09-13T12:29:00.000Z",
+    "eventDate": "13th Sep 10 AM - 12 PM",
+    "location": "ABC Block",
+    "contact": "TOA Manager"
+  },
+  {
     "number": 7,
     "id": "a873f597-0765-4288-9e17-08aa951c284b",
     "slug": "clay-ganesha-idols-for-sale-at-tejomaya",
