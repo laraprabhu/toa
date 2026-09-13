@@ -27,6 +27,7 @@ interface Announcement {
   previewVersion?: string;
   previewHeight?: number;
   images?: AnnouncementImage[];
+  attachments?: AnnouncementAttachment[];
   body: string;
   category: 'urgent' | 'maintenance' | 'event' | 'action' | 'community';
   priority: 'normal' | 'high';
@@ -47,6 +48,13 @@ interface AnnouncementImage {
   height: number;
 }
 
+interface AnnouncementAttachment {
+  src: string;
+  name: string;
+  mimeType: string;
+  size: number;
+}
+
 type GitHubFile<T> = { content: T; sha: string };
 
 const googleKeys = createRemoteJWKSet(
@@ -61,6 +69,21 @@ const categories = new Set([
 ]);
 const statuses = new Set(['draft', 'published']);
 const priorities = new Set(['normal', 'high']);
+const attachmentMimeTypes: Record<string, string[]> = {
+  pdf: ['application/pdf'],
+  doc: ['application/msword'],
+  docx: [
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  ],
+  xls: ['application/vnd.ms-excel'],
+  xlsx: ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'],
+  ppt: ['application/vnd.ms-powerpoint'],
+  pptx: [
+    'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+  ],
+  txt: ['text/plain'],
+  csv: ['text/csv', 'application/vnd.ms-excel'],
+};
 
 const worker = {
   async fetch(request: Request, env: Env): Promise<Response> {
@@ -173,6 +196,101 @@ const worker = {
           items.map((item) =>
             item.id === id
               ? { ...item, images: images.length > 0 ? images : undefined }
+              : item,
+          ),
+        );
+        return json({ announcements: result, admin }, 200, corsHeaders);
+      }
+
+      const attachmentMatch = url.pathname.match(
+        /^\/api\/announcements\/([^/]+)\/attachments\/?$/,
+      );
+
+      if (request.method === 'PUT' && attachmentMatch) {
+        const id = decodeURIComponent(attachmentMatch[1]);
+        const payload = validateAttachmentPayload(await request.json());
+        const { content } = await getRepoJson<Announcement[]>(
+          'content/announcements.json',
+          env,
+        );
+        const announcement = content.find((item) => item.id === id);
+        if (!announcement) throw new HttpError(404, 'Announcement not found.');
+
+        const existingAttachments = announcement.attachments ?? [];
+        const allowedPrefix = `/attachments/announcement-${announcement.number}/`;
+        for (const source of payload.removeSources) {
+          if (!source.startsWith(allowedPrefix)) {
+            throw new HttpError(
+              400,
+              'An attachment path does not belong to this announcement.',
+            );
+          }
+        }
+
+        const retainedAttachments = existingAttachments.filter(
+          (attachment) => !payload.removeSources.includes(attachment.src),
+        );
+        if (retainedAttachments.length + payload.files.length > 5) {
+          throw new HttpError(400, 'A notice can contain up to 5 attachments.');
+        }
+        const retainedSize = retainedAttachments.reduce(
+          (total, attachment) => total + attachment.size,
+          0,
+        );
+        const uploadedSize = payload.files.reduce(
+          (total, file) => total + file.size,
+          0,
+        );
+        if (retainedSize + uploadedSize > 25_000_000) {
+          throw new HttpError(
+            400,
+            'Attachments may total up to 25 MB per notice.',
+          );
+        }
+        const retainedSources = new Set(
+          retainedAttachments.map((attachment) => attachment.src),
+        );
+        if (
+          payload.files.some((file) =>
+            retainedSources.has(`${allowedPrefix}${file.id}.${file.extension}`),
+          )
+        ) {
+          throw new HttpError(400, 'An attachment filename is already in use.');
+        }
+
+        const uploadedAttachments: AnnouncementAttachment[] = [];
+        for (const file of payload.files) {
+          const src = `${allowedPrefix}${file.id}.${file.extension}`;
+          await putRepoBase64(
+            `public${src}`,
+            file.contentBase64,
+            env,
+            `Add attachment to announcement #${announcement.number}`,
+          );
+          uploadedAttachments.push({
+            src,
+            name: file.name,
+            mimeType: file.mimeType,
+            size: file.size,
+          });
+        }
+
+        for (const source of payload.removeSources) {
+          await deleteRepoFile(
+            `public${source}`,
+            env,
+            `Remove attachment from announcement #${announcement.number}`,
+          );
+        }
+
+        const attachments = [...retainedAttachments, ...uploadedAttachments];
+        const result = await mutateAnnouncements(env, admin.email, (items) =>
+          items.map((item) =>
+            item.id === id
+              ? {
+                  ...item,
+                  attachments: attachments.length > 0 ? attachments : undefined,
+                }
               : item,
           ),
         );
@@ -679,6 +797,26 @@ function validateAnnouncement(input: unknown): Announcement {
       sources.add(validated.src);
     }
   }
+  if (value.attachments !== undefined) {
+    if (!Array.isArray(value.attachments) || value.attachments.length > 5) {
+      throw new HttpError(400, 'A notice can contain up to 5 attachments.');
+    }
+    const expectedPrefix = `/attachments/announcement-${Number(value.number)}/`;
+    const sources = new Set<string>();
+    for (const attachment of value.attachments) {
+      const validated = validateStoredAttachment(attachment);
+      if (!validated.src.startsWith(expectedPrefix)) {
+        throw new HttpError(
+          400,
+          'An attachment does not belong to this announcement.',
+        );
+      }
+      if (sources.has(validated.src)) {
+        throw new HttpError(400, 'Duplicate attachments are not allowed.');
+      }
+      sources.add(validated.src);
+    }
+  }
   if (value.actionUrl) {
     if (typeof value.actionUrl !== 'string')
       throw new HttpError(400, 'Action URL must be text.');
@@ -783,6 +921,144 @@ function validateMediaPayload(input: unknown) {
     throw new HttpError(400, 'Duplicate image removals are not allowed.');
   }
   return { images, removeSources };
+}
+
+function validateStoredAttachment(input: unknown): AnnouncementAttachment {
+  if (!input || typeof input !== 'object')
+    throw new HttpError(400, 'Attachment data is invalid.');
+  const attachment = input as Record<string, unknown>;
+  if (
+    typeof attachment.src !== 'string' ||
+    !/^\/attachments\/announcement-\d+\/[a-zA-Z0-9-]{8,80}\.(?:pdf|docx?|xlsx?|pptx?|txt|csv)$/.test(
+      attachment.src,
+    )
+  ) {
+    throw new HttpError(400, 'Attachment path is invalid.');
+  }
+  const extension = attachment.src.split('.').pop()?.toLowerCase() ?? '';
+  if (
+    typeof attachment.name !== 'string' ||
+    !attachment.name.trim() ||
+    attachment.name.length > 180 ||
+    attachment.name.split('').some((character) => {
+      const code = character.charCodeAt(0);
+      return code < 32 || code === 127;
+    })
+  ) {
+    throw new HttpError(400, 'Attachment name is invalid.');
+  }
+  if (
+    typeof attachment.mimeType !== 'string' ||
+    !attachmentMimeTypes[extension]?.includes(attachment.mimeType)
+  ) {
+    throw new HttpError(400, 'Attachment file type is invalid.');
+  }
+  if (
+    !Number.isInteger(attachment.size) ||
+    Number(attachment.size) < 1 ||
+    Number(attachment.size) > 10_000_000
+  ) {
+    throw new HttpError(400, 'Attachment size is invalid.');
+  }
+  return attachment as unknown as AnnouncementAttachment;
+}
+
+function validateAttachmentPayload(input: unknown) {
+  if (!input || typeof input !== 'object')
+    throw new HttpError(400, 'Attachment data is required.');
+  const value = input as Record<string, unknown>;
+  if (!Array.isArray(value.files) || !Array.isArray(value.removeSources)) {
+    throw new HttpError(400, 'Attachment changes are invalid.');
+  }
+  if (value.files.length > 5 || value.removeSources.length > 5) {
+    throw new HttpError(400, 'A notice can contain up to 5 attachments.');
+  }
+
+  let totalSize = 0;
+  const files = value.files.map((item) => {
+    if (!item || typeof item !== 'object')
+      throw new HttpError(400, 'Attachment data is invalid.');
+    const file = item as Record<string, unknown>;
+    if (typeof file.id !== 'string' || !/^[a-zA-Z0-9-]{8,80}$/.test(file.id)) {
+      throw new HttpError(400, 'Attachment ID is invalid.');
+    }
+    if (
+      typeof file.extension !== 'string' ||
+      !Object.hasOwn(attachmentMimeTypes, file.extension)
+    ) {
+      throw new HttpError(400, 'Attachment extension is not supported.');
+    }
+    const metadata = validateStoredAttachment({
+      src: `/attachments/announcement-1/${file.id}.${file.extension}`,
+      name: file.name,
+      mimeType: file.mimeType,
+      size: file.size,
+    });
+    if (
+      typeof file.contentBase64 !== 'string' ||
+      file.contentBase64.length < 1 ||
+      file.contentBase64.length > 13_400_000 ||
+      !/^[A-Za-z0-9+/]+={0,2}$/.test(file.contentBase64)
+    ) {
+      throw new HttpError(400, 'Attachment content is invalid.');
+    }
+    const padding = file.contentBase64.endsWith('==')
+      ? 2
+      : file.contentBase64.endsWith('=')
+        ? 1
+        : 0;
+    const decodedSize =
+      Math.floor((file.contentBase64.length * 3) / 4) - padding;
+    if (decodedSize !== metadata.size) {
+      throw new HttpError(400, 'Attachment size does not match its content.');
+    }
+    if (file.extension === 'pdf' && !file.contentBase64.startsWith('JVBERi0')) {
+      throw new HttpError(400, 'The PDF attachment is invalid.');
+    }
+    if (
+      ['docx', 'xlsx', 'pptx'].includes(file.extension) &&
+      !file.contentBase64.startsWith('UEsDB')
+    ) {
+      throw new HttpError(400, 'The Office attachment is invalid.');
+    }
+    if (
+      ['doc', 'xls', 'ppt'].includes(file.extension) &&
+      !file.contentBase64.startsWith('0M8R4KGxGuE')
+    ) {
+      throw new HttpError(400, 'The legacy Office attachment is invalid.');
+    }
+    totalSize += metadata.size;
+    return {
+      id: file.id,
+      extension: file.extension,
+      contentBase64: file.contentBase64,
+      name: metadata.name,
+      mimeType: metadata.mimeType,
+      size: metadata.size,
+    };
+  });
+  if (totalSize > 25_000_000) {
+    throw new HttpError(400, 'Attachments may total up to 25 MB per notice.');
+  }
+  if (new Set(files.map((file) => file.id)).size !== files.length) {
+    throw new HttpError(400, 'Duplicate attachment IDs are not allowed.');
+  }
+
+  const removeSources = value.removeSources.map((source) => {
+    if (
+      typeof source !== 'string' ||
+      !/^\/attachments\/announcement-\d+\/[a-zA-Z0-9-]{8,80}\.(?:pdf|docx?|xlsx?|pptx?|txt|csv)$/.test(
+        source,
+      )
+    ) {
+      throw new HttpError(400, 'Attachment removal path is invalid.');
+    }
+    return source;
+  });
+  if (new Set(removeSources).size !== removeSources.length) {
+    throw new HttpError(400, 'Duplicate attachment removals are not allowed.');
+  }
+  return { files, removeSources };
 }
 
 function validatePngBase64(input: unknown) {

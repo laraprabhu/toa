@@ -9,6 +9,8 @@ import {
   Cloud,
   Eye,
   FilePenLine,
+  FileText,
+  FileUp,
   ImageIcon,
   ImagePlus,
   LoaderCircle,
@@ -23,6 +25,7 @@ import {
 } from 'lucide-react';
 import type {
   Announcement,
+  AnnouncementAttachment,
   AnnouncementCategory,
   AnnouncementImage,
   AnnouncementPriority,
@@ -104,15 +107,24 @@ type ApiResult = {
   announcements: Announcement[];
   admin?: { email: string; name?: string };
 };
-type FormState = Omit<Announcement, 'publishedAt' | 'expiresAt' | 'images'> & {
+type FormState = Omit<
+  Announcement,
+  'publishedAt' | 'expiresAt' | 'images' | 'attachments'
+> & {
   publishedAt: string;
   expiresAt: string;
   images: AnnouncementImage[];
+  attachments: AnnouncementAttachment[];
 };
 type PreparedImage = AnnouncementImage & {
   id: string;
   imageBase64: string;
   previewUrl: string;
+};
+type PreparedAttachment = AnnouncementAttachment & {
+  id: string;
+  extension: string;
+  contentBase64: string;
 };
 
 const PUBLICATION_POLL_INTERVAL_MS = 4_000;
@@ -122,6 +134,20 @@ const AUTH_SESSION_STORAGE_KEY = 'toa-noticeboard-admin-session-v1';
 const MAX_NOTICE_IMAGES = 8;
 const MAX_IMAGE_EDGE = 1_800;
 const MAX_SOURCE_IMAGE_BYTES = 20_000_000;
+const MAX_NOTICE_ATTACHMENTS = 5;
+const MAX_ATTACHMENT_BYTES = 10_000_000;
+const MAX_TOTAL_ATTACHMENT_BYTES = 25_000_000;
+const attachmentTypes: Record<string, string> = {
+  pdf: 'application/pdf',
+  doc: 'application/msword',
+  docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  xls: 'application/vnd.ms-excel',
+  xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  ppt: 'application/vnd.ms-powerpoint',
+  pptx: 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+  txt: 'text/plain',
+  csv: 'text/csv',
+};
 
 const emptyForm = (): FormState => ({
   number: 0,
@@ -131,6 +157,7 @@ const emptyForm = (): FormState => ({
   summary: '',
   image: '/announcement-preview.png',
   images: [],
+  attachments: [],
   body: '',
   category: 'community',
   priority: 'normal',
@@ -173,11 +200,12 @@ function announcementToForm(item: Announcement): FormState {
     actionUrl: item.actionUrl ?? '',
     contact: item.contact ?? '',
     images: item.images ?? [],
+    attachments: item.attachments ?? [],
   };
 }
 
 function formToAnnouncement(form: FormState): Announcement {
-  const { images, ...fields } = form;
+  const { images, attachments, ...fields } = form;
   return {
     ...fields,
     id: form.id || crypto.randomUUID(),
@@ -192,6 +220,7 @@ function formToAnnouncement(form: FormState): Announcement {
     actionUrl: form.actionUrl || undefined,
     contact: form.contact || undefined,
     images: images.length > 0 ? images : undefined,
+    attachments: attachments.length > 0 ? attachments : undefined,
   };
 }
 
@@ -261,6 +290,33 @@ async function prepareNoticeImage(file: File): Promise<PreparedImage> {
   }
 }
 
+async function prepareAttachment(file: File): Promise<PreparedAttachment> {
+  const extension = file.name.split('.').pop()?.toLowerCase() ?? '';
+  const mimeType = attachmentTypes[extension];
+  if (!mimeType) {
+    throw new Error(`${file.name} is not a supported attachment type.`);
+  }
+  if (file.size < 1) throw new Error(`${file.name} is empty.`);
+  if (file.size > MAX_ATTACHMENT_BYTES) {
+    throw new Error(`${file.name} is larger than 10 MB.`);
+  }
+  return {
+    id: crypto.randomUUID(),
+    src: '',
+    name: file.name.slice(0, 180),
+    mimeType,
+    size: file.size,
+    extension,
+    contentBase64: arrayBufferToBase64(await file.arrayBuffer()),
+  };
+}
+
+function formatFileSize(size: number) {
+  if (size >= 1_000_000) return `${(size / 1_000_000).toFixed(1)} MB`;
+  if (size >= 1_000) return `${Math.round(size / 1_000)} KB`;
+  return `${size} B`;
+}
+
 function loadPublicationRecords() {
   if (typeof window === 'undefined') return {};
   try {
@@ -320,6 +376,13 @@ export function AdminConsole({
   const [pendingImages, setPendingImages] = useState<PreparedImage[]>([]);
   const [removedImageSources, setRemovedImageSources] = useState<string[]>([]);
   const [processingImages, setProcessingImages] = useState(false);
+  const [pendingAttachments, setPendingAttachments] = useState<
+    PreparedAttachment[]
+  >([]);
+  const [removedAttachmentSources, setRemovedAttachmentSources] = useState<
+    string[]
+  >([]);
+  const [processingAttachments, setProcessingAttachments] = useState(false);
   const [previewImage, setPreviewImage] = useState('');
   const [noticePreview, setNoticePreview] = useState<Announcement | null>(null);
   const [busy, setBusy] = useState(false);
@@ -661,6 +724,85 @@ export function AdminConsole({
     setProcessingImages(false);
   }
 
+  async function addAttachments(files: FileList | null) {
+    if (!files?.length) return;
+    const availableSlots =
+      MAX_NOTICE_ATTACHMENTS -
+      form.attachments.length -
+      pendingAttachments.length;
+    if (availableSlots <= 0) {
+      setNotice(
+        `A notice can contain up to ${MAX_NOTICE_ATTACHMENTS} attachments.`,
+      );
+      return;
+    }
+
+    const selectedFiles = Array.from(files);
+    if (selectedFiles.length > availableSlots) {
+      setNotice(
+        `Only ${availableSlots} more attachment${availableSlots === 1 ? '' : 's'} can be added.`,
+      );
+      return;
+    }
+    const currentSize = [...form.attachments, ...pendingAttachments].reduce(
+      (total, file) => total + file.size,
+      0,
+    );
+    const selectedSize = selectedFiles.reduce(
+      (total, file) => total + file.size,
+      0,
+    );
+    if (currentSize + selectedSize > MAX_TOTAL_ATTACHMENT_BYTES) {
+      setNotice('Attachments may total up to 25 MB per notice.');
+      return;
+    }
+
+    setProcessingAttachments(true);
+    setNotice('Preparing attachments…');
+    try {
+      const prepared = await Promise.all(selectedFiles.map(prepareAttachment));
+      setPendingAttachments((current) => [...current, ...prepared]);
+      setDirty(true);
+      setNotice(
+        `${prepared.length} attachment${prepared.length === 1 ? '' : 's'} ready. Save the announcement to upload.`,
+      );
+    } catch (error) {
+      setNotice(
+        error instanceof Error
+          ? error.message
+          : 'Unable to prepare the selected attachments.',
+      );
+    } finally {
+      setProcessingAttachments(false);
+    }
+  }
+
+  function removeStoredAttachment(attachment: AnnouncementAttachment) {
+    setForm((current) => ({
+      ...current,
+      attachments: current.attachments.filter(
+        (item) => item.src !== attachment.src,
+      ),
+    }));
+    setRemovedAttachmentSources((current) =>
+      current.includes(attachment.src) ? current : [...current, attachment.src],
+    );
+    setDirty(true);
+  }
+
+  function removePendingAttachment(id: string) {
+    setPendingAttachments((current) =>
+      current.filter((attachment) => attachment.id !== id),
+    );
+    setDirty(true);
+  }
+
+  function resetAttachmentChanges() {
+    setPendingAttachments([]);
+    setRemovedAttachmentSources([]);
+    setProcessingAttachments(false);
+  }
+
   async function waitForPublishedVersion(
     announcement: Announcement,
     checkToken: string,
@@ -822,6 +964,54 @@ export function AdminConsole({
         }
       }
 
+      if (
+        pendingAttachments.length > 0 ||
+        removedAttachmentSources.length > 0
+      ) {
+        try {
+          result = await apiRequest(
+            `/api/announcements/${encodeURIComponent(saved.id)}/attachments`,
+            credential,
+            {
+              method: 'PUT',
+              body: JSON.stringify({
+                files: pendingAttachments.map(
+                  ({ id, extension, contentBase64, name, mimeType, size }) => ({
+                    id,
+                    extension,
+                    contentBase64,
+                    name,
+                    mimeType,
+                    size,
+                  }),
+                ),
+                removeSources: removedAttachmentSources,
+              }),
+            },
+          );
+          saved = result.announcements.find(
+            (item) => item.id === announcement.id,
+          );
+          if (!saved)
+            throw new Error(
+              'Attachments were uploaded, but the announcement could not be reloaded.',
+            );
+          resetAttachmentChanges();
+        } catch (attachmentError) {
+          setAnnouncements(result.announcements);
+          setForm(announcementToForm(saved ?? announcement));
+          setDirty(true);
+          const reason =
+            attachmentError instanceof Error
+              ? attachmentError.message
+              : 'Attachment upload failed.';
+          setNotice(
+            `Announcement saved, but its attachments were not updated: ${reason}`,
+          );
+          return;
+        }
+      }
+
       try {
         const previewResult = await generateAndStorePreview(saved, credential);
         setAnnouncements(previewResult.announcements);
@@ -871,6 +1061,7 @@ export function AdminConsole({
       setAnnouncements(result.announcements);
       setForm(emptyForm());
       resetImageChanges();
+      resetAttachmentChanges();
       publicationCheckTokensRef.current.delete(selectedId);
       setPublicationRecords((current) => {
         const next = { ...current };
@@ -917,6 +1108,7 @@ export function AdminConsole({
     setAnnouncements([]);
     setForm(emptyForm());
     resetImageChanges();
+    resetAttachmentChanges();
     setPreviewImage('');
     setDirty(false);
     setAuthState('signed-out');
@@ -964,6 +1156,17 @@ export function AdminConsole({
         })),
       ];
       if (announcement.images.length === 0) announcement.images = undefined;
+      announcement.attachments = [
+        ...form.attachments,
+        ...pendingAttachments.map((attachment) => ({
+          src: `data:${attachment.mimeType};base64,${attachment.contentBase64}`,
+          name: attachment.name,
+          mimeType: attachment.mimeType,
+          size: attachment.size,
+        })),
+      ];
+      if (announcement.attachments.length === 0)
+        announcement.attachments = undefined;
       setNoticePreview(announcement);
       setNotice('');
     } catch {
@@ -1062,6 +1265,7 @@ export function AdminConsole({
                 onClick={() => {
                   setForm(emptyForm());
                   resetImageChanges();
+                  resetAttachmentChanges();
                   setDirty(false);
                   setPreviewImage('');
                   setNotice('');
@@ -1084,6 +1288,7 @@ export function AdminConsole({
                   onClick={() => {
                     setForm(announcementToForm(announcement));
                     resetImageChanges();
+                    resetAttachmentChanges();
                     setDirty(false);
                     setPreviewImage('');
                     setNotice('');
@@ -1260,6 +1465,91 @@ export function AdminConsole({
                   placeholder="Add all details residents may need."
                 />
               </FormField>
+              <div className="form-field md:col-span-2">
+                <span>
+                  Attachments
+                  <small>Optional · up to {MAX_NOTICE_ATTACHMENTS} files</small>
+                </span>
+                <div className="admin-attachment-uploader">
+                  <label className="admin-attachment-add">
+                    {processingAttachments ? (
+                      <LoaderCircle
+                        className="animate-spin"
+                        aria-hidden="true"
+                      />
+                    ) : (
+                      <FileUp aria-hidden="true" />
+                    )}
+                    <span>
+                      <strong>
+                        {processingAttachments
+                          ? 'Preparing…'
+                          : 'Choose attachments'}
+                      </strong>
+                      <small>
+                        PDF, Word, Excel, PowerPoint, TXT or CSV · 10 MB each
+                      </small>
+                    </span>
+                    <input
+                      className="sr-only"
+                      type="file"
+                      accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv"
+                      multiple
+                      disabled={
+                        processingAttachments ||
+                        form.attachments.length + pendingAttachments.length >=
+                          MAX_NOTICE_ATTACHMENTS
+                      }
+                      onChange={(event) => {
+                        void addAttachments(event.target.files);
+                        event.target.value = '';
+                      }}
+                    />
+                  </label>
+                </div>
+                {(form.attachments.length > 0 ||
+                  pendingAttachments.length > 0) && (
+                  <div className="admin-attachment-list">
+                    {form.attachments.map((attachment) => (
+                      <div key={attachment.src}>
+                        <FileText aria-hidden="true" />
+                        <span>
+                          <strong>{attachment.name}</strong>
+                          <small>{formatFileSize(attachment.size)}</small>
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => removeStoredAttachment(attachment)}
+                          aria-label={`Remove ${attachment.name}`}
+                        >
+                          <X aria-hidden="true" />
+                        </button>
+                      </div>
+                    ))}
+                    {pendingAttachments.map((attachment) => (
+                      <div className="pending" key={attachment.id}>
+                        <FileText aria-hidden="true" />
+                        <span>
+                          <strong>{attachment.name}</strong>
+                          <small>{formatFileSize(attachment.size)}</small>
+                        </span>
+                        <em>New</em>
+                        <button
+                          type="button"
+                          onClick={() => removePendingAttachment(attachment.id)}
+                          aria-label={`Remove ${attachment.name}`}
+                        >
+                          <X aria-hidden="true" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                <small className="text-muted-foreground">
+                  Attachment links appear after the complete message on the
+                  notice page.
+                </small>
+              </div>
               <FormField label="Category">
                 <NativeSelect
                   className="w-full"
@@ -1434,7 +1724,7 @@ export function AdminConsole({
               <Button
                 className="h-11 px-5"
                 onClick={saveAnnouncement}
-                disabled={busy || processingImages}
+                disabled={busy || processingImages || processingAttachments}
               >
                 {busy ? (
                   <LoaderCircle className="animate-spin" aria-hidden="true" />
@@ -1447,7 +1737,7 @@ export function AdminConsole({
                 className="h-11"
                 variant="outline"
                 onClick={previewNotice}
-                disabled={busy || processingImages}
+                disabled={busy || processingImages || processingAttachments}
               >
                 <Eye aria-hidden="true" /> Preview notice
               </Button>
@@ -1456,7 +1746,11 @@ export function AdminConsole({
                 variant="outline"
                 onClick={previewBanner}
                 disabled={
-                  busy || processingImages || !form.title || !form.summary
+                  busy ||
+                  processingImages ||
+                  processingAttachments ||
+                  !form.title ||
+                  !form.summary
                 }
               >
                 <ImageIcon aria-hidden="true" /> Preview banner

@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import type { Announcement } from '@/lib/announcements';
 import { NoticeImageGallery } from '@/components/notice-image-gallery';
+import { NoticeAttachments } from '@/components/notice-attachments';
 import { siteHref } from '@/lib/site-path';
 
 const categoryLabels: Record<Announcement['category'], string> = {
@@ -130,6 +131,13 @@ export function AdminNoticePreview({
                   ),
                 )}
               </div>
+              {announcement.attachments &&
+                announcement.attachments.length > 0 && (
+                  <NoticeAttachments
+                    attachments={announcement.attachments}
+                    resolveSrc={resolvePreviewImage}
+                  />
+                )}
               {announcement.actionUrl && (
                 <span className="primary-action mt-8" aria-disabled="true">
                   {announcement.actionLabel ?? 'Open link'}{' '}

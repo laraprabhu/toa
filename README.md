@@ -12,6 +12,7 @@ A mobile-first communication hub for residents. The public site is a static GitH
 - **Admin writes:** a stateless Cloudflare Worker verifies the Google account, checks the repository allowlist, and commits JSON changes through the GitHub Contents API.
 - **Preview images:** after GitHub assigns the permanent number, the admin browser renders a 1200×800 PNG with Canvas and the Worker commits it to `public/previews/announcement-N.png`.
 - **Notice images:** admins can attach up to eight JPEG, PNG or WebP images. The browser converts them to WebP with a maximum 1800-pixel edge before the Worker stores them under `public/media/announcement-N/`. A single image preserves its natural aspect ratio; multiple images render as a masonry gallery with a full-screen viewer.
+- **Attachments:** admins can attach up to five PDF, Word, Excel, PowerPoint, TXT or CSV files, limited to 10 MB each and 25 MB total per notice. The Worker validates and stores them under `public/attachments/announcement-N/`, and the notice displays download links after its complete message.
 - **Short resident links:** every published notice is available at `https://laraprabhu.github.io/toa/<announcement-number>/`.
 - **Publishing:** each content commit triggers the Pages workflow, so residents see the new version after the build finishes.
 

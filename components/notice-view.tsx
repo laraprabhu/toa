@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import type { Announcement } from '@/lib/announcements';
 import { NoticeImageGallery } from '@/components/notice-image-gallery';
+import { NoticeAttachments } from '@/components/notice-attachments';
 import { NoticeMetaStrip } from '@/components/notice-meta-strip';
 import { ShareButton } from '@/components/share-button';
 import { siteHref } from '@/lib/site-path';
@@ -72,6 +73,10 @@ export function NoticeView({ announcement }: { announcement: Announcement }) {
                 ),
               )}
             </div>
+            {announcement.attachments &&
+              announcement.attachments.length > 0 && (
+                <NoticeAttachments attachments={announcement.attachments} />
+              )}
             {announcement.actionUrl && (
               <a
                 className="primary-action mt-8"

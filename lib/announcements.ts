@@ -16,6 +16,13 @@ export interface AnnouncementImage {
   height: number;
 }
 
+export interface AnnouncementAttachment {
+  src: string;
+  name: string;
+  mimeType: string;
+  size: number;
+}
+
 export interface Announcement {
   number: number;
   id: string;
@@ -26,6 +33,7 @@ export interface Announcement {
   previewVersion?: string;
   previewHeight?: number;
   images?: AnnouncementImage[];
+  attachments?: AnnouncementAttachment[];
   body: string;
   category: AnnouncementCategory;
   priority: AnnouncementPriority;

@@ -338,6 +338,30 @@
   .notice-body {
     @apply mt-9 max-w-3xl space-y-4 text-base leading-7 text-foreground;
   }
+  .notice-attachments {
+    @apply mt-8 max-w-3xl border-t border-border pt-6;
+  }
+  .notice-attachments h2 {
+    @apply flex items-center gap-2 text-sm font-bold text-ink;
+  }
+  .notice-attachments h2 > svg {
+    @apply size-4 text-teal;
+  }
+  .notice-attachments > div {
+    @apply mt-3 flex flex-wrap gap-2;
+  }
+  .notice-attachments a {
+    @apply inline-flex min-w-0 max-w-full items-center gap-2 rounded-xl border border-border bg-background px-3 py-2.5 text-sm font-semibold text-teal transition hover:border-teal/35 hover:bg-secondary;
+  }
+  .notice-attachments a > svg {
+    @apply size-4 shrink-0;
+  }
+  .notice-attachments a > span {
+    @apply truncate;
+  }
+  .notice-attachments a > small {
+    @apply shrink-0 text-xs font-normal text-muted-foreground;
+  }
   .notice-sidebar {
     @apply h-fit rounded-[1.5rem] bg-ink p-6 text-white shadow-[0_16px_48px_rgb(16_45_54/14%)] lg:sticky lg:top-7;
   }
@@ -543,6 +567,51 @@
     @apply absolute right-2 top-2 grid size-8 place-items-center rounded-full bg-black/65 text-white shadow backdrop-blur transition hover:bg-red-600;
   }
   .admin-image-tile > button > svg {
+    @apply size-4;
+  }
+  .admin-attachment-uploader {
+    @apply rounded-xl border border-dashed border-teal/35 bg-secondary/35 p-3;
+  }
+  .admin-attachment-add {
+    @apply flex min-h-20 cursor-pointer items-center justify-center gap-3 rounded-lg px-4 py-3 text-teal transition hover:bg-white/70;
+  }
+  .admin-attachment-add > svg {
+    @apply size-6 shrink-0;
+  }
+  .admin-attachment-add > span {
+    @apply grid gap-1;
+  }
+  .admin-attachment-add strong {
+    @apply text-sm;
+  }
+  .admin-attachment-add small {
+    @apply text-xs font-normal text-muted-foreground;
+  }
+  .admin-attachment-list {
+    @apply grid gap-2;
+  }
+  .admin-attachment-list > div {
+    @apply flex min-w-0 items-center gap-3 rounded-xl border border-border bg-background px-3 py-2.5;
+  }
+  .admin-attachment-list > div > svg {
+    @apply size-5 shrink-0 text-teal;
+  }
+  .admin-attachment-list > div > span {
+    @apply grid min-w-0 flex-1;
+  }
+  .admin-attachment-list strong {
+    @apply truncate text-sm text-ink;
+  }
+  .admin-attachment-list small {
+    @apply text-xs font-normal text-muted-foreground;
+  }
+  .admin-attachment-list em {
+    @apply rounded-full bg-teal px-2 py-1 text-[10px] font-bold not-italic text-white;
+  }
+  .admin-attachment-list button {
+    @apply grid size-8 shrink-0 place-items-center rounded-full text-muted-foreground transition hover:bg-red-50 hover:text-red-600;
+  }
+  .admin-attachment-list button > svg {
     @apply size-4;
   }
   .form-field [data-slot='native-select'] {
