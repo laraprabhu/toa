@@ -13,7 +13,15 @@
     "publishedAt": "2026-09-13T08:19:00.000Z",
     "eventDate": "Today 3:30 PM onwards",
     "location": "In-front of A Block",
-    "contact": "TOA Manager"
+    "contact": "TOA Manager",
+    "images": [
+      {
+        "src": "/media/announcement-7/0bd6862a-05fa-4b78-8c7c-7af73e97e298.webp",
+        "alt": "WhatsApp Image 2026 09 13 at 13.30.52",
+        "width": 960,
+        "height": 1280
+      }
+    ]
   },
   {
     "number": 6,
