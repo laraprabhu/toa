@@ -1117,7 +1117,7 @@ export function AdminConsole({
     }
     const announcement = formToAnnouncement(form);
     const noticeUrl = new URL(
-      `${sitePath}/${announcement.number}`,
+      `${sitePath}/${announcement.number}/`,
       window.location.origin,
     ).href;
     await navigator.clipboard.writeText(noticeUrl);

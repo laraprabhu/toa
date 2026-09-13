@@ -10,7 +10,7 @@ export function ShareButton() {
     const shareUrl = new URL(window.location.href);
     shareUrl.search = '';
     shareUrl.hash = '';
-    shareUrl.pathname = shareUrl.pathname.replace(/\/$/, '');
+    if (!shareUrl.pathname.endsWith('/')) shareUrl.pathname += '/';
     await navigator.clipboard.writeText(shareUrl.href);
     setCopied(true);
     window.setTimeout(() => setCopied(false), 1800);
