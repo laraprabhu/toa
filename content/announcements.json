@@ -14,6 +14,8 @@
     "eventDate": "Today 3:30 PM onwards",
     "location": "In-front of A Block",
     "contact": "TOA Manager",
+    "previewVersion": "7-mtzjnpog",
+    "previewHeight": 800,
     "images": [
       {
         "src": "/media/announcement-7/0bd6862a-05fa-4b78-8c7c-7af73e97e298.webp",
@@ -21,9 +23,7 @@
         "width": 960,
         "height": 1280
       }
-    ],
-    "previewVersion": "7-mtzjnpog",
-    "previewHeight": 800
+    ]
   },
   {
     "number": 6,
