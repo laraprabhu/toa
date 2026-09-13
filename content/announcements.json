@@ -5,7 +5,7 @@
     "slug": "gym-closed-tomorrow",
     "title": "Gym closed tomorrow! 🔒",
     "summary": "As per our recently published holiday list, our Gym will be closed tomorrow on the occasion of \"Vinayagar Chathurthi\". Advance Chathurthi wishes to all! 🙏",
-    "image": "/announcement-preview.png",
+    "image": "/previews/announcement-9.png",
     "body": "Dear Residents,\n\nAs mentioned in our recently published holiday list, the gym will remain closed tomorrow on the occasion of Vinayagar Chathurthi.\n\nWe kindly request everyone to plan their workouts accordingly. Regular gym operations will resume after the holiday.\n\nThank you for your understanding and cooperation. Wishing you and your family a happy and blessed Vinayagar Chathurthi in advance! 🙏\n\nThanks,\nTOA.",
     "category": "community",
     "priority": "normal",
@@ -13,7 +13,9 @@
     "publishedAt": "2026-09-13T12:41:00.000Z",
     "eventDate": "13 Sepember 2026",
     "location": "Tejomaya Gym",
-    "contact": "TOA Gym Trainer"
+    "contact": "TOA Gym Trainer",
+    "previewVersion": "9-mtzt9ypa",
+    "previewHeight": 800
   },
   {
     "number": 8,
