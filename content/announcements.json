@@ -3,7 +3,7 @@
     "number": 10,
     "id": "a783b153-9aee-494d-adf9-d241d1204d30",
     "slug": "chathurthi-celebrations-went-well",
-    "title": "Chathurthi Celebrations Went Well! 🎉",
+    "title": "Ganesh Chathurthi celebration at temple went well! 🎉",
     "summary": "Click to view a glimpse of Tejomaya’s Ganesh Chathurthi celebrations. Thanks to all the coordinators and donors for making this happen. This weekend’s event awaits you!",
     "image": "/previews/announcement-10.png",
     "body": "Tejomaya’s Ganesh Chathurthi celebration was a joyful and memorable occasion for our community. We hope you get some divine vibes from looking at our celebration pictures.\n\nA heartfelt thank you to all the coordinators and donors for their time, effort, and generous support in making this celebration possible. We truly appreciate everyone who participated and contributed to its success.\n\nAnother exciting event awaits you this weekend. Stay tuned! 🎉\n\nThanks,\nTOA.",
@@ -14,6 +14,8 @@
     "eventDate": "September 14, Monday",
     "location": "Tejomaya Temple",
     "contact": "Tejomaya Temple Committee",
+    "previewVersion": "10-mu24hz21",
+    "previewHeight": 800,
     "images": [
       {
         "src": "/media/announcement-10/edee09ec-374a-47d7-8dbc-febf4f6c98f6.webp",
@@ -57,9 +59,7 @@
         "width": 1200,
         "height": 1600
       }
-    ],
-    "previewVersion": "10-mu24hz21",
-    "previewHeight": 800
+    ]
   },
   {
     "number": 9,
