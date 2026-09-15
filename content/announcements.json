@@ -13,7 +13,51 @@
     "publishedAt": "2026-09-15T03:34:00.000Z",
     "eventDate": "September 14, Monday",
     "location": "Tejomaya Temple",
-    "contact": "Tejomaya Temple Committee"
+    "contact": "Tejomaya Temple Committee",
+    "images": [
+      {
+        "src": "/media/announcement-10/edee09ec-374a-47d7-8dbc-febf4f6c98f6.webp",
+        "alt": "img 5517",
+        "width": 1430,
+        "height": 860
+      },
+      {
+        "src": "/media/announcement-10/c1bdf3e5-bd3a-49ed-a0c9-da5722154b61.webp",
+        "alt": "img 2121",
+        "width": 1350,
+        "height": 1800
+      },
+      {
+        "src": "/media/announcement-10/ee8361e1-5bae-4666-a2a4-df96ca60fbd8.webp",
+        "alt": "2eda7b51 bb9b 4417 9f5f c0bc03e5a716",
+        "width": 1600,
+        "height": 1200
+      },
+      {
+        "src": "/media/announcement-10/fb7ed170-6d71-4fe7-8e5d-024f8af57263.webp",
+        "alt": "301f037e af41 4bab 93b6 419c3e3b1459",
+        "width": 720,
+        "height": 1280
+      },
+      {
+        "src": "/media/announcement-10/6ac6fa67-04f4-454b-833b-9f074442cc77.webp",
+        "alt": "f5bc7895 460a 4ee8 8f70 58c5ced104b4",
+        "width": 1200,
+        "height": 1600
+      },
+      {
+        "src": "/media/announcement-10/ffabaa1a-ca72-43f2-b833-c0e2842164d6.webp",
+        "alt": "d0a5fc5b ce8b 4fd3 a62b d118204265a2",
+        "width": 720,
+        "height": 1280
+      },
+      {
+        "src": "/media/announcement-10/eb289719-4788-4076-ad24-69be5e22b313.webp",
+        "alt": "d0ebc8c4 0cd4 4b51 b7f7 1172289f2477",
+        "width": 1200,
+        "height": 1600
+      }
+    ]
   },
   {
     "number": 9,
