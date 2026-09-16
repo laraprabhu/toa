@@ -1,5 +1,20 @@
 [
   {
+    "number": 11,
+    "id": "e321f295-365b-4d60-b77a-cb40477c3669",
+    "slug": "e-tower-erl-painting-work-west-side",
+    "title": "#11. E Tower - ERL 🫟painting work starting tomorrow from West side",
+    "summary": "E Tower - ERL 🫟painting work starting tomorrow from West side",
+    "image": "/announcement-preview.png",
+    "body": "This is to inform you all about the painting work by ERL is going to start in E tower - West side from tomorrow. We appreciate your cooperation and ensuring the work is completed smoothly.",
+    "category": "community",
+    "priority": "normal",
+    "status": "published",
+    "publishedAt": "2026-09-16T05:36:00.000Z",
+    "eventDate": "Starting from tomorrow - Daily from 9:00 AM to 6:00 PM until the work is completed",
+    "location": "E Tower - West Side"
+  },
+  {
     "number": 10,
     "id": "a783b153-9aee-494d-adf9-d241d1204d30",
     "slug": "chathurthi-celebrations-went-well",
