@@ -1,5 +1,20 @@
 [
   {
+    "number": 13,
+    "id": "c0c1f64e-8a79-4bef-b04c-2a29a1cacf98",
+    "slug": "tower-abc-external-painting-work-completed",
+    "title": "Tower ABC - External painting work completed! 🫟",
+    "summary": "ERL has successfully completed the exterior painting of Tower ABC. Thank you all for your sincere cooperation and support in completing this activity🙏🏽",
+    "image": "/announcement-preview.png",
+    "body": "Dear Residents,\n\nPlease be informed that ERL has completed the exterior paiting work in Tower ABC. \n\nTower ABC residents can bring their cars back as only wind-shaft painting is pending and that won’t spill paints over the car.\n\nThank you all for your sincere cooperation and support in completing this activity.\n\nRegards TOA",
+    "category": "community",
+    "priority": "normal",
+    "status": "draft",
+    "publishedAt": "2026-09-17T06:13:00.000Z",
+    "eventDate": "Today",
+    "location": "Tower ABC"
+  },
+  {
     "number": 12,
     "id": "d128e377-79d8-4885-9a0a-e1096a33a91d",
     "slug": "urgent-tower-e-external-painting-work-started-today-on-the-south-side",
