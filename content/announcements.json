@@ -1,5 +1,18 @@
 [
   {
+    "number": 12,
+    "id": "d128e377-79d8-4885-9a0a-e1096a33a91d",
+    "slug": "urgent-tower-e-external-painting-work-started-today-on-the-south-side",
+    "title": "#Urgent# Tower E - External painting work started today on the south side!!",
+    "summary": "ERL has accidentally started painting the South side walls of Tower E today. Please exercise caution when entering or exiting, close the windows and curtains for Privacy and safety, relocate the vechicles to avoid painting spill.",
+    "image": "/announcement-preview.png",
+    "body": "Dear Residents,\n\nPlease note that ERL has began painting the exterior walls on the south side of E Tower instead on the west side today. We appreciate your cooperation in helping ensure that the work is completed smoothly.\n\nWe do not currently have an estimated completion date, but we will keep you informed as and when we receive updates from the builder (ERL).\n Since no one has a parking space close to the west-side walls of E Tower, there is no need to relocate any vehicles at the moment. In case relocation is needed in an extreme situation, we will send another communication. Stay tuned.\n\nThanks,\nTOA",
+    "category": "community",
+    "priority": "normal",
+    "status": "draft",
+    "publishedAt": "2026-09-17T05:54:00.000Z"
+  },
+  {
     "number": 11,
     "id": "e321f295-365b-4d60-b77a-cb40477c3669",
     "slug": "e-tower-erl-painting-work-west-side",
