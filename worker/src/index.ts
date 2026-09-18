@@ -385,20 +385,30 @@ const worker = {
       const id = match[1] ? decodeURIComponent(match[1]) : undefined;
       if (request.method === 'POST' && !id) {
         const candidate = validateAnnouncement(await request.json());
+        const { content: existingAnnouncements } =
+          await getRepoJson<Announcement[]>('content/announcements.json', env);
+        if (existingAnnouncements.some((item) => item.id === candidate.id)) {
+          throw new HttpError(
+            409,
+            'This draft has already been saved. Refresh the admin page and try again.',
+          );
+        }
         const number = await allocateAnnouncementNumber(env);
         const result = await mutateAnnouncements(env, admin.email, (items) => {
-          if (
-            items.some(
-              (item) =>
-                item.id === candidate.id || item.slug === candidate.slug,
-            )
-          ) {
+          if (items.some((item) => item.id === candidate.id)) {
             throw new HttpError(
               409,
-              'An announcement with this ID or page address already exists.',
+              'This draft has already been saved. Refresh the admin page and try again.',
             );
           }
-          return [{ ...candidate, number }, ...items];
+          return [
+            {
+              ...candidate,
+              number,
+              slug: uniqueAnnouncementSlug(candidate.slug, items, number),
+            },
+            ...items,
+          ];
         });
         return json({ announcements: result, admin }, 201, corsHeaders);
       }
@@ -867,6 +877,36 @@ function validateAnnouncement(input: unknown): Announcement {
     }
   }
   return value as unknown as Announcement;
+}
+
+function uniqueAnnouncementSlug(
+  requestedSlug: string,
+  announcements: Announcement[],
+  announcementNumber: number,
+) {
+  const existingSlugs = new Set(
+    announcements.map((announcement) => announcement.slug),
+  );
+  if (!existingSlugs.has(requestedSlug)) return requestedSlug;
+
+  let attempt = 0;
+  while (attempt < 100) {
+    const suffix =
+      attempt === 0
+        ? `-${announcementNumber}`
+        : `-${announcementNumber}-${attempt + 1}`;
+    const base = requestedSlug
+      .slice(0, Math.max(1, 70 - suffix.length))
+      .replace(/-+$/, '');
+    const candidate = `${base}${suffix}`;
+    if (!existingSlugs.has(candidate)) return candidate;
+    attempt += 1;
+  }
+
+  throw new HttpError(
+    409,
+    'Unable to create a unique page address. Please edit the page address and try again.',
+  );
 }
 
 function validateStoredImage(input: unknown): AnnouncementImage {
