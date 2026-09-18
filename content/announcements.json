@@ -5,7 +5,7 @@
     "slug": "tejomaya-chathurthi-cultural-event-15",
     "title": "Tejomaya Chathurthi Cultural Event 💃🕺",
     "summary": "Get ready to witness some electrifying performances from Tejomayans tomorrow. The event starts at 6pm. Tap here for venue details and the event schedule.",
-    "image": "/announcement-preview.png",
+    "image": "/previews/announcement-15.png",
     "body": "Dear Tejomaya Residents,\n\nYou are warmly invited to an evening of devotion, music, dance, drama, yoga, martial arts, and community celebration.\n\nDate: Saturday, 19 September 2026\nTime: 6:00 PM to 9:00 PM\n\nCome with your family and encourage our talented residents as we celebrate Lord Ganesha together. We look forward to seeing you all!\n\nPlease refer to the attached image for details of the registered performances. Registrations are still open, so you can expect even more performances on the day of the event.\n\nThanks,\nTOA.",
     "category": "event",
     "priority": "normal",
@@ -21,7 +21,9 @@
         "width": 1122,
         "height": 1402
       }
-    ]
+    ],
+    "previewVersion": "15-mu6trqkv",
+    "previewHeight": 800
   },
   {
     "number": 14,
