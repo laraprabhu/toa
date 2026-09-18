@@ -1,5 +1,21 @@
 [
   {
+    "number": 15,
+    "id": "c028972e-a0bf-4a71-bf6b-fff87f9b1edb",
+    "slug": "tejomaya-chathurthi-cultural-event-15",
+    "title": "Tejomaya Chathurthi Cultural Event 💃🕺",
+    "summary": "Get ready to witness some electrifying performances from Tejomayans tomorrow. The event starts at 6pm. Tap here for venue details and the event schedule.",
+    "image": "/announcement-preview.png",
+    "body": "Dear Tejomaya Residents,\n\nYou are warmly invited to an evening of devotion, music, dance, drama, yoga, martial arts, and community celebration.\n\nDate: Saturday, 19 September 2026\nTime: 6:00 PM to 9:00 PM\n\nCome with your family and encourage our talented residents as we celebrate Lord Ganesha together. We look forward to seeing you all!\n\nPlease refer to the attached image for details of the registered performances. Registrations are still open, so you can expect even more performances on the day of the event.\n\nThanks,\nTOA.",
+    "category": "event",
+    "priority": "normal",
+    "status": "published",
+    "publishedAt": "2026-09-18T10:29:00.000Z",
+    "eventDate": "19th September, 6PM to 9PM",
+    "location": "In-front of C Block",
+    "contact": "TOA Manager"
+  },
+  {
     "number": 14,
     "id": "8fae86a1-3dee-44ea-b0e6-a84620dba59c",
     "slug": "tejomaya-chathurthi-cultural-event",
