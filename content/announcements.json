@@ -15,7 +15,15 @@
     "location": "Infront of C Block",
     "contact": "TOA Manager",
     "previewVersion": "14-mu6r5h1x",
-    "previewHeight": 800
+    "previewHeight": 800,
+    "images": [
+      {
+        "src": "/media/announcement-14/38a652d6-9d0b-4b67-b023-01f4fd05f418.webp",
+        "alt": "final event notice",
+        "width": 1122,
+        "height": 1402
+      }
+    ]
   },
   {
     "number": 13,
