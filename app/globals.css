@@ -291,10 +291,10 @@
     @apply mt-6 max-w-3xl border-l-4 border-sun pl-5 text-lg leading-8 text-muted-foreground sm:text-xl;
   }
   .notice-image-gallery {
-    @apply mt-8 max-w-3xl;
+    @apply mt-8 min-w-0 max-w-3xl;
   }
   .notice-image-masonry {
-    @apply columns-1 gap-3 sm:columns-2 sm:gap-4;
+    @apply columns-2 gap-3 sm:gap-4;
   }
   .notice-image-masonry.is-positioned {
     @apply relative block;

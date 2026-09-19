@@ -32,8 +32,8 @@ export function NoticeImageGallery({
   // Keep the original DOM/lightbox order, but place each image under the
   // shortest column. CSS multi-column layout balances blocks differently and
   // can leave a large gap beside mixed portrait/landscape images.
-  const useMasonry = isMultiple && galleryWidth >= 420;
-  const gap = 16;
+  const useMasonry = isMultiple && galleryWidth > 0;
+  const gap = galleryWidth < 420 ? 12 : 16;
   const columnWidth = useMasonry ? (galleryWidth - gap) / 2 : 0;
   const columnHeights = [0, 0];
   const positions = images.map((image) => {
