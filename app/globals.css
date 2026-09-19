@@ -294,7 +294,11 @@
     @apply mt-8 max-w-3xl;
   }
   .notice-image-masonry {
-    @apply columns-2 gap-3 sm:gap-4 md:columns-3;
+    @apply columns-1 gap-3 sm:columns-2 sm:gap-4;
+  }
+  .notice-image-masonry.is-positioned {
+    @apply relative block;
+    columns: initial;
   }
   .notice-image-button {
     @apply block w-full overflow-hidden rounded-2xl border border-border bg-background text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md focus-visible:z-10;
@@ -302,8 +306,12 @@
   .notice-image-masonry .notice-image-button {
     @apply mb-3 break-inside-avoid sm:mb-4;
   }
+  .notice-image-masonry.is-positioned .notice-image-button {
+    @apply absolute;
+    margin-bottom: 0;
+  }
   .notice-image-button img {
-    @apply h-auto w-full object-contain;
+    @apply block h-auto w-full object-contain;
   }
   .notice-lightbox {
     @apply fixed inset-0 z-[100] m-0 grid h-screen max-h-none w-screen max-w-none place-items-center border-0 bg-black/92 p-4 outline-none sm:p-10;

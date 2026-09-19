@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 import type { AnnouncementImage } from '@/lib/announcements';
@@ -14,8 +14,41 @@ export function NoticeImageGallery({
   resolveSrc?: (src: string) => string;
 }) {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
+  const [galleryWidth, setGalleryWidth] = useState(0);
   const dialogRef = useRef<HTMLDialogElement>(null);
+  const galleryRef = useRef<HTMLDivElement>(null);
   const isMultiple = images.length > 1;
+
+  useLayoutEffect(() => {
+    if (!isMultiple || !galleryRef.current) return;
+    const gallery = galleryRef.current;
+    const measure = () => setGalleryWidth(gallery.clientWidth);
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(gallery);
+    return () => observer.disconnect();
+  }, [isMultiple]);
+
+  // Keep the original DOM/lightbox order, but place each image under the
+  // shortest column. CSS multi-column layout balances blocks differently and
+  // can leave a large gap beside mixed portrait/landscape images.
+  const useMasonry = isMultiple && galleryWidth >= 420;
+  const gap = 16;
+  const columnWidth = useMasonry ? (galleryWidth - gap) / 2 : 0;
+  const columnHeights = [0, 0];
+  const positions = images.map((image) => {
+    if (!useMasonry) return null;
+    const column = columnHeights[0] <= columnHeights[1] ? 0 : 1;
+    const top = columnHeights[column];
+    const ratio =
+      image.width > 0 && image.height > 0
+        ? image.height / image.width
+        : 1;
+    const height = Math.max(0, columnWidth - 2) * ratio + 2;
+    columnHeights[column] += height + gap;
+    return { left: column * (columnWidth + gap), top, width: columnWidth };
+  });
+  const masonryHeight = Math.max(0, ...columnHeights) - gap;
 
   useEffect(() => {
     if (activeIndex === null) return;
@@ -59,17 +92,20 @@ export function NoticeImageGallery({
   return (
     <>
       <div
+        ref={galleryRef}
         className={
           isMultiple
-            ? 'notice-image-gallery notice-image-masonry'
+            ? `notice-image-gallery notice-image-masonry${useMasonry ? ' is-positioned' : ''}`
             : 'notice-image-gallery'
         }
+        style={useMasonry ? { height: masonryHeight } : undefined}
       >
         {images.map((image, index) => (
           <button
             className="notice-image-button"
             key={image.src}
             type="button"
+            style={positions[index] ?? undefined}
             onClick={() => setActiveIndex(index)}
             aria-label={`Open image ${index + 1} of ${images.length}`}
           >
