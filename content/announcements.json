@@ -13,7 +13,27 @@
     "publishedAt": "2026-09-19T08:28:00.000Z",
     "eventDate": "Today, From 6PM onwards",
     "location": "Opposite to C block",
-    "contact": "TOA Manager"
+    "contact": "TOA Manager",
+    "images": [
+      {
+        "src": "/media/announcement-17/a3ef5da9-4cd5-469b-8913-de2606bd5445.webp",
+        "alt": "IMG 5145 (1)",
+        "width": 1350,
+        "height": 1800
+      },
+      {
+        "src": "/media/announcement-17/18cbe7f2-2c84-437a-a89b-e74eea58bbf3.webp",
+        "alt": "walking challenge winners",
+        "width": 1800,
+        "height": 1273
+      },
+      {
+        "src": "/media/announcement-17/da3210c9-b868-415f-ab13-9f4f56582907.webp",
+        "alt": "fitness challenge winners",
+        "width": 1800,
+        "height": 1273
+      }
+    ]
   },
   {
     "number": 16,
