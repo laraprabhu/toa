@@ -1,5 +1,21 @@
 [
   {
+    "number": 16,
+    "id": "aafec068-02db-4359-9fe1-5ac3bd518ada",
+    "slug": "annathanam-awaits-you-all",
+    "title": "You’re Invited: Annathanam This Evening! 🍚✨",
+    "summary": "There is an official invite waiting for you all inside. We warmly welcome you all to join us this evening, enjoy the cultural show, take part in Annadhanam, and get blessings.",
+    "image": "/announcement-preview.png",
+    "body": "Dear Tejomaya Residents,\n\nYou are cordially invited to the Tejomaya Ganesh Chaturthi Celebrations 2026 for an evening of joy, devotion and cultural performances.\n\nSaturday, 19 September 2026\nFrom 6:30 PM onwards\n\nVenue: In front of C Block, Tejomaya Apartments\n\nThe evening will feature cultural performances, Shruti and Shlokas (devotional chanting), followed by Annadanam (Mahaprasad distribution) at 9:00 PM.\n\nWe warmly welcome you and your family to celebrate with us!\n\nThanks,\nTOA.",
+    "category": "event",
+    "priority": "normal",
+    "status": "published",
+    "publishedAt": "2026-09-19T04:14:00.000Z",
+    "eventDate": "Today, From 6:30 PM onwards",
+    "location": "In front of C Block",
+    "contact": "TOA Manager"
+  },
+  {
     "number": 15,
     "id": "c028972e-a0bf-4a71-bf6b-fff87f9b1edb",
     "slug": "tejomaya-chathurthi-cultural-event-15",
