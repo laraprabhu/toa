@@ -346,6 +346,10 @@
   .notice-body {
     @apply mt-9 max-w-3xl space-y-4 text-base leading-7 text-foreground;
   }
+  .notice-body a {
+    @apply font-medium text-teal underline decoration-teal/50 underline-offset-4 transition hover:decoration-teal focus-visible:rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal;
+    overflow-wrap: anywhere;
+  }
   .notice-attachments {
     @apply mt-8 max-w-3xl border-t border-border pt-6;
   }

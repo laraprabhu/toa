@@ -10,6 +10,7 @@ import {
 import type { Announcement } from '@/lib/announcements';
 import { NoticeImageGallery } from '@/components/notice-image-gallery';
 import { NoticeAttachments } from '@/components/notice-attachments';
+import { NoticeBody } from '@/components/notice-body';
 import { NoticeMetaStrip } from '@/components/notice-meta-strip';
 import { ShareButton } from '@/components/share-button';
 import { siteHref } from '@/lib/site-path';
@@ -20,19 +21,6 @@ function formatDate(value: string) {
     month: 'long',
     year: 'numeric',
   }).format(new Date(value));
-}
-
-function formatBody(value: string) {
-  return value
-    .trim()
-    .split(/\n\s*\n+/)
-    .map((paragraph) =>
-      paragraph
-        .split('\n')
-        .map((line) => line.trim())
-        .filter(Boolean),
-    )
-    .filter((paragraph) => paragraph.length > 0);
 }
 
 export function NoticeView({ announcement }: { announcement: Announcement }) {
@@ -60,19 +48,7 @@ export function NoticeView({ announcement }: { announcement: Announcement }) {
             {announcement.images && announcement.images.length > 0 && (
               <NoticeImageGallery images={announcement.images} />
             )}
-            <div className="notice-body">
-              {formatBody(announcement.body).map(
-                (paragraph, paragraphIndex) => (
-                  <p key={paragraphIndex}>
-                    {paragraph.map((line, lineIndex) => (
-                      <span className="block" key={lineIndex}>
-                        {line}
-                      </span>
-                    ))}
-                  </p>
-                ),
-              )}
-            </div>
+            <NoticeBody body={announcement.body} />
             {announcement.attachments &&
               announcement.attachments.length > 0 && (
                 <NoticeAttachments attachments={announcement.attachments} />

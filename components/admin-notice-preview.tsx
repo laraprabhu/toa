@@ -14,6 +14,7 @@ import {
 import type { Announcement } from '@/lib/announcements';
 import { NoticeImageGallery } from '@/components/notice-image-gallery';
 import { NoticeAttachments } from '@/components/notice-attachments';
+import { NoticeBody } from '@/components/notice-body';
 import { siteHref } from '@/lib/site-path';
 
 const categoryLabels: Record<Announcement['category'], string> = {
@@ -30,19 +31,6 @@ function formatDate(value: string) {
     month: 'long',
     year: 'numeric',
   }).format(new Date(value));
-}
-
-function formatBody(value: string) {
-  return value
-    .trim()
-    .split(/\n\s*\n+/)
-    .map((paragraph) =>
-      paragraph
-        .split('\n')
-        .map((line) => line.trim())
-        .filter(Boolean),
-    )
-    .filter((paragraph) => paragraph.length > 0);
 }
 
 function resolvePreviewImage(src: string) {
@@ -118,19 +106,7 @@ export function AdminNoticePreview({
                   resolveSrc={resolvePreviewImage}
                 />
               )}
-              <div className="notice-body">
-                {formatBody(announcement.body).map(
-                  (paragraph, paragraphIndex) => (
-                    <p key={paragraphIndex}>
-                      {paragraph.map((line, lineIndex) => (
-                        <span className="block" key={lineIndex}>
-                          {line}
-                        </span>
-                      ))}
-                    </p>
-                  ),
-                )}
-              </div>
+              <NoticeBody body={announcement.body} />
               {announcement.attachments &&
                 announcement.attachments.length > 0 && (
                   <NoticeAttachments
