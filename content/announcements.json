@@ -13,7 +13,57 @@
     "publishedAt": "2026-09-24T16:02:00.000Z",
     "eventDate": "From October 1",
     "location": "TOA Gym",
-    "contact": "TOA Manager"
+    "contact": "TOA Manager",
+    "images": [
+      {
+        "src": "/media/announcement-22/dd5c9f7a-75cb-42c8-803f-9bec5261dfbd.webp",
+        "alt": "HFC Thendral",
+        "width": 1201,
+        "height": 1800
+      },
+      {
+        "src": "/media/announcement-22/05faf914-0a37-4c82-b46d-4c1a06d72a2a.webp",
+        "alt": "HFC Ajay",
+        "width": 1201,
+        "height": 1800
+      },
+      {
+        "src": "/media/announcement-22/bb09cf97-aacb-4dd3-9ce4-029ae706eff1.webp",
+        "alt": "HFC Aravindh",
+        "width": 1201,
+        "height": 1800
+      },
+      {
+        "src": "/media/announcement-22/37ebde66-b401-4437-a056-296c5968779d.webp",
+        "alt": "HFC Ben",
+        "width": 1201,
+        "height": 1800
+      },
+      {
+        "src": "/media/announcement-22/28af67d4-c70d-46c5-b94d-eeb9263746f0.webp",
+        "alt": "HFC Hari",
+        "width": 1201,
+        "height": 1800
+      },
+      {
+        "src": "/media/announcement-22/31052c95-b43c-4ef9-940f-dde9476c464a.webp",
+        "alt": "HFC Jaison",
+        "width": 1201,
+        "height": 1800
+      },
+      {
+        "src": "/media/announcement-22/fec3403f-91ec-417f-befb-264dff511c4b.webp",
+        "alt": "HFC John",
+        "width": 1201,
+        "height": 1800
+      },
+      {
+        "src": "/media/announcement-22/6b9d5222-ec60-4d05-ae6f-665d573381e9.webp",
+        "alt": "HFC Lingam",
+        "width": 1201,
+        "height": 1800
+      }
+    ]
   },
   {
     "number": 21,
