@@ -15,7 +15,15 @@
     "previewHeight": 800,
     "eventDate": "25th September 2026",
     "location": "ABC Hallway",
-    "contact": "TOA Manager"
+    "contact": "TOA Manager",
+    "images": [
+      {
+        "src": "/media/announcement-23/defdd7eb-2956-4c1b-b33b-b435dba92db8.webp",
+        "alt": "WhatsApp Image 2026 09 25 at 13.12.59",
+        "width": 899,
+        "height": 1599
+      }
+    ]
   },
   {
     "number": 22,
