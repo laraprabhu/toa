@@ -5,7 +5,7 @@
     "slug": "weekend-started-with-a-happy-note",
     "title": "❤️ Weekend Started With a Happy Note!",
     "summary": "Yes, that’s true. The irrational parking issue has been resolved. TOA and the resident’s family carefully discussed the timeline of events and brought the matter to a close.",
-    "image": "/announcement-preview.png",
+    "image": "/previews/announcement-24.png",
     "body": "Dear Residents,\n\nThis issue was resolved today after TOA met with the family of the resident who had parked the car irrationally yesterday. From the resident’s side, the family acknowledged their mistake and agreed to abide by TOA’s terms. From TOA’s side, we acknowledged that the action taken by an individual member to bring the resident to the site of the incident was unnecessary. Additionally, we assured the resident’s family that, going forward, no individual’s decision will be acted upon unless it is collectively approved by the EC team. This was a serious gap on our part, and we will address it immediately.\n\nThe resident’s family is such a sweet one. The way the women of the house handled the issue helped calm tensions on both sides and brought the matter to a simple conclusion. #WomenPower\n\nFrom this incident, TOA would like to emphasise one thing: kindly do not act out of anger, no matter what. Instead of acting irrationally, gathering groups, or sending coordinated messages, a simple discussion among us can resolve matters faster. We are available every Sunday at 11:00 AM at the TOA office.\n\nHappy Weekend,\nTOA.",
     "category": "community",
     "priority": "normal",
@@ -13,7 +13,9 @@
     "publishedAt": "2026-09-26T09:20:00.000Z",
     "eventDate": "26 Sep 2026",
     "location": "TOA Office",
-    "contact": "TOA Manager"
+    "contact": "TOA Manager",
+    "previewVersion": "24-mui6lxrv",
+    "previewHeight": 800
   },
   {
     "number": 23,
