@@ -13,7 +13,57 @@
     "publishedAt": "2026-09-27T15:00:00.000Z",
     "eventDate": "September 26 & 27",
     "location": "C block, MPH",
-    "contact": "Yoga Tutor"
+    "contact": "Yoga Tutor",
+    "images": [
+      {
+        "src": "/media/announcement-26/da451b4a-bbba-40a5-aa2e-67038a885f6d.webp",
+        "alt": "IMG 5305",
+        "width": 1350,
+        "height": 1800
+      },
+      {
+        "src": "/media/announcement-26/ed5dce86-60b4-495f-a101-6dccc2fc19c6.webp",
+        "alt": "IMG 5310",
+        "width": 1350,
+        "height": 1800
+      },
+      {
+        "src": "/media/announcement-26/6b6a11d8-138a-4f6c-960b-652732daba17.webp",
+        "alt": "IMG 5321",
+        "width": 1350,
+        "height": 1800
+      },
+      {
+        "src": "/media/announcement-26/0c155e77-d92c-4f6f-a037-e1fe69e2145b.webp",
+        "alt": "WhatsApp Image 2026 09 27 at 20.54.37",
+        "width": 1600,
+        "height": 1200
+      },
+      {
+        "src": "/media/announcement-26/0db83e51-96d8-420f-acd2-628f24f4813e.webp",
+        "alt": "WhatsApp Image 2026 09 27 at 20.54.38",
+        "width": 1600,
+        "height": 1200
+      },
+      {
+        "src": "/media/announcement-26/3557fa56-ddfc-4b5a-8be3-c3153fc84d4b.webp",
+        "alt": "WhatsApp Image 2026 09 27 at 20.54.37 (1)",
+        "width": 1600,
+        "height": 1200
+      },
+      {
+        "src": "/media/announcement-26/86614fe9-cf9a-4390-8936-00e8f50c64a0.webp",
+        "alt": "IMG 5272",
+        "width": 1350,
+        "height": 1800
+      },
+      {
+        "src": "/media/announcement-26/14bf49da-d87d-43f0-af65-725a0cec5ce3.webp",
+        "alt": "IMG 5285",
+        "width": 1350,
+        "height": 1800
+      }
+    ]
   },
   {
     "number": 25,
