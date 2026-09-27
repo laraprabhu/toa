@@ -5,7 +5,7 @@
     "slug": "toa-rebooted",
     "title": "TOA Rebooted! ♻️",
     "summary": "Following today’s retrospective meeting, TOA has made a few firm decisions and adopted several resolutions for the well-being of our community. Please tap here to learn more.",
-    "image": "/announcement-preview.png",
+    "image": "/previews/announcement-25.png",
     "body": "Dear Residents,\n\nWe held an internal meeting today and reviewed a few matters that require our immediate attention.\n\nFirst, we understood that regardless of any action a resident may take, neither any individual member of TOA nor TOA as a whole has the right to interfere with the essential services provided to that resident. We regret the reactive measure we took recently and hope you will accept our realisation in good faith.\n\nMoving forward, TOA will not confront any unusual activity from resident directly. Instead, we will focus on limiting the damage, containing the situation through legally permitted measures, and involving the appropriate authorities for further action.\n\nSecond, no individual member of TOA has the authority to personally approve or promise anything to any resident. From now on, all decisions will be passed back to the resident only after they have been approved by the majority of the committee members. We have realised that granting unrestricted discretion to individuals can lead to problems in many ways. We sincerely trust that you will understand our realisation in this regard as well.\n\nLooking forward to a fresh start.\n\nTOA.",
     "category": "community",
     "priority": "normal",
@@ -13,7 +13,9 @@
     "publishedAt": "2026-09-27T13:45:00.000Z",
     "eventDate": "27 Sep, 2026",
     "location": "Tejomaya",
-    "contact": "TOA Manager"
+    "contact": "TOA Manager",
+    "previewVersion": "25-mujvllvi",
+    "previewHeight": 800
   },
   {
     "number": 24,
