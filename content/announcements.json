@@ -1,5 +1,21 @@
 [
   {
+    "number": 26,
+    "id": "cb3f75c0-ecfe-4056-bd18-e636d877fc9f",
+    "slug": "look-at-these-little-rubbers-flexing",
+    "title": "Look at these little rubbers flexing! 🤸🏻",
+    "summary": "Our Tejomaya children participated in the yoga trial classes with great excitement. Tap to see pictures of our cute little ones and details about further enrolment.",
+    "image": "/announcement-preview.png",
+    "body": "Dear Residents,\n\nThe children of tejomaya completed their trial classes this weekend with the utmost energy and excitement. There is no better evidence than the pictures above.\n\nIf you would still like to enrol your children, please contact our yoga tutor, Mrs. Sivaranjani.\n\nThanks,\nTOA.",
+    "category": "event",
+    "priority": "normal",
+    "status": "published",
+    "publishedAt": "2026-09-27T15:00:00.000Z",
+    "eventDate": "September 26 & 27",
+    "location": "C block, MPH",
+    "contact": "Yoga Tutor"
+  },
+  {
     "number": 25,
     "id": "a8de5bed-1e5d-47ec-ba83-02f3df12a2e2",
     "slug": "toa-rebooted",
