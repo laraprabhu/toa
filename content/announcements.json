@@ -1,5 +1,21 @@
 [
   {
+    "number": 29,
+    "id": "fa2138d5-117b-44f4-b962-554120fefcf9",
+    "slug": "alert-e-block-vehicles-are-needs-to-be-moved",
+    "title": " Caution: Vehicles in E Block need to be moved! 🫗",
+    "summary": "Painting work will begin in full force at E Block tomorrow. Residents are advised to move their vehicles & close your windows as soon as possible to avoid paint splashes.",
+    "image": "/announcement-preview.png",
+    "body": "Dear Residents,\n\nPainting work will begin in full force at E Block tomorrow (30th September 2026). E Block residents are requested to move their vehicles as soon as possible to avoid paint splashes. Vehicles may be parked temporarily in the visitors’ parking area.\n\nERL has tried their best to cover some of the vehicles, but a few remain exposed. Please move them immediately and ensure that all windows are securely closed while the painting work is in progress.\n\nThank you for your cooperation.\n\nTOA.",
+    "category": "community",
+    "priority": "normal",
+    "status": "published",
+    "publishedAt": "2026-09-29T10:59:00.000Z",
+    "eventDate": "From tomorrow: 30th Sep 2026",
+    "location": "E Block",
+    "contact": "TOA Manager"
+  },
+  {
     "number": 28,
     "id": "a373076d-b35e-4451-a08a-13fc7fb6d02b",
     "slug": "gym",
