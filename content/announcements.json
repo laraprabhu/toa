@@ -1,5 +1,21 @@
 [
   {
+    "number": 28,
+    "id": "a373076d-b35e-4451-a08a-13fc7fb6d02b",
+    "slug": "gym",
+    "title": "Change in Gym Weekly Closing Day",
+    "summary": "Based on feedback from residents and our review of Sunday footfall, we have decided to keep the gym closed on Sundays and open on Wednesdays instead.",
+    "image": "/announcement-preview.png",
+    "body": "Dear Residents,\n\nBased on feedback received from residents and our review of gym footfall on Sundays, we have decided to revise the weekly schedule. The gym will remain closed on Sundays and will be open on Wednesdays instead. This change is intended to better align the gym’s operating days with residents’ preferences and usage patterns.\n\nIf you have any concerns, please write to us at tejomayaownersassociation@gmail.com.\n\nThanks,  \nTOA.",
+    "category": "community",
+    "priority": "normal",
+    "status": "published",
+    "publishedAt": "2026-09-29T02:43:00.000Z",
+    "eventDate": "From 30th of September onwards",
+    "location": "Tejomaya",
+    "contact": "TOA Manager"
+  },
+  {
     "number": 27,
     "id": "50b8b5af-68c6-4004-ad85-f4223fc6e4ef",
     "slug": "important-update-on-erl-activities-and-noc",
