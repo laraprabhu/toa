@@ -5,7 +5,7 @@
     "slug": "alert-e-block-vehicles-are-needs-to-be-moved",
     "title": " Caution: Vehicles in E Block need to be moved! 🫗",
     "summary": "Painting work will begin in full force at E Block tomorrow. Residents are advised to move their vehicles & close your windows as soon as possible to avoid paint splashes.",
-    "image": "/announcement-preview.png",
+    "image": "/previews/announcement-29.png",
     "body": "Dear Residents,\n\nPainting work will begin in full force at E Block tomorrow (30th September 2026). E Block residents are requested to move their vehicles as soon as possible to avoid paint splashes. Vehicles may be parked temporarily in the visitors’ parking area.\n\nERL has tried their best to cover some of the vehicles, but a few remain exposed. Please move them immediately and ensure that all windows are securely closed while the painting work is in progress.\n\nThank you for your cooperation.\n\nTOA.",
     "category": "community",
     "priority": "normal",
@@ -21,7 +21,9 @@
         "width": 670,
         "height": 1491
       }
-    ]
+    ],
+    "previewVersion": "29-mumkubbd",
+    "previewHeight": 800
   },
   {
     "number": 28,
