@@ -14,7 +14,15 @@
     "expiresAt": "2026-09-30T09:01:00.000Z",
     "eventDate": "Today",
     "location": "TOA office",
-    "contact": "TOA Manager"
+    "contact": "TOA Manager",
+    "images": [
+      {
+        "src": "/media/announcement-30/fd24edfe-c911-4dbd-ad2c-ba86e3e411a7.webp",
+        "alt": "WhatsApp Image 2026 09 30 at 13.10.23",
+        "width": 1600,
+        "height": 1200
+      }
+    ]
   },
   {
     "number": 29,
