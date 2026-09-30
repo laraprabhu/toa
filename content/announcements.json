@@ -5,7 +5,7 @@
     "slug": "a-car-key-found",
     "title": "Bike Key Found! 🙌",
     "summary": "We have secured a car key found in front of A Block. Whoever has lost it, kindly collect it from the TOA office. Tap to see an image of the key.",
-    "image": "/announcement-preview.png",
+    "image": "/previews/announcement-30.png",
     "body": "Dear Residents,\n\nSomeone has misplaced their bike key in front of A Block. We have secured it and kept it in the TOA office. Whoever has lost it, please collect it from our manager.\n\nThanks,\nTOA",
     "category": "action",
     "priority": "normal",
@@ -22,7 +22,9 @@
         "width": 1600,
         "height": 1200
       }
-    ]
+    ],
+    "previewVersion": "30-muo3r2dk",
+    "previewHeight": 800
   },
   {
     "number": 29,
