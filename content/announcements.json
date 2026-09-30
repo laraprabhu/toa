@@ -1,5 +1,22 @@
 [
   {
+    "number": 30,
+    "id": "3b7610fd-58ee-4f83-9cc7-2beac3201d1a",
+    "slug": "a-car-key-found",
+    "title": "Bike Key Found! 🙌",
+    "summary": "We have secured a car key found in front of A Block. Whoever has lost it, kindly collect it from the TOA office. Tap to see an image of the key.",
+    "image": "/announcement-preview.png",
+    "body": "Dear Residents,\n\nSomeone has misplaced their bike key in front of A Block. We have secured it and kept it in the TOA office. Whoever has lost it, please collect it from our manager.\n\nThanks,\nTOA",
+    "category": "action",
+    "priority": "normal",
+    "status": "published",
+    "publishedAt": "2026-09-30T08:50:00.000Z",
+    "expiresAt": "2026-09-30T09:01:00.000Z",
+    "eventDate": "Today",
+    "location": "TOA office",
+    "contact": "TOA Manager"
+  },
+  {
     "number": 29,
     "id": "fa2138d5-117b-44f4-b962-554120fefcf9",
     "slug": "alert-e-block-vehicles-are-needs-to-be-moved",
