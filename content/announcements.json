@@ -5,7 +5,7 @@
     "slug": "oct-2-gym-is-open",
     "title": "Gym open tomorrow! ⍈",
     "summary": "The gym will be open tomorrow as usual. We are working with the new gym management company to finalise the holiday schedule and will share the confirmed list shortly.",
-    "image": "/announcement-preview.png",
+    "image": "/previews/announcement-32.png",
     "body": "Dear Residents,\n\nPlease note that the gym will be open tomorrow (Oct 2) and operate as usual.\n\nWe are currently coordinating with the new gym management company to finalise the holiday schedule. Once confirmed, we will share the complete list with all residents so that you can plan your workouts accordingly.\n\nAny future changes to the gym’s operating schedule will be communicated in advance.\n\nThanks,\nTOA.",
     "category": "community",
     "priority": "normal",
@@ -13,7 +13,9 @@
     "publishedAt": "2026-10-01T14:20:00.000Z",
     "eventDate": "Oct 2",
     "location": "TOA Gym",
-    "contact": "TOA Manager"
+    "contact": "TOA Manager",
+    "previewVersion": "32-mupnm58i",
+    "previewHeight": 800
   },
   {
     "number": 31,
