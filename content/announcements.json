@@ -1,5 +1,21 @@
 [
   {
+    "number": 32,
+    "id": "faa25fa2-1c19-4eb7-86dd-19e01db4b23b",
+    "slug": "oct-2-gym-is-open",
+    "title": "Gym open tomorrow! ⍈",
+    "summary": "The gym will be open tomorrow as usual. We are working with the new gym management company to finalise the holiday schedule and will share the confirmed list shortly.",
+    "image": "/announcement-preview.png",
+    "body": "Dear Residents,\n\nPlease note that the gym will be open tomorrow (Oct 2) and operate as usual.\n\nWe are currently coordinating with the new gym management company to finalise the holiday schedule. Once confirmed, we will share the complete list with all residents so that you can plan your workouts accordingly.\n\nAny future changes to the gym’s operating schedule will be communicated in advance.\n\nThanks,\nTOA.",
+    "category": "community",
+    "priority": "normal",
+    "status": "published",
+    "publishedAt": "2026-10-01T14:20:00.000Z",
+    "eventDate": "Oct 2",
+    "location": "TOA Gym",
+    "contact": "TOA Manager"
+  },
+  {
     "number": 31,
     "id": "7242cada-d91b-42c3-84d4-ed00a3c893a3",
     "slug": "survey-for-next-walking-challenge",
