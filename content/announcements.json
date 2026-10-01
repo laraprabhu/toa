@@ -1,5 +1,20 @@
 [
   {
+    "number": 31,
+    "id": "7242cada-d91b-42c3-84d4-ed00a3c893a3",
+    "slug": "survey-for-next-walking-challenge",
+    "title": "🏃‍♀️📊 Survey for next walking challenge! ",
+    "summary": "We’re thinking of starting a new walking challenge and would like your preferences before proceeding. Tap to take the survey and share your thoughts.",
+    "image": "/announcement-preview.png",
+    "body": "Dear Residents,\n\nBased on requests from a few residents, we’re planning to start a new walking challenge for the Tejomaya community. The aim of this survey is to understand whether we should take a short break before starting the next challenge or begin right away.  We would also like to know your preferences and suggestions regarding the format, duration, and other details. \n\nPlease take a moment to complete the survey and share your thoughts.\nSurvey link: https://forms.gle/rfzJHfXu1FNyATe17\n\nThanks,\nTOA.",
+    "category": "community",
+    "priority": "normal",
+    "status": "published",
+    "publishedAt": "2026-10-01T12:57:00.000Z",
+    "location": "TOA Gym",
+    "contact": "TOA Gym Trainer"
+  },
+  {
     "number": 30,
     "id": "3b7610fd-58ee-4f83-9cc7-2beac3201d1a",
     "slug": "a-car-key-found",
