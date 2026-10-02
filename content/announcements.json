@@ -5,7 +5,7 @@
     "slug": "casagrande",
     "title": "📣 Casagrand Promotional Activity!",
     "summary": "Tomorrow, Casagrand will host a promotional event with engaging activities for children and adults, along with gifts for the winners. Tap to learn more.",
-    "image": "/announcement-preview.png",
+    "image": "/previews/announcement-33.png",
     "body": "Dear Residents,\n\nCasagrand, in association with Whopper Ads Services, will conduct a promotional stall event at Emami Tejomaya tomorrow.\n\nDate: Saturday, 3 October 2026\nTime: 10:00 AM to 6:00 PM\n\nAs part of the event, engaging activities will be organised for children and adults. A Snake and Ladders game will also be conducted in teams of three, with gifts for the winners.\n\nResidents are invited to visit the stall, participate in the activities, and enjoy the event with their families.\n\nThanks,\nTOA.",
     "category": "event",
     "priority": "normal",
@@ -13,7 +13,9 @@
     "publishedAt": "2026-10-02T11:58:00.000Z",
     "eventDate": "October 3",
     "location": "Infront of A block",
-    "contact": "TOA Manager"
+    "contact": "TOA Manager",
+    "previewVersion": "33-muqx7izh",
+    "previewHeight": 800
   },
   {
     "number": 32,
