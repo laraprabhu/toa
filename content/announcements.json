@@ -13,7 +13,15 @@
     "publishedAt": "2026-10-03T05:55:00.000Z",
     "eventDate": "Oct 3, Saturday",
     "location": "TOA Gym",
-    "contact": "TOA Gym Trainer"
+    "contact": "TOA Gym Trainer",
+    "images": [
+      {
+        "src": "/media/announcement-34/bf855c50-2d5c-4d59-8d09-ec9fdcdcdb1a.webp",
+        "alt": "IMG 5381",
+        "width": 1350,
+        "height": 1800
+      }
+    ]
   },
   {
     "number": 33,
