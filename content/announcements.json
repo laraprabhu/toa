@@ -5,7 +5,7 @@
     "slug": "tejomaya-gym-leaderboard-is-on",
     "title": "Introducing Tejomaya Gym Leaderboard! 📋",
     "summary": "Have a look at our new gym leaderboard! Walk-in any time to take part in HFC’s fitness challenges for men and women and get your name on the board. Tap to learn more.",
-    "image": "/announcement-preview.png",
+    "image": "/previews/announcement-34.png",
     "body": "Dear Residents,\n\nHave a look at the new leaderboard installed in our gym! HFC will conduct fitness challenges for both men and women and regularly update the leaderboard with participants’ achievements.\n\nWalk in anytime, take part in the challenges, test your fitness, and earn a place on the board. It’s a great opportunity to stay motivated, challenge yourself, and celebrate your progress with the Tejomaya fitness community.\n\nWe will share regular updates whenever the leaderboard is refreshed.\n\nThanks,\nTOA.",
     "category": "community",
     "priority": "normal",
@@ -21,7 +21,9 @@
         "width": 1350,
         "height": 1800
       }
-    ]
+    ],
+    "previewVersion": "34-mus01t30",
+    "previewHeight": 800
   },
   {
     "number": 33,
