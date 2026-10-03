@@ -5,7 +5,7 @@
     "slug": "sgm-tomorrow",
     "title": "SGM Tomorrow! 👥💬",
     "summary": "Further to our earlier communication, the SGM will be held at C Block MPH at 10:00 AM tomorrow. Tap here for entry requirements, proxy forms, and the Google Meet link.",
-    "image": "/announcement-preview.png",
+    "image": "/previews/announcement-35.png",
     "body": "Dear Owners,\n\nThis is to inform all owners that the Annual General Meeting (SGM) of the Tejomaya Owners Association will be held on 4 October 2026 at 10:00 AM in the MPH, Tower C, Emami Tejomaya.\n\nMandatory Entry Requirements:\n\nOwners attending in person are requested to carry the following documents for verification at the entrance:\n\n1. A copy of the Sale Deed or Construction Agreement\n2. A valid photo ID\n\nOwners who wish to appoint a proxy must download the attached proxy form, complete and sign it, scan it, and email it in advance to tejomayaownersassociation@gmail.com from their registered email address.\n\nEntry to the AGM will not be permitted without the required documents.\n\nOwners who are unable to attend in person may join online using the following Google Meet link:\nhttps://meet.google.com/rys-bywp-xae\n\nWe look forward to your active participation.\n\nRegards,\nTOA.",
     "category": "urgent",
     "priority": "normal",
@@ -21,7 +21,9 @@
         "mimeType": "application/pdf",
         "size": 13745
       }
-    ]
+    ],
+    "previewVersion": "35-musens23",
+    "previewHeight": 800
   },
   {
     "number": 34,
