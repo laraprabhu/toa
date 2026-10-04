@@ -1,5 +1,21 @@
 [
   {
+    "number": 36,
+    "id": "43a22f6a-0ec4-45f5-8ca5-8b91c6995142",
+    "slug": "egm-has-been-adjourned-to-10-45am",
+    "title": "The EGM has been adjourned until 10:45 AM!",
+    "summary": "TOA’s EGM will be held on 4 October at 10:45 AM in the C Block MPH. All owners are requested to attend and participate.",
+    "image": "/announcement-preview.png",
+    "body": "Dear Owners,\n\nTOA’s Extraordinary General Meeting (EGM) will be held today, 4 October 2026, at 10:45 AM in the C Block MPH.\nImportant matters concerning our community will be discussed, and your participation and valuable input are essential. \n\nAll owners are requested to attend the meeting and contribute to the discussions and decisions.\nWe look forward to your active participation.\n\nThanks,\nTOA.",
+    "category": "urgent",
+    "priority": "normal",
+    "status": "published",
+    "publishedAt": "2026-10-04T04:37:00.000Z",
+    "eventDate": "Today 10:45AM",
+    "location": "C Block MPH",
+    "contact": "TOA Manager"
+  },
+  {
     "number": 35,
     "id": "605d60b4-bd76-4ee7-94a2-e3b511805d39",
     "slug": "sgm-tomorrow",
