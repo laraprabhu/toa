@@ -5,7 +5,7 @@
     "slug": "oct-4-egm-s-minutes-of-the-meeting",
     "title": "Minutes of the October 4 EGM 📋✍🏻",
     "summary": "Our recent EGM concluded with productive discussions and valuable suggestions from owners. Consensus was reached on several agenda items. Tap to view the minutes.",
-    "image": "/announcement-preview.png",
+    "image": "/previews/announcement-38.png",
     "body": "Dear Residents,\n\nPlease find attached the Minutes of the EGM held on 4 October. The PDF contains a detailed summary of the discussions and decisions made during the meeting.\n\nThanks,\nTOA.",
     "category": "community",
     "priority": "normal",
@@ -21,7 +21,9 @@
         "mimeType": "application/pdf",
         "size": 159878
       }
-    ]
+    ],
+    "previewVersion": "38-muy65zfp",
+    "previewHeight": 800
   },
   {
     "number": 37,
