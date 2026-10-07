@@ -13,7 +13,15 @@
     "publishedAt": "2026-10-07T13:40:00.000Z",
     "eventDate": "Oct 4, Sunday",
     "location": "C Block MPH",
-    "contact": "TOA Manager"
+    "contact": "TOA Manager",
+    "attachments": [
+      {
+        "src": "/attachments/announcement-38/3e14dd4a-3a31-404d-afd5-8febd184d0e4.pdf",
+        "name": "TOA_EGM_Minutes_04_Oct_26.pdf",
+        "mimeType": "application/pdf",
+        "size": 159878
+      }
+    ]
   },
   {
     "number": 37,
