@@ -1,5 +1,21 @@
 [
   {
+    "number": 41,
+    "id": "147b2150-ce29-42b4-9361-f1d1531f9061",
+    "slug": "live-stalls-for-residents",
+    "title": "Ready for a colourful evening today? 🍗🍜",
+    "summary": "Explore live food counters, kids’ games, live music, homemade food and more this evening. Tap for stall details and timings. Your friends and family are most welcome.",
+    "image": "/announcement-preview.png",
+    "body": "Dear Residents,\n\nV2 Events invites you and your family to a festive multi-store shopping event at Emami Tejomaya today, Sunday, 11 October 2026.\n\nExplore a variety of stalls featuring dresses, jewellery, accessories, homemade products, games, live music, live food counters, brand promotions and more.\n\nCome along with your friends and family to shop, connect and enjoy the festive celebration together!\n\nThanks,\nTOA.",
+    "category": "event",
+    "priority": "high",
+    "status": "published",
+    "publishedAt": "2026-10-11T10:23:00.000Z",
+    "eventDate": "Sunday, 11 October 2026",
+    "location": "Tejomaya",
+    "contact": "TOA Manager"
+  },
+  {
     "number": 40,
     "id": "cdbcb69e-29b7-48f0-9fbb-ce85d5183a7a",
     "slug": "anti-aging-cure-batch-2",
