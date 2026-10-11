@@ -5,7 +5,7 @@
     "slug": "live-stalls-for-residents",
     "title": "Ready for a colourful evening today? 🍗🍜",
     "summary": "Explore live food counters, kids’ games, live music, homemade food and more this evening. Tap for stall details and timings. Your friends and family are most welcome.",
-    "image": "/announcement-preview.png",
+    "image": "/previews/announcement-41.png",
     "body": "Dear Residents,\n\nV2 Events invites you and your family to a festive multi-store shopping event at Emami Tejomaya today, Sunday, 11 October 2026.\n\nExplore a variety of stalls featuring dresses, jewellery, accessories, homemade products, games, live music, live food counters, brand promotions and more.\n\nCome along with your friends and family to shop, connect and enjoy the festive celebration together!\n\nThanks,\nTOA.",
     "category": "event",
     "priority": "high",
@@ -21,7 +21,9 @@
         "width": 1024,
         "height": 1536
       }
-    ]
+    ],
+    "previewVersion": "41-mv3p7d1h",
+    "previewHeight": 800
   },
   {
     "number": 40,
