@@ -13,7 +13,15 @@
     "publishedAt": "2026-10-11T10:23:00.000Z",
     "eventDate": "Sunday, 11 October 2026",
     "location": "Tejomaya",
-    "contact": "TOA Manager"
+    "contact": "TOA Manager",
+    "images": [
+      {
+        "src": "/media/announcement-41/18b46707-b1b8-4da4-a78b-86cf2de2344b.webp",
+        "alt": "event sunday",
+        "width": 1024,
+        "height": 1536
+      }
+    ]
   },
   {
     "number": 40,
