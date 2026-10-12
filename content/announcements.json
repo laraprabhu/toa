@@ -5,7 +5,7 @@
     "slug": "tower-a-pl-1-repair-work-started",
     "title": "Tower A - PL 1 Repair work started today 🛗⚒️",
     "summary": "A tower - Passenger lift 1 repair work by ERL has started today. Regret for inconvenience. ",
-    "image": "/announcement-preview.png",
+    "image": "/previews/announcement-42.png",
     "body": "Dear Residents,\n\nRepair work on A Tower – Passenger Lift 1 by ERL commenced today. The work is expected to take approximately 7 days to complete.\n\nFollowing this, repair work on the other lifts will also commence, one by one in other towers. We will share further updates as soon as we receive from ERL.\n\nWe request residents to plan accordingly and regret the inconvenience caused.\n\nThank you for your understanding and cooperation.\n\nRegards,\nTOA",
     "category": "urgent",
     "priority": "high",
@@ -13,7 +13,9 @@
     "publishedAt": "2026-10-12T08:33:00.000Z",
     "expiresAt": "2026-10-12T08:44:00.000Z",
     "location": "Tower A",
-    "contact": "TOA manager"
+    "contact": "TOA manager",
+    "previewVersion": "42-mv50aavx",
+    "previewHeight": 800
   },
   {
     "number": 41,
