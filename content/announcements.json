@@ -1,5 +1,21 @@
 [
   {
+    "number": 43,
+    "id": "63e7fd7f-9fa8-4e8a-86a2-353c7c261714",
+    "slug": "main-gate-new-boom-barrier",
+    "title": "New Boom Barrier Goes Live on 14 October ✋🛑",
+    "summary": "GI Smart Parking’s new boom barrier will be activated at the main gate on 14 October. Please verify your vehicle number in MyGate to avoid entry delays. Tap for more info.",
+    "image": "/announcement-preview.png",
+    "body": "Dear Residents,\n\nWe are pleased to inform you that GI Smart Parking’s new boom barrier system will be activated at the main gate from 14 October.\n\nPlease ensure that your vehicle registration number is correctly updated and verified in the MyGate app. Vehicles with verified registration numbers will be allowed to pass through the boom barrier smoothly.\n\nIf a vehicle number is not verified, security personnel will allow entry only after confirming the resident’s identity and verifying the occupant or driver.\n\nThis system is being introduced to strengthen security, prevent unauthorised vehicle entry and maintain an accurate record of vehicles entering the premises.\n\nKindly update your vehicle details in MyGate at the earliest to avoid inconvenience or delays at the gate.\n\nThank you for your cooperation.\n\nTOA.",
+    "category": "urgent",
+    "priority": "normal",
+    "status": "published",
+    "publishedAt": "2026-10-13T12:05:00.000Z",
+    "eventDate": "From 14th October 2026",
+    "location": "Tejomaya",
+    "contact": "TOA Manager"
+  },
+  {
     "number": 42,
     "id": "7790b812-203e-4c8d-9462-d12249ce4584",
     "slug": "tower-a-pl-1-repair-work-started",
