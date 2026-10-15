@@ -1489,12 +1489,16 @@ export function AdminConsole({
                   gallery.
                 </small>
               </div>
-              <FormField label="Complete message" wide>
+              <FormField
+                label="Complete message"
+                hint="Markdown supported · links, lists and emphasis"
+                wide
+              >
                 <Textarea
                   className="admin-textarea min-h-44"
                   value={form.body}
                   onChange={(event) => updateField('body', event.target.value)}
-                  placeholder="Add all details residents may need."
+                  placeholder="Add all details residents may need. Use **bold**, *italics*, lists or links as needed."
                 />
               </FormField>
               <div className="form-field md:col-span-2">

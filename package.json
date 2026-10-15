@@ -20,7 +20,10 @@
   "dependencies": {
     "react": "19.2.6",
     "react-dom": "19.2.6",
+    "react-markdown": "10.1.0",
     "react-server-dom-webpack": "19.2.6",
+    "remark-breaks": "4.0.0",
+    "remark-gfm": "4.0.1",
     "vinext": "1.0.0-beta.5",
     "@base-ui/react": "1.7.0",
     "@shadcn/react": "0.3.0",

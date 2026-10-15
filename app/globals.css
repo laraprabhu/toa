@@ -346,6 +346,55 @@
   .notice-body {
     @apply mt-9 max-w-3xl space-y-4 text-base leading-7 text-foreground;
   }
+  .notice-body h1,
+  .notice-body h2 {
+    @apply pt-3 font-heading text-2xl font-semibold leading-tight text-ink sm:text-3xl;
+  }
+  .notice-body h3 {
+    @apply pt-2 font-heading text-xl font-semibold leading-tight text-ink sm:text-2xl;
+  }
+  .notice-body h4,
+  .notice-body h5,
+  .notice-body h6 {
+    @apply pt-1 text-base font-bold text-ink;
+  }
+  .notice-body strong {
+    @apply font-bold text-ink;
+  }
+  .notice-body ul {
+    @apply list-disc space-y-1 pl-6;
+  }
+  .notice-body ol {
+    @apply list-decimal space-y-1 pl-6;
+  }
+  .notice-body li > ul,
+  .notice-body li > ol {
+    @apply mt-1;
+  }
+  .notice-body blockquote {
+    @apply border-l-4 border-sun bg-secondary/60 px-5 py-3 text-muted-foreground;
+  }
+  .notice-body code {
+    @apply rounded bg-secondary px-1.5 py-0.5 font-mono text-sm text-ink;
+  }
+  .notice-body pre {
+    @apply overflow-x-auto rounded-xl bg-ink p-4 text-white;
+  }
+  .notice-body pre code {
+    @apply bg-transparent p-0 text-inherit;
+  }
+  .notice-body hr {
+    @apply border-border;
+  }
+  .notice-body table {
+    @apply block w-full overflow-x-auto border-collapse text-left text-sm;
+  }
+  .notice-body th {
+    @apply border border-border bg-secondary px-3 py-2 font-bold text-ink;
+  }
+  .notice-body td {
+    @apply border border-border px-3 py-2 align-top;
+  }
   .notice-body a {
     @apply font-medium text-teal underline decoration-teal/50 underline-offset-4 transition hover:decoration-teal focus-visible:rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal;
     overflow-wrap: anywhere;
