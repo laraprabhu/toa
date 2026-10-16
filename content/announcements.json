@@ -12,7 +12,15 @@
     "status": "draft",
     "publishedAt": "2026-10-16T05:26:00.000Z",
     "location": "TOA Office",
-    "actionLabel": "Complete your KYC Now!"
+    "actionLabel": "Complete your KYC Now!",
+    "images": [
+      {
+        "src": "/media/announcement-45/ffb40987-fbf0-4402-93ac-052e9d790e8b.webp",
+        "alt": "Screenshot 2026 10 15 at 11.03.56 AM",
+        "width": 1108,
+        "height": 1170
+      }
+    ]
   },
   {
     "number": 44,
