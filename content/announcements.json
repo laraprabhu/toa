@@ -13,6 +13,8 @@
     "publishedAt": "2026-10-16T05:26:00.000Z",
     "location": "TOA Office",
     "actionLabel": "Complete your KYC Now!",
+    "previewVersion": "45-mvaj2saq",
+    "previewHeight": 800,
     "images": [
       {
         "src": "/media/announcement-45/ffb40987-fbf0-4402-93ac-052e9d790e8b.webp",
@@ -20,9 +22,7 @@
         "width": 1108,
         "height": 1170
       }
-    ],
-    "previewVersion": "45-mvaj2saq",
-    "previewHeight": 800
+    ]
   },
   {
     "number": 44,
