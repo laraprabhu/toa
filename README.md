@@ -15,7 +15,7 @@ A mobile-first communication hub for residents. The public site is a static GitH
 - **Attachments:** admins can attach up to five PDF, Word, Excel, PowerPoint, TXT or CSV files, limited to 10 MB each and 25 MB total per notice. The Worker validates and stores them under `public/attachments/announcement-N/`, and the notice displays download links after its complete message.
 - **Short resident links:** every published notice is available at `https://laraprabhu.github.io/toa/<announcement-number>/`.
 - **Publishing:** each content commit triggers the Pages workflow, so residents see the new version after the build finishes.
-- **ERL progress hub:** `https://laraprabhu.github.io/toa/erl-issues/` opens with animated verified completion, then provides Civil, Fund and Documents tabs. Civil uses a swipeable issue reel with sheet-based filters; Fund and Documents are reserved as static modules.
+- **ERL progress hub:** `https://laraprabhu.github.io/toa/erl-issues/` opens with animated verified completion, then provides Civil, Fund and Documents tabs. Civil is a full-screen swipeable issue reel with fixed progress controls and sheet-based filters; Fund and Documents are reserved as static modules.
 - **ERL issue source:** `content/erl-issues/issues.json`, with permanent numbering in `content/erl-issues/issue-sequence.json`.
 - **Separate issue admins:** `content/erl-issues/admins.json` controls only the ERL issue console at `/erl-issues/admin/`; noticeboard access remains independent.
 

@@ -12,6 +12,7 @@ import {
   IndianRupee,
   RotateCcw,
   Search,
+  ShieldCheck,
   SlidersHorizontal,
   Sparkles,
   X,
@@ -30,6 +31,7 @@ import {
   type ErlIssue,
   type IssueStatus,
 } from '@/lib/erl-issues';
+import { siteHref } from '@/lib/site-path';
 
 type AppTab = 'civil' | 'fund' | 'documents';
 type StatusFilter = IssueStatus | 'all';
@@ -99,7 +101,7 @@ function ReelCard({
   return (
     <article
       data-reel-index={position}
-      className="relative flex h-full min-h-full max-h-full snap-start snap-always flex-col overflow-hidden bg-[radial-gradient(circle_at_92%_4%,rgba(246,200,88,0.25),transparent_32%),linear-gradient(145deg,#0d2a35,#092129_55%,#071a20)] p-5 text-white sm:p-8 lg:p-10"
+      className="relative flex h-full min-h-full max-h-full snap-start snap-always flex-col overflow-hidden bg-[radial-gradient(circle_at_92%_4%,rgba(246,200,88,0.25),transparent_32%),linear-gradient(145deg,#0d2a35,#092129_55%,#071a20)] px-5 pb-5 pt-28 text-white sm:px-8 sm:pb-8 sm:pt-32 lg:px-10 lg:pb-10 lg:pt-36"
     >
       <div className="absolute -right-8 top-14 select-none font-heading text-[10rem] font-bold leading-none text-white/[0.035] sm:text-[15rem] lg:text-[18rem]">
         {issue.number}
@@ -476,8 +478,8 @@ function StaticTab({ tab }: { tab: Exclude<AppTab, 'civil'> }) {
     : ['Handover records', 'Drawings & certificates', 'Meeting files'];
 
   return (
-    <section className="mx-auto w-full max-w-5xl pb-28 pt-5 sm:pt-8">
-      <div className="overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-[0_22px_70px_rgb(16_45_54/8%)]">
+    <section className="h-[calc(100svh-5.5rem)] overflow-y-auto bg-[#f3f6f5] px-5 py-6 sm:px-8 sm:py-10">
+      <div className="mx-auto w-full max-w-5xl overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-[0_22px_70px_rgb(16_45_54/8%)]">
         <div className="bg-[radial-gradient(circle_at_90%_0%,rgba(246,200,88,0.24),transparent_34%),linear-gradient(145deg,#0d2a35,#071a20)] px-6 py-10 text-white sm:px-10 sm:py-14">
           <span className="grid size-14 place-items-center rounded-2xl bg-sun text-ink">
             <Icon size={27} aria-hidden="true" />
@@ -621,48 +623,56 @@ export function IssueTracker({ issues }: { issues: ErlIssue[] }) {
   return (
     <>
       {activeTab === 'civil' ? (
-        <section className="mx-auto w-full max-w-6xl pb-28 pt-4 sm:pt-7">
-          <div className="mb-4 flex items-end justify-between gap-4 px-1 sm:mb-5">
-            <div>
-              <p className="text-[11px] font-black uppercase tracking-[0.15em] text-teal sm:text-xs">
-                Civil delivery
-              </p>
-              <h1 className="mt-1 font-heading text-3xl font-semibold tracking-[-0.035em] text-ink sm:text-4xl">
-                Issue progress
-              </h1>
-              <p className="mt-1 text-xs text-slate-500 sm:text-sm">
-                {filteredIssues.length} of {issues.length} issues · {completion}
-                % verified complete
-              </p>
+        <section className="relative h-[calc(100svh-5.5rem)] w-full overflow-hidden bg-ink">
+          <div className="pointer-events-none absolute inset-x-0 top-0 z-30 bg-gradient-to-b from-[#071a20] via-[#071a20]/80 to-transparent px-3 pb-10 pt-3 sm:px-5 sm:pb-12 sm:pt-5">
+            <div className="pointer-events-auto mx-auto flex max-w-6xl items-center justify-between gap-3 rounded-2xl border border-white/10 bg-black/25 p-2.5 text-white shadow-[0_12px_40px_rgb(0_0_0/20%)] backdrop-blur-xl sm:p-3">
+              <div className="min-w-0 pl-1">
+                <p className="truncate text-[10px] font-black uppercase tracking-[0.16em] text-teal-200 sm:text-xs">
+                  TOA · ERL Civil Progress
+                </p>
+                <p className="mt-0.5 truncate text-xs font-semibold text-slate-300 sm:text-sm">
+                  {filteredIssues.length} of {issues.length} issues ·{' '}
+                  {completion}% verified
+                </p>
+              </div>
+              <div className="flex shrink-0 items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setShowFilters(true)}
+                  aria-label="Filter issues"
+                  className="relative inline-flex size-11 items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/10 text-sm font-black text-white transition hover:bg-white/15 sm:w-auto sm:px-4"
+                >
+                  <SlidersHorizontal size={18} aria-hidden="true" />
+                  <span className="hidden sm:inline">Filter</span>
+                  {activeFilterCount > 0 && (
+                    <span className="absolute -right-1 -top-1 grid size-5 place-items-center rounded-full bg-sun text-[10px] text-ink sm:static">
+                      {activeFilterCount}
+                    </span>
+                  )}
+                </button>
+                <a
+                  href={siteHref('/erl-issues/admin')}
+                  className="grid size-11 place-items-center rounded-xl border border-white/10 bg-white/10 text-white transition hover:bg-white/15"
+                  aria-label="Open issue administration"
+                >
+                  <ShieldCheck size={18} aria-hidden="true" />
+                </a>
+              </div>
             </div>
-            <button
-              type="button"
-              onClick={() => setShowFilters(true)}
-              aria-label="Filter issues"
-              className="relative inline-flex min-h-12 items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 text-sm font-black text-ink shadow-[0_8px_26px_rgb(16_45_54/8%)] transition hover:-translate-y-0.5 hover:border-slate-300"
-            >
-              <SlidersHorizontal size={18} aria-hidden="true" />
-              <span className="hidden sm:inline">Filter</span>
-              {activeFilterCount > 0 && (
-                <span className="grid size-5 place-items-center rounded-full bg-teal text-[10px] text-white">
-                  {activeFilterCount}
-                </span>
-              )}
-            </button>
           </div>
 
           {filteredIssues.length === 0 ? (
-            <div className="grid min-h-[480px] place-items-center rounded-[2rem] border border-dashed border-slate-300 bg-white p-8 text-center">
+            <div className="grid h-full place-items-center bg-ink p-8 pt-28 text-center text-white">
               <div>
-                <Search className="mx-auto text-slate-400" size={28} />
-                <h2 className="mt-3 font-heading text-2xl font-semibold text-ink">
+                <Search className="mx-auto text-slate-500" size={28} />
+                <h2 className="mt-3 font-heading text-2xl font-semibold">
                   No matching issues
                 </h2>
-                <p className="mt-2 text-sm text-slate-500">
+                <p className="mt-2 text-sm text-slate-400">
                   Adjust the filters to return to the issue feed.
                 </p>
                 <button
-                  className="mt-4 rounded-full bg-ink px-5 py-3 text-sm font-black text-white"
+                  className="mt-4 rounded-full bg-sun px-5 py-3 text-sm font-black text-ink"
                   type="button"
                   onClick={resetFilters}
                 >
@@ -671,10 +681,10 @@ export function IssueTracker({ issues }: { issues: ErlIssue[] }) {
               </div>
             </div>
           ) : (
-            <section className="relative overflow-hidden rounded-[2rem] border border-slate-800 bg-ink shadow-[0_26px_80px_rgb(7_26_32/24%)]">
+            <section className="relative h-full overflow-hidden bg-ink">
               <section
                 ref={reelRef}
-                className="h-[calc(100svh-14rem)] min-h-[500px] max-h-[760px] snap-y snap-mandatory overflow-y-auto overscroll-contain"
+                className="h-full snap-y snap-mandatory overflow-y-auto overscroll-contain"
                 aria-label="Swipeable civil issue reel"
               >
                 {filteredIssues.map((issue, index) => (
@@ -708,11 +718,6 @@ export function IssueTracker({ issues }: { issues: ErlIssue[] }) {
               </div>
             </section>
           )}
-
-          <p className="mx-auto mt-4 max-w-2xl text-center text-[11px] leading-5 text-slate-500 sm:text-xs">
-            Status is assessed conservatively for TOA. Done requires no pending
-            delivery, rework or verification gap.
-          </p>
         </section>
       ) : (
         <StaticTab tab={activeTab} />
