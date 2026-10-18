@@ -13,7 +13,6 @@ import {
   Search,
   ShieldCheck,
   SlidersHorizontal,
-  Sparkles,
   X,
 } from 'lucide-react';
 import {
@@ -313,69 +312,52 @@ function CompletionModal({
       aria-modal="true"
       aria-labelledby="completion-title"
     >
-      <section className="relative w-full max-w-md overflow-hidden rounded-[2rem] border border-white/15 bg-[radial-gradient(circle_at_100%_0%,rgba(246,200,88,0.2),transparent_38%),linear-gradient(160deg,#123641,#0a232b)] p-6 text-white shadow-[0_35px_100px_rgb(0_0_0/45%)] sm:p-8">
-        <div className="absolute -right-10 -top-12 size-44 rounded-full border border-white/[0.06]" />
-        <div className="relative">
-          <p className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.17em] text-teal-200">
-            <Sparkles size={14} aria-hidden="true" /> TOA · ERL Progress
-          </p>
+      <section className="w-full max-w-md rounded-[2rem] border border-white/15 bg-[#0b252d] p-6 text-white shadow-[0_35px_100px_rgb(0_0_0/45%)] sm:p-8">
+        <div>
           <h1
             id="completion-title"
-            className="mt-4 max-w-sm font-heading text-3xl font-semibold leading-tight tracking-[-0.035em] sm:text-4xl"
+            className="font-heading text-3xl font-semibold leading-tight tracking-[-0.035em] sm:text-4xl"
           >
-            Verified civil work completion
+            ERL Progress Tracker For Owners
           </h1>
 
-          <div className="my-8 flex items-center justify-center">
-            <div
-              className="grid size-48 place-items-center rounded-full p-[10px] shadow-[0_0_70px_rgb(246_200_88/13%)] sm:size-56"
-              style={{
-                background: `conic-gradient(#f6c858 ${displayedCompletion * 3.6}deg, rgba(255,255,255,0.09) 0deg)`,
-              }}
-            >
-              <div className="grid size-full place-items-center rounded-full border border-white/10 bg-[#0b252d] text-center shadow-inner">
-                <div>
-                  <strong
-                    className="block font-heading text-7xl leading-none tracking-[-0.06em] text-white sm:text-8xl"
-                    aria-live="polite"
-                  >
-                    {displayedCompletion}%
+          <div className="mt-8 space-y-6">
+            {[
+              {
+                label: 'Civil works',
+                value: `${completed} of ${total}`,
+                progress: displayedCompletion,
+              },
+              { label: 'Fund transfer', value: '0 of 5.2 Crs', progress: 0 },
+              { label: 'Documents', value: 'No docs', progress: 0 },
+            ].map((row, index) => (
+              <div key={row.label}>
+                <div className="flex items-center justify-between gap-4 text-sm sm:text-base">
+                  <span className="font-bold text-white">{row.label}</span>
+                  <strong className="text-sm text-slate-300">
+                    {row.value}
                   </strong>
-                  <span className="mt-2 block text-xs font-bold uppercase tracking-[0.15em] text-slate-400">
-                    Complete
-                  </span>
+                </div>
+                <div
+                  className="modal-progress-track mt-3 h-2.5 overflow-hidden rounded-full bg-white/10"
+                  style={{ animationDelay: `${index * 140}ms` }}
+                >
+                  <div
+                    className="h-full rounded-full bg-sun transition-[width] duration-1000 ease-out"
+                    style={{ width: `${row.progress}%` }}
+                  />
                 </div>
               </div>
-            </div>
+            ))}
           </div>
-
-          <div className="rounded-2xl border border-white/10 bg-white/[0.06] p-4">
-            <div className="flex items-center justify-between gap-4 text-sm">
-              <span className="text-slate-300">Confirmed as complete</span>
-              <strong className="text-white">
-                {completed} of {total} issues
-              </strong>
-            </div>
-            <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-white/10">
-              <div
-                className="h-full rounded-full bg-sun transition-[width] duration-1000 ease-out"
-                style={{ width: `${displayedCompletion}%` }}
-              />
-            </div>
-          </div>
-
-          <p className="mt-4 text-xs leading-5 text-slate-400">
-            TOA marks work Done only when the available record shows no pending
-            delivery, rework or verification gap.
-          </p>
 
           <button
             ref={closeButtonRef}
             type="button"
             onClick={onClose}
-            className="mt-6 inline-flex min-h-13 w-full items-center justify-center gap-2 rounded-2xl bg-sun px-5 text-sm font-black text-ink shadow-[0_12px_30px_rgb(246_200_88/18%)] transition hover:bg-[#ffd872]"
+            className="mt-8 inline-flex min-h-13 w-full items-center justify-center rounded-2xl bg-sun px-5 text-sm font-black text-ink transition hover:bg-[#ffd872] focus:outline-none focus-visible:outline-none"
           >
-            <X size={17} aria-hidden="true" /> Close and view tracker
+            Close and View tracker
           </button>
         </div>
       </section>

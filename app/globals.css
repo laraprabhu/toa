@@ -683,6 +683,23 @@
   }
 }
 
+@keyframes toa-progress-reveal {
+  from {
+    transform: scaleX(0);
+    opacity: 0.45;
+  }
+
+  to {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+}
+
+.modal-progress-track {
+  transform-origin: left center;
+  animation: toa-progress-reveal 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
 @keyframes toa-swipe-demo {
   0% {
     transform: translateY(2.5rem) scale(0.96);
