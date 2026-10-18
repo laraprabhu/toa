@@ -2,7 +2,6 @@
 
 import {
   Calculator,
-  CalendarDays,
   CheckCircle2,
   CircleDashed,
   Clock3,
@@ -16,7 +15,6 @@ import {
   ShieldCheck,
   SlidersHorizontal,
   Sparkles,
-  TrendingUp,
   X,
 } from 'lucide-react';
 import {
@@ -567,13 +565,9 @@ function LiveFundTotal() {
 
   const elapsedMs = Math.max(0, now - fundBaselineTimestamp);
   const elapsedSeconds = Math.floor(elapsedMs / 1_000);
-  const accruedInterest =
+  const liveTotal =
+    fundBaselineTotal +
     (elapsedMs / (24 * 60 * 60 * 1_000)) * fundDailyInterest;
-  const liveTotal = fundBaselineTotal + accruedInterest;
-  const days = Math.floor(elapsedSeconds / 86_400);
-  const hours = Math.floor((elapsedSeconds % 86_400) / 3_600);
-  const minutes = Math.floor((elapsedSeconds % 3_600) / 60);
-  const seconds = elapsedSeconds % 60;
 
   return (
     <section className="relative overflow-hidden rounded-[2rem] border border-teal-300/20 bg-[#0b2a32] p-5 shadow-[0_0_48px_rgb(45_212_191/14%)] sm:p-8">
@@ -588,7 +582,7 @@ function LiveFundTotal() {
               <span className="absolute inline-flex size-full animate-ping rounded-full bg-emerald-300 opacity-70" />
               <span className="relative inline-flex size-2 rounded-full bg-emerald-300" />
             </span>
-            Accruing now
+            Updating now
           </span>
         </div>
 
@@ -601,38 +595,47 @@ function LiveFundTotal() {
           </span>
         </output>
 
-        <p className="mt-4 flex items-center gap-2 text-xs font-bold text-slate-300 sm:text-sm">
-          <TrendingUp size={16} className="text-sun" aria-hidden="true" />+
-          {formatRupees(fundDailyInterest, 2)} per day · approximately{' '}
-          {formatRupees(fundDailyInterest / 86_400, 4)} per second
-        </p>
-
-        <div className="mt-7 grid gap-3 sm:grid-cols-2">
+        <div className="mt-7">
           <div className="rounded-2xl border border-white/10 bg-black/15 p-4">
             <span className="text-[10px] font-black uppercase tracking-[0.13em] text-slate-400">
-              Revised dues on 17 Oct 2026
+              Revised dues as on today
             </span>
             <strong className="mt-2 block text-lg text-white sm:text-xl">
               {formatRupees(fundBaselineTotal)}
             </strong>
           </div>
-          <div className="rounded-2xl border border-sun/20 bg-sun/[0.07] p-4">
-            <span className="text-[10px] font-black uppercase tracking-[0.13em] text-sun">
-              Interest added since then
-            </span>
-            <strong className="mt-2 block text-lg text-white sm:text-xl">
-              +{formatRupees(accruedInterest, 2)}
-            </strong>
-          </div>
         </div>
-
-        <p className="mt-4 flex items-center gap-2 text-[11px] text-slate-400 sm:text-xs">
-          <Clock3 size={14} aria-hidden="true" />
-          {days}d {hours}h {minutes}m {seconds}s since 17 October 2026, 12:00 AM
-          IST
-        </p>
       </div>
     </section>
+  );
+}
+
+function TodayStamp() {
+  const [today, setToday] = useState('');
+
+  useEffect(() => {
+    const update = () =>
+      setToday(
+        new Intl.DateTimeFormat('en-IN', {
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric',
+          timeZone: 'Asia/Kolkata',
+        }).format(new Date()),
+      );
+    const initialUpdate = window.setTimeout(update, 0);
+    const interval = window.setInterval(update, 60_000);
+    return () => {
+      window.clearTimeout(initialUpdate);
+      window.clearInterval(interval);
+    };
+  }, []);
+
+  return (
+    <span>
+      Updated today
+      {today ? ` · ${today}` : ''}
+    </span>
   );
 }
 
@@ -650,7 +653,7 @@ function FundTab() {
                 TOA · Financial claim
               </p>
               <p className="mt-1 text-xs text-slate-400">
-                Promoter: ERL · Updated 17 October 2026
+                Promoter: ERL · <TodayStamp />
               </p>
             </div>
           </div>
@@ -658,8 +661,8 @@ function FundTab() {
             Revised dues payable by the promoter
           </h1>
           <p className="mt-4 max-w-2xl text-sm leading-6 text-slate-300 sm:text-base">
-            The stated revised dues, with further interest continuously added
-            from the published calculation date.
+            A clear view of the revised amount payable by ERL and its supporting
+            breakup.
           </p>
         </header>
 
@@ -710,7 +713,7 @@ function FundTab() {
 
           <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-sun/25 bg-sun/[0.08] p-4 sm:p-5">
             <span className="text-xs font-black uppercase tracking-[0.13em] text-sun">
-              Total revised dues
+              Total revised dues as on today
             </span>
             <strong className="font-heading text-2xl font-semibold text-white sm:text-3xl">
               {formatRupees(fundBaselineTotal)}
@@ -718,72 +721,44 @@ function FundTab() {
           </div>
         </section>
 
-        <section className="mt-6 grid gap-4 lg:grid-cols-[1.15fr_0.85fr]">
-          <div className="rounded-[2rem] border border-white/10 bg-white/[0.045] p-5 sm:p-8">
-            <div className="flex items-center gap-3">
-              <span className="grid size-10 place-items-center rounded-xl bg-teal-300/10 text-teal-200">
-                <Calculator size={20} aria-hidden="true" />
-              </span>
-              <div>
-                <p className="text-[10px] font-black uppercase tracking-[0.15em] text-teal-200">
-                  Interest breakup
-                </p>
-                <h2 className="mt-1 font-heading text-2xl font-semibold">
-                  Accumulated interest
-                </h2>
-              </div>
+        <section className="mt-6 rounded-[2rem] border border-white/10 bg-white/[0.045] p-5 sm:p-8">
+          <div className="flex items-center gap-3">
+            <span className="grid size-10 place-items-center rounded-xl bg-teal-300/10 text-teal-200">
+              <Calculator size={20} aria-hidden="true" />
+            </span>
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-[0.15em] text-teal-200">
+                Interest breakup
+              </p>
+              <h2 className="mt-1 font-heading text-2xl font-semibold">
+                Accumulated interest
+              </h2>
             </div>
-
-            <dl className="mt-6 divide-y divide-white/10">
-              <div className="flex items-center justify-between gap-4 py-3">
-                <dt className="text-sm text-slate-300">
-                  Up to 5 September 2022
-                </dt>
-                <dd className="shrink-0 font-bold text-white">
-                  {formatRupees(7_423_975)}
-                </dd>
-              </div>
-              <div className="flex items-center justify-between gap-4 py-3">
-                <dt className="text-sm text-slate-300">
-                  Additional, up to 17 October 2026
-                </dt>
-                <dd className="shrink-0 font-bold text-white">
-                  {formatRupees(14_132_161)}
-                </dd>
-              </div>
-              <div className="flex items-center justify-between gap-4 py-3">
-                <dt className="text-sm font-bold text-teal-100">
-                  Total accumulated interest
-                </dt>
-                <dd className="shrink-0 font-black text-sun">
-                  {formatRupees(21_556_136)}
-                </dd>
-              </div>
-            </dl>
           </div>
 
-          <div className="rounded-[2rem] border border-white/10 bg-[#0b252d] p-5 sm:p-8">
-            <p className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.15em] text-teal-200">
-              <CalendarDays size={15} aria-hidden="true" /> Calculation
-            </p>
-            <p className="mt-5 break-words font-heading text-xl font-semibold leading-relaxed text-white sm:text-2xl">
-              ₹2,76,77,112 × 12.4% × 1,503 days ÷ 365
-            </p>
-            <div className="my-4 h-px bg-white/10" />
-            <p className="font-heading text-3xl font-semibold text-sun">
-              = ₹1,41,32,161
-            </p>
-            <p className="mt-5 text-xs leading-5 text-slate-400">
-              The live total adds the stated further interest of ₹9,402.64 per
-              day to the revised dues from 17 October 2026.
-            </p>
-          </div>
+          <dl className="mt-6 divide-y divide-white/10">
+            <div className="flex items-center justify-between gap-4 py-3">
+              <dt className="text-sm text-slate-300">Up to 5 September 2022</dt>
+              <dd className="shrink-0 font-bold text-white">
+                {formatRupees(7_423_975)}
+              </dd>
+            </div>
+            <div className="flex items-center justify-between gap-4 py-3">
+              <dt className="text-sm text-slate-300">Additional interest</dt>
+              <dd className="shrink-0 font-bold text-white">
+                {formatRupees(14_132_161)}
+              </dd>
+            </div>
+            <div className="flex items-center justify-between gap-4 py-3">
+              <dt className="text-sm font-bold text-teal-100">
+                Total accumulated interest
+              </dt>
+              <dd className="shrink-0 font-black text-sun">
+                {formatRupees(21_556_136)}
+              </dd>
+            </div>
+          </dl>
         </section>
-
-        <aside className="mt-6 rounded-2xl border border-amber-300/20 bg-amber-300/[0.08] p-4 text-sm leading-6 text-amber-50 sm:p-5">
-          <strong className="font-black">GST/ITC refund is additional.</strong>{' '}
-          It has not been included because the amount is yet to be determined.
-        </aside>
       </div>
     </section>
   );
