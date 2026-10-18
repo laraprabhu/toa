@@ -16,8 +16,8 @@ A mobile-first communication hub for residents. The public site is a static GitH
 - **Short resident links:** every published notice is available at `https://laraprabhu.github.io/toa/<announcement-number>/`.
 - **Publishing:** each content commit triggers the Pages workflow, so residents see the new version after the build finishes.
 - **ERL progress hub:** `https://laraprabhu.github.io/toa/erl-issues/` opens with animated verified completion, then provides Civil, Fund and Documents tabs. Civil is a full-screen swipeable issue reel with fixed progress controls and sheet-based filters; Fund and Documents are reserved as static modules.
-- **ERL issue source:** `content/erl-issues/issues.json`, with permanent numbering in `content/erl-issues/issue-sequence.json`.
-- **Separate issue admins:** `content/erl-issues/admins.json` controls only the ERL issue console at `/erl-issues/admin/`; noticeboard access remains independent.
+- **ERL issue source:** the shared read-only Google Sheet is imported into `content/erl-issues/issues.json` every day at 2:00 AM IST by `.github/workflows/sync-erl-issues.yml`.
+- **Separate issue admins:** `content/erl-issues/admins.json` controls only the ERL synchronization console at `/erl-issues/admin/`; noticeboard access remains independent. Authenticated issue admins can request an immediate Sheet sync.
 
 GitHub Pages cannot securely hold a GitHub write credential or verify Google authorization by itself. The Worker is therefore required for secure editing, but it stores no announcement or resident data.
 
@@ -112,7 +112,9 @@ Issue status is intentionally conservative from TOA's perspective:
 - **In Progress:** work is actively underway, or completion is claimed but still needs verification or closure.
 - **Not Done:** only a promise, acknowledgement, discussion or future action is recorded.
 
-The ERL issue admin console can add, edit and delete issues. Every save is committed to `content/erl-issues/issues.json`, so Git history provides a simple audit trail. Supported statuses are limited to `Done`, `In Progress` and `Not Done`.
+Google Sheets is the issue tracker’s source of truth. The scheduled workflow downloads the public read-only CSV export, validates all required columns and commits `content/erl-issues/issues.json` only when data changes. The same importer powers the admin-only **Sync now** button through the Worker. Website-based issue creation, editing and deletion are disabled.
+
+If an ERL response has not changed, the importer preserves its reviewed status. A changed response is re-evaluated conservatively: future commitments remain `Not Done`, partial or percentage completion remains `In Progress`, and an unqualified completion statement can become `Done`. An optional Sheet column named `Status` can explicitly provide `Done`, `In Progress` or `Not Done`.
 
 ## Security notes
 

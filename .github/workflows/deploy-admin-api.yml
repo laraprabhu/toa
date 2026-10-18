@@ -1,6 +1,12 @@
 name: Deploy admin API
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - 'worker/**'
+      - 'lib/erl-issues-sync.mjs'
+      - '.github/workflows/deploy-admin-api.yml'
   workflow_dispatch:
 
 permissions:

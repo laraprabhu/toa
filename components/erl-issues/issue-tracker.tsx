@@ -956,7 +956,7 @@ export function IssueTracker({ issues }: { issues: ErlIssue[] }) {
                 <a
                   href={siteHref('/erl-issues/admin')}
                   className="grid size-11 place-items-center rounded-xl border border-white/10 bg-white/10 text-white transition hover:bg-white/15 sm:size-12"
-                  aria-label="Open issue administration"
+                  aria-label="Open issue synchronization"
                 >
                   <ShieldCheck size={19} aria-hidden="true" />
                 </a>

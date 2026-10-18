@@ -2,25 +2,14 @@
 
 import {
   ArrowLeft,
-  CirclePlus,
-  LoaderCircle,
+  CheckCircle2,
+  ExternalLink,
   LogOut,
-  Save,
-  Search,
-  ShieldAlert,
+  RefreshCw,
   ShieldCheck,
-  Trash2,
+  Sheet,
 } from 'lucide-react';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import {
-  issueStatusLabels,
-  type ErlIssue,
-  type IssueParty,
-  type IssueStatus,
-} from '@/lib/erl-issues';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { siteHref } from '@/lib/site-path';
 
 type GoogleCredentialResponse = { credential: string };
@@ -30,7 +19,7 @@ type GoogleAccounts = {
       client_id: string;
       callback(response: GoogleCredentialResponse): void;
     }): void;
-    renderButton(element: HTMLElement, options: Record<string, unknown>): void;
+    renderButton(element: HTMLElement, config: Record<string, unknown>): void;
     disableAutoSelect(): void;
   };
 };
@@ -41,142 +30,24 @@ declare global {
   }
 }
 
-type AuthState =
-  | 'loading'
-  | 'signed-out'
-  | 'authorized'
-  | 'denied'
-  | 'misconfigured';
-
-type ApiResult = {
-  issues: ErlIssue[];
-  admin?: { email: string; name?: string };
+type Admin = { email: string; name?: string };
+type IssueSummary = {
+  issues: unknown[];
+  admin: Admin;
+};
+type SyncSummary = {
+  issues: unknown[];
+  admin: Admin;
+  changed: boolean;
+  changedCount: number;
+  importedCount: number;
+  removedCount: number;
+  syncedOn: string;
 };
 
-type FormState = Omit<ErlIssue, 'startDate' | 'etaDate'> & {
-  startDate: string;
-  etaDate: string;
-};
-
-const AUTH_SESSION_STORAGE_KEY = 'toa-erl-issues-admin-session-v1';
-const defaultCategories = [
-  'Administrative / Documentation',
-  'Amenities Delivery',
-  'Civil & Plumbing (High Priority)',
-  'Civil & Structural',
-  'Documentation / Compliance',
-  'External Fixtures',
-  'Financial / Legal',
-  'Legal / Documentation',
-  'Operational / Communication',
-];
-
-function today() {
-  return new Date().toISOString().slice(0, 10);
-}
-
-function emptyForm(): FormState {
-  return {
-    number: 0,
-    id: '',
-    title: '',
-    tower: 'ABCE',
-    category: 'Civil & Structural',
-    raisedBy: 'TOA',
-    owner: 'ERL',
-    status: 'not-done',
-    startDate: '',
-    etaDate: '',
-    erlComment: '',
-    momComment: '',
-    updatedOn: today(),
-  };
-}
-
-function issueToForm(issue: ErlIssue): FormState {
-  return {
-    ...issue,
-    startDate: issue.startDate ?? '',
-    etaDate: issue.etaDate ?? '',
-  };
-}
-
-function formToIssue(form: FormState): ErlIssue {
-  return {
-    ...form,
-    id: form.id || crypto.randomUUID(),
-    startDate: form.startDate || null,
-    etaDate: form.etaDate || null,
-    updatedOn: today(),
-  };
-}
-
-function loadStoredCredential() {
-  if (typeof window === 'undefined') return '';
-  try {
-    return window.sessionStorage.getItem(AUTH_SESSION_STORAGE_KEY) ?? '';
-  } catch {
-    return '';
-  }
-}
-
-function storeCredential(token: string) {
-  try {
-    window.sessionStorage.setItem(AUTH_SESSION_STORAGE_KEY, token);
-  } catch {
-    // The active Google session continues until the page is refreshed.
-  }
-}
-
-function clearStoredCredential() {
-  try {
-    window.sessionStorage.removeItem(AUTH_SESSION_STORAGE_KEY);
-  } catch {
-    // There is no persisted credential to remove.
-  }
-}
-
-function Field({
-  label,
-  children,
-  hint,
-}: {
-  label: string;
-  children: React.ReactNode;
-  hint?: string;
-}) {
-  return (
-    <label className="grid gap-1.5 text-sm font-bold text-slate-800">
-      {label}
-      {children}
-      {hint && (
-        <span className="text-xs font-normal leading-5 text-slate-500">
-          {hint}
-        </span>
-      )}
-    </label>
-  );
-}
-
-function Select({
-  value,
-  onChange,
-  children,
-}: {
-  value: string;
-  onChange: (value: string) => void;
-  children: React.ReactNode;
-}) {
-  return (
-    <select
-      className="min-h-11 w-full rounded-xl border border-input bg-white px-3 text-sm font-semibold text-slate-900 outline-none transition focus:border-teal focus:ring-3 focus:ring-teal/20"
-      value={value}
-      onChange={(event) => onChange(event.target.value)}
-    >
-      {children}
-    </select>
-  );
-}
+const authSessionStorageKey = 'toa-erl-issues-admin-session-v2';
+const googleSheetUrl =
+  'https://docs.google.com/spreadsheets/d/13DREMQUny0iHV71Lc8GbUjSmGQR3LixC/edit?usp=sharing';
 
 export function IssueAdminConsole({
   apiUrl,
@@ -185,100 +56,88 @@ export function IssueAdminConsole({
   apiUrl: string;
   googleClientId: string;
 }) {
-  const [authState, setAuthState] = useState<AuthState>(() =>
-    !apiUrl || !googleClientId ? 'misconfigured' : 'loading',
-  );
-  const [credential, setCredential] = useState('');
-  const [admin, setAdmin] = useState<{ email: string; name?: string } | null>(
-    null,
-  );
-  const [issues, setIssues] = useState<ErlIssue[]>([]);
-  const [form, setForm] = useState<FormState>(emptyForm);
-  const [query, setQuery] = useState('');
-  const [busy, setBusy] = useState(false);
-  const [dirty, setDirty] = useState(false);
-  const [notice, setNotice] = useState('');
+  const configured = Boolean(apiUrl && googleClientId);
+  const [token, setToken] = useState('');
+  const [admin, setAdmin] = useState<Admin | null>(null);
+  const [issueCount, setIssueCount] = useState<number | null>(null);
+  const [loadingSession, setLoadingSession] = useState(configured);
+  const [syncing, setSyncing] = useState(false);
+  const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
   const googleButtonRef = useRef<HTMLDivElement>(null);
-  const selectedId = form.id;
 
-  const apiRequest = useCallback(
-    async (path: string, token: string, init?: RequestInit) => {
-      const headers = new Headers(init?.headers);
-      headers.set('Authorization', `Bearer ${token}`);
-      headers.set('Content-Type', 'application/json');
-      const response = await fetch(`${apiUrl.replace(/\/$/, '')}${path}`, {
-        ...init,
-        headers,
-      });
-      const payload = (await response.json().catch(() => ({
-        error: 'The service returned an unreadable response.',
-      }))) as ApiResult & { error?: string };
-      if (!response.ok) {
-        throw new Error(payload.error || 'The request could not be completed.');
+  const authorize = useCallback(
+    async (credential: string) => {
+      setError('');
+      try {
+        const result = await apiRequest<IssueSummary>(
+          apiUrl,
+          '/api/erl-issues',
+          credential,
+        );
+        setToken(credential);
+        setAdmin(result.admin);
+        setIssueCount(result.issues.length);
+        window.sessionStorage.setItem(authSessionStorageKey, credential);
+      } catch (requestError) {
+        window.sessionStorage.removeItem(authSessionStorageKey);
+        setToken('');
+        setAdmin(null);
+        setIssueCount(null);
+        setError(
+          requestError instanceof Error
+            ? requestError.message
+            : 'Unable to authorize this account.',
+        );
+      } finally {
+        setLoadingSession(false);
       }
-      return payload as ApiResult;
     },
     [apiUrl],
   );
 
-  const authorize = useCallback(
-    async (token: string) => {
-      try {
-        setAuthState('loading');
-        const result = await apiRequest('/api/erl-issues', token);
-        setCredential(token);
-        storeCredential(token);
-        setAdmin(result.admin ?? null);
-        setIssues(result.issues);
-        setAuthState('authorized');
-        setNotice('');
-      } catch (error) {
-        setCredential('');
-        clearStoredCredential();
-        setAuthState('denied');
-        setNotice(error instanceof Error ? error.message : 'Access denied.');
+  useEffect(() => {
+    if (!configured) return;
+    const timer = window.setTimeout(() => {
+      const stored = window.sessionStorage.getItem(authSessionStorageKey);
+      if (stored) {
+        void authorize(stored);
+      } else {
+        setLoadingSession(false);
       }
-    },
-    [apiRequest],
-  );
-
-  useEffect(() => {
-    if (!apiUrl || !googleClientId) return;
-    const storedCredential = loadStoredCredential();
-    if (!storedCredential) return;
-    const timer = window.setTimeout(() => void authorize(storedCredential), 0);
+    }, 0);
     return () => window.clearTimeout(timer);
-  }, [apiUrl, authorize, googleClientId]);
+  }, [authorize, configured]);
 
   useEffect(() => {
-    if (!apiUrl || !googleClientId) return;
+    if (!configured || token) return;
     let cancelled = false;
 
     const renderGoogleButton = () => {
       if (cancelled || !window.google || !googleButtonRef.current) return;
       window.google.accounts.id.initialize({
         client_id: googleClientId,
-        callback: ({ credential: token }) => void authorize(token),
+        callback: ({ credential }) => void authorize(credential),
       });
       googleButtonRef.current.replaceChildren();
       window.google.accounts.id.renderButton(googleButtonRef.current, {
+        type: 'standard',
         theme: 'outline',
         size: 'large',
         shape: 'pill',
         text: 'signin_with',
         width: 280,
       });
-      if (!loadStoredCredential()) setAuthState('signed-out');
     };
 
     if (window.google) {
       renderGoogleButton();
     } else {
-      const existing = document.querySelector<HTMLScriptElement>(
+      let script = document.querySelector<HTMLScriptElement>(
         'script[data-google-identity]',
       );
-      const script = existing ?? document.createElement('script');
-      if (!existing) {
+      if (!script) {
+        script = document.createElement('script');
         script.src = 'https://accounts.google.com/gsi/client';
         script.async = true;
         script.dataset.googleIdentity = 'true';
@@ -290,427 +149,212 @@ export function IssueAdminConsole({
     return () => {
       cancelled = true;
     };
-  }, [apiUrl, authorize, googleClientId]);
+  }, [authorize, configured, googleClientId, token]);
 
-  const sortedIssues = useMemo(
-    () => [...issues].sort((a, b) => a.number - b.number),
-    [issues],
-  );
-  const visibleIssues = useMemo(() => {
-    const needle = query.trim().toLowerCase();
-    if (!needle) return sortedIssues;
-    return sortedIssues.filter((issue) =>
-      [
-        String(issue.number),
-        issue.title,
-        issue.category,
-        issue.tower,
-        issue.status,
-      ].some((value) => value.toLowerCase().includes(needle)),
-    );
-  }, [query, sortedIssues]);
-  const categories = useMemo(
-    () =>
-      [
-        ...new Set([
-          ...defaultCategories,
-          ...issues.map((issue) => issue.category),
-        ]),
-      ].sort(),
-    [issues],
-  );
-
-  function updateField<K extends keyof FormState>(key: K, value: FormState[K]) {
-    setDirty(true);
-    setForm((current) => ({ ...current, [key]: value }));
-  }
-
-  function selectIssue(issue: ErlIssue) {
-    if (
-      dirty &&
-      !window.confirm('Discard unsaved changes and open another issue?')
-    )
-      return;
-    setForm(issueToForm(issue));
-    setDirty(false);
-    setNotice('');
-  }
-
-  function createIssue() {
-    if (
-      dirty &&
-      !window.confirm('Discard unsaved changes and create a new issue?')
-    )
-      return;
-    setForm(emptyForm());
-    setDirty(false);
-    setNotice('');
-  }
-
-  async function saveIssue() {
-    if (!form.title.trim() || !form.category.trim() || !form.tower.trim()) {
-      setNotice('Issue, category and tower/block are required.');
-      return;
-    }
-    setBusy(true);
-    setNotice('');
+  async function syncNow() {
+    if (!token || syncing) return;
+    setSyncing(true);
+    setError('');
+    setMessage('');
     try {
-      const issue = formToIssue(form);
-      const path = selectedId
-        ? `/api/erl-issues/${encodeURIComponent(selectedId)}`
-        : '/api/erl-issues';
-      const result = await apiRequest(path, credential, {
-        method: selectedId ? 'PUT' : 'POST',
-        body: JSON.stringify(issue),
-      });
-      const saved = result.issues.find((item) => item.id === issue.id);
-      if (!saved)
-        throw new Error('The issue was saved but could not be reloaded.');
-      setIssues(result.issues);
-      setForm(issueToForm(saved));
-      setDirty(false);
-      setNotice(`Issue #${saved.number} saved to GitHub.`);
-    } catch (error) {
-      setNotice(
-        error instanceof Error ? error.message : 'Unable to save this issue.',
+      const result = await apiRequest<SyncSummary>(
+        apiUrl,
+        '/api/erl-issues/sync',
+        token,
+        { method: 'POST' },
+      );
+      setAdmin(result.admin);
+      setIssueCount(result.importedCount);
+      setMessage(
+        result.changed
+          ? `Synced ${result.importedCount} issues. ${result.changedCount} changed and ${result.removedCount} removed.`
+          : `The tracker is already up to date. ${result.importedCount} issues checked.`,
+      );
+    } catch (requestError) {
+      setError(
+        requestError instanceof Error
+          ? requestError.message
+          : 'Unable to synchronize the tracker.',
       );
     } finally {
-      setBusy(false);
-    }
-  }
-
-  async function deleteIssue() {
-    if (!selectedId) return;
-    if (
-      !window.confirm(
-        `Delete issue #${form.number}? This creates a GitHub commit.`,
-      )
-    )
-      return;
-    setBusy(true);
-    setNotice('');
-    try {
-      const result = await apiRequest(
-        `/api/erl-issues/${encodeURIComponent(selectedId)}`,
-        credential,
-        { method: 'DELETE' },
-      );
-      setIssues(result.issues);
-      setForm(emptyForm());
-      setDirty(false);
-      setNotice('Issue deleted from GitHub.');
-    } catch (error) {
-      setNotice(
-        error instanceof Error ? error.message : 'Unable to delete this issue.',
-      );
-    } finally {
-      setBusy(false);
+      setSyncing(false);
     }
   }
 
   function signOut() {
+    window.sessionStorage.removeItem(authSessionStorageKey);
     window.google?.accounts.id.disableAutoSelect();
-    clearStoredCredential();
-    setCredential('');
+    setToken('');
     setAdmin(null);
-    setIssues([]);
-    setForm(emptyForm());
-    setDirty(false);
-    setAuthState('signed-out');
-    window.setTimeout(() => {
-      if (!window.google || !googleButtonRef.current) return;
-      window.google.accounts.id.renderButton(googleButtonRef.current, {
-        theme: 'outline',
-        size: 'large',
-        shape: 'pill',
-        text: 'signin_with',
-        width: 280,
-      });
-    }, 0);
-  }
-
-  if (authState !== 'authorized') {
-    return (
-      <main className="grid min-h-screen place-items-center bg-[#f3f6f5] p-5">
-        <section className="w-full max-w-md rounded-3xl border border-slate-200 bg-white p-7 text-center shadow-[0_24px_70px_rgb(16_45_54/12%)] sm:p-10">
-          <span className="mx-auto grid size-14 place-items-center rounded-2xl bg-ink text-white">
-            {authState === 'denied' || authState === 'misconfigured' ? (
-              <ShieldAlert size={26} />
-            ) : (
-              <ShieldCheck size={26} />
-            )}
-          </span>
-          <h1 className="mt-5 font-heading text-3xl font-semibold text-ink">
-            ERL tracker administration
-          </h1>
-          <p className="mt-3 text-sm leading-6 text-slate-600">
-            Sign in with a Google account listed in the separate ERL tracker
-            administrator file.
-          </p>
-          {authState === 'loading' && (
-            <LoaderCircle className="mx-auto mt-6 animate-spin text-teal" />
-          )}
-          {authState === 'misconfigured' && (
-            <p className="mt-5 rounded-xl bg-rose-50 p-3 text-sm font-semibold text-rose-800">
-              Google authentication or the admin API is not configured.
-            </p>
-          )}
-          {notice && (
-            <p className="mt-5 rounded-xl bg-rose-50 p-3 text-sm font-semibold text-rose-800">
-              {notice}
-            </p>
-          )}
-          <div
-            ref={googleButtonRef}
-            className="mt-6 flex min-h-11 justify-center"
-          />
-          <a
-            href={siteHref('/erl-issues')}
-            className="mt-6 inline-flex items-center gap-2 text-sm font-bold text-teal"
-          >
-            <ArrowLeft size={16} /> Back to public tracker
-          </a>
-        </section>
-      </main>
-    );
+    setIssueCount(null);
+    setMessage('');
+    setError('');
   }
 
   return (
-    <main className="min-h-screen bg-[#f3f6f5]">
-      <header className="border-b border-white/10 bg-ink text-white">
-        <div className="page-shell flex min-h-20 flex-wrap items-center justify-between gap-4 py-4">
-          <div>
-            <a
-              href={siteHref('/erl-issues')}
-              className="inline-flex items-center gap-2 text-sm font-bold text-slate-300 hover:text-white"
-            >
-              <ArrowLeft size={16} /> Public tracker
-            </a>
-            <h1 className="mt-1 font-heading text-xl font-semibold">
-              ERL issue administration
-            </h1>
-          </div>
-          <div className="flex items-center gap-3 text-sm">
-            <span className="hidden text-slate-300 sm:inline">
-              {admin?.name || admin?.email}
-            </span>
-            <Button
-              type="button"
-              variant="outline"
-              className="border-white/20 bg-white/5 text-white hover:bg-white/10 hover:text-white"
-              onClick={signOut}
-            >
-              <LogOut /> Sign out
-            </Button>
-          </div>
-        </div>
-      </header>
+    <main className="min-h-svh bg-[#071a20] px-4 py-5 text-white sm:px-6 sm:py-8">
+      <div className="mx-auto max-w-2xl">
+        <a
+          href={siteHref('/erl-issues')}
+          className="inline-flex items-center gap-2 text-sm font-black text-teal-200 transition hover:text-white"
+        >
+          <ArrowLeft size={17} aria-hidden="true" />
+          Back to tracker
+        </a>
 
-      <div className="page-shell grid gap-5 py-6 lg:grid-cols-[340px_minmax(0,1fr)]">
-        <aside className="self-start rounded-3xl border border-slate-200 bg-white p-4 shadow-[0_12px_38px_rgb(16_45_54/6%)] lg:sticky lg:top-5">
-          <div className="flex items-center justify-between gap-3">
-            <div>
-              <p className="text-xs font-black uppercase tracking-[0.12em] text-teal">
-                Issues
-              </p>
-              <p className="mt-1 text-sm text-slate-500">
-                {issues.length} records
-              </p>
-            </div>
-            <Button type="button" onClick={createIssue}>
-              <CirclePlus /> New
-            </Button>
-          </div>
-          <label className="mt-4 flex min-h-11 items-center gap-2 rounded-xl border border-slate-200 px-3 text-slate-500 focus-within:border-teal">
-            <Search size={16} />
-            <input
-              className="w-full bg-transparent text-sm text-slate-900 outline-none"
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              placeholder="Search issues"
-            />
-          </label>
-          <div className="mt-3 max-h-[calc(100vh-15rem)] space-y-2 overflow-y-auto pr-1">
-            {visibleIssues.map((issue) => (
-              <button
-                type="button"
-                key={issue.id}
-                onClick={() => selectIssue(issue)}
-                className={`w-full rounded-2xl border p-3 text-left transition ${
-                  selectedId === issue.id
-                    ? 'border-teal bg-teal/5 shadow-sm'
-                    : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50'
-                }`}
-              >
-                <div className="flex items-center justify-between gap-3">
-                  <strong className="text-xs text-slate-500">
-                    #{issue.number}
-                  </strong>
-                  <span className="text-[11px] font-black uppercase tracking-[0.08em] text-slate-500">
-                    {issueStatusLabels[issue.status]}
-                  </span>
-                </div>
-                <p className="mt-1 line-clamp-2 text-sm font-semibold leading-5 text-slate-900">
-                  {issue.title}
+        <section className="mt-6 overflow-hidden rounded-[2rem] border border-white/10 bg-[#0b252d] shadow-[0_0_46px_rgb(45_212_191/16%)]">
+          <header className="border-b border-white/10 px-6 py-6 sm:px-8">
+            <div className="flex items-start gap-4">
+              <span className="grid size-12 shrink-0 place-items-center rounded-2xl bg-teal-300/10 text-teal-200 ring-1 ring-inset ring-teal-300/20">
+                <ShieldCheck size={24} aria-hidden="true" />
+              </span>
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-[0.16em] text-teal-200">
+                  Admin only
                 </p>
-              </button>
-            ))}
-          </div>
-        </aside>
-
-        <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-[0_12px_38px_rgb(16_45_54/6%)] sm:p-7">
-          <div className="flex flex-wrap items-start justify-between gap-4 border-b border-slate-200 pb-5">
-            <div>
-              <p className="text-xs font-black uppercase tracking-[0.12em] text-teal">
-                {selectedId ? `Issue #${form.number}` : 'New issue'}
-              </p>
-              <h2 className="mt-1 font-heading text-3xl font-semibold text-ink">
-                {selectedId ? 'Edit issue' : 'Add issue'}
-              </h2>
-            </div>
-            <div className="flex gap-2">
-              {selectedId && (
-                <Button
-                  type="button"
-                  variant="destructive"
-                  onClick={() => void deleteIssue()}
-                  disabled={busy}
-                >
-                  <Trash2 /> Delete
-                </Button>
-              )}
-              <Button
-                type="button"
-                onClick={() => void saveIssue()}
-                disabled={busy}
-              >
-                {busy ? <LoaderCircle className="animate-spin" /> : <Save />}
-                Save
-              </Button>
-            </div>
-          </div>
-
-          {notice && (
-            <p
-              className={`mt-5 rounded-xl p-3 text-sm font-semibold ${notice.includes('saved') || notice.includes('deleted') ? 'bg-emerald-50 text-emerald-800' : 'bg-amber-50 text-amber-900'}`}
-            >
-              {notice}
-            </p>
-          )}
-
-          <div className="mt-6 grid gap-5">
-            <Field label="Issue">
-              <Textarea
-                className="min-h-28 text-base"
-                value={form.title}
-                onChange={(event) => updateField('title', event.target.value)}
-              />
-            </Field>
-
-            <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
-              <Field
-                label="Status"
-                hint="Use Done only when the record supports completed delivery with no remaining gap."
-              >
-                <Select
-                  value={form.status}
-                  onChange={(value) =>
-                    updateField('status', value as IssueStatus)
-                  }
-                >
-                  <option value="not-done">Not Done</option>
-                  <option value="in-progress">In Progress</option>
-                  <option value="done">Done</option>
-                </Select>
-              </Field>
-              <Field label="Tower / block">
-                <Input
-                  className="h-11 rounded-xl"
-                  value={form.tower}
-                  onChange={(event) => updateField('tower', event.target.value)}
-                />
-              </Field>
-              <Field label="Category">
-                <Select
-                  value={form.category}
-                  onChange={(value) => updateField('category', value)}
-                >
-                  {categories.map((value) => (
-                    <option value={value} key={value}>
-                      {value}
-                    </option>
-                  ))}
-                </Select>
-              </Field>
-              <Field label="Raised by">
-                <Select
-                  value={form.raisedBy}
-                  onChange={(value) =>
-                    updateField('raisedBy', value as IssueParty)
-                  }
-                >
-                  <option value="TOA">TOA</option>
-                  <option value="ERL">ERL</option>
-                </Select>
-              </Field>
-              <Field label="Owner">
-                <Select
-                  value={form.owner}
-                  onChange={(value) =>
-                    updateField('owner', value as IssueParty)
-                  }
-                >
-                  <option value="ERL">ERL</option>
-                  <option value="TOA">TOA</option>
-                </Select>
-              </Field>
-              <div className="grid grid-cols-2 gap-3">
-                <Field label="Start date">
-                  <Input
-                    className="h-11 rounded-xl"
-                    type="date"
-                    value={form.startDate}
-                    onChange={(event) =>
-                      updateField('startDate', event.target.value)
-                    }
-                  />
-                </Field>
-                <Field label="ETA date">
-                  <Input
-                    className="h-11 rounded-xl"
-                    type="date"
-                    value={form.etaDate}
-                    onChange={(event) =>
-                      updateField('etaDate', event.target.value)
-                    }
-                  />
-                </Field>
+                <h1 className="mt-1 font-heading text-3xl font-semibold tracking-[-0.035em] sm:text-4xl">
+                  Issue synchronization
+                </h1>
+                <p className="mt-2 text-sm leading-6 text-slate-300">
+                  Google Sheets is the source of truth. The tracker syncs every
+                  morning at 2:00 AM IST.
+                </p>
               </div>
             </div>
+          </header>
 
-            <div className="grid gap-5 xl:grid-cols-2">
-              <Field label="ERL response">
-                <Textarea
-                  className="min-h-36"
-                  value={form.erlComment}
-                  onChange={(event) =>
-                    updateField('erlComment', event.target.value)
-                  }
-                />
-              </Field>
-              <Field label="TOA–ERL meeting record">
-                <Textarea
-                  className="min-h-36"
-                  value={form.momComment}
-                  onChange={(event) =>
-                    updateField('momComment', event.target.value)
-                  }
-                />
-              </Field>
-            </div>
+          <div className="space-y-5 px-6 py-6 sm:px-8 sm:py-8">
+            {!configured ? (
+              <Notice tone="error">
+                Google authentication or the admin API is not configured.
+              </Notice>
+            ) : loadingSession ? (
+              <div className="flex items-center gap-3 text-sm font-bold text-slate-300">
+                <RefreshCw className="animate-spin" size={18} />
+                Checking your admin session…
+              </div>
+            ) : !token || !admin ? (
+              <div>
+                <h2 className="text-lg font-black">Admin sign-in</h2>
+                <p className="mt-1 text-sm leading-6 text-slate-400">
+                  Sign in with a Google account listed in the ERL tracker admin
+                  list.
+                </p>
+                <div ref={googleButtonRef} className="mt-5 min-h-11" />
+              </div>
+            ) : (
+              <>
+                <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/10 bg-white/[0.05] p-4">
+                  <div>
+                    <p className="text-xs font-black uppercase tracking-[0.12em] text-teal-200">
+                      Signed in
+                    </p>
+                    <p className="mt-1 text-sm font-bold text-white">
+                      {admin.name || admin.email}
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={signOut}
+                    className="inline-flex min-h-10 items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-4 text-xs font-black text-slate-200 transition hover:bg-white/10"
+                  >
+                    <LogOut size={15} aria-hidden="true" />
+                    Sign out
+                  </button>
+                </div>
+
+                <div className="rounded-[1.5rem] border border-white/10 bg-black/15 p-5">
+                  <div className="flex items-center gap-3">
+                    <Sheet className="text-sun" size={22} aria-hidden="true" />
+                    <div>
+                      <h2 className="font-black">Google Sheets tracker</h2>
+                      <p className="mt-0.5 text-xs text-slate-400">
+                        {issueCount === null
+                          ? 'Checking records'
+                          : `${issueCount} issue records loaded`}
+                      </p>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => void syncNow()}
+                    disabled={syncing}
+                    className="mt-5 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl bg-sun px-5 text-sm font-black text-ink transition hover:bg-[#ffd872] disabled:cursor-wait disabled:opacity-70"
+                  >
+                    <RefreshCw
+                      className={syncing ? 'animate-spin' : undefined}
+                      size={18}
+                      aria-hidden="true"
+                    />
+                    {syncing ? 'Syncing…' : 'Sync now'}
+                  </button>
+
+                  <a
+                    href={googleSheetUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="mt-3 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-5 text-sm font-black text-white transition hover:bg-white/10"
+                  >
+                    Open Google Sheet
+                    <ExternalLink size={16} aria-hidden="true" />
+                  </a>
+                </div>
+              </>
+            )}
+
+            {message && (
+              <Notice tone="success">
+                <CheckCircle2 className="shrink-0" size={18} />
+                {message}
+              </Notice>
+            )}
+            {error && <Notice tone="error">{error}</Notice>}
           </div>
         </section>
       </div>
     </main>
   );
+}
+
+function Notice({
+  children,
+  tone,
+}: {
+  children: React.ReactNode;
+  tone: 'success' | 'error';
+}) {
+  return (
+    <div
+      className={`flex items-start gap-2 rounded-2xl border px-4 py-3 text-sm font-bold leading-6 ${
+        tone === 'success'
+          ? 'border-emerald-300/20 bg-emerald-300/10 text-emerald-100'
+          : 'border-rose-300/20 bg-rose-300/10 text-rose-100'
+      }`}
+      role={tone === 'error' ? 'alert' : 'status'}
+    >
+      {children}
+    </div>
+  );
+}
+
+async function apiRequest<T>(
+  apiUrl: string,
+  path: string,
+  token: string,
+  init: RequestInit = {},
+) {
+  const headers = new Headers(init.headers);
+  headers.set('Authorization', `Bearer ${token}`);
+  const response = await fetch(`${apiUrl.replace(/\/$/, '')}${path}`, {
+    ...init,
+    headers,
+  });
+  const payload = (await response.json().catch(() => ({}))) as {
+    error?: string;
+  };
+  if (!response.ok) {
+    throw new Error(payload.error || 'The admin service rejected the request.');
+  }
+  return payload as T;
 }

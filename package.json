@@ -12,6 +12,7 @@
     "start": "vinext start",
     "worker:dev": "wrangler dev worker/src/index.ts --config worker/wrangler.toml",
     "worker:deploy": "wrangler deploy worker/src/index.ts --config worker/wrangler.toml",
+    "issues:sync": "node scripts/sync-erl-issues.mjs",
     "admin:hash": "node scripts/hash-admin-email.mjs",
     "check": "tsc --noEmit && npm run build:pages",
     "lint": "oxlint",
