@@ -15,7 +15,7 @@ A mobile-first communication hub for residents. The public site is a static GitH
 - **Attachments:** admins can attach up to five PDF, Word, Excel, PowerPoint, TXT or CSV files, limited to 10 MB each and 25 MB total per notice. The Worker validates and stores them under `public/attachments/announcement-N/`, and the notice displays download links after its complete message.
 - **Short resident links:** every published notice is available at `https://laraprabhu.github.io/toa/<announcement-number>/`.
 - **Publishing:** each content commit triggers the Pages workflow, so residents see the new version after the build finishes.
-- **ERL issue tracker:** `https://laraprabhu.github.io/toa/erl-issues/` provides searchable list and swipeable reel views for owners.
+- **ERL progress hub:** `https://laraprabhu.github.io/toa/erl-issues/` opens with animated verified completion, then provides Civil, Fund and Documents tabs. Civil uses a swipeable issue reel with sheet-based filters; Fund and Documents are reserved as static modules.
 - **ERL issue source:** `content/erl-issues/issues.json`, with permanent numbering in `content/erl-issues/issue-sequence.json`.
 - **Separate issue admins:** `content/erl-issues/admins.json` controls only the ERL issue console at `/erl-issues/admin/`; noticeboard access remains independent.
 
@@ -104,7 +104,7 @@ The admin console can create, edit and delete announcements, generate a WhatsApp
 
 ## ERL issue tracker
 
-The public tracker supports free-text search and filtering by status, category, tower/block and owner. It offers a compact list as well as a full-height vertical reel that can be swiped, scrolled or controlled with its previous/next buttons.
+The public progress hub supports mobile and desktop layouts. Its Civil tab opens directly into a full-height vertical reel that can be swiped, scrolled or controlled with previous/next buttons. A filter sheet provides free-text search and filtering by status, category, tower/block and owner.
 
 Issue status is intentionally conservative from TOA's perspective:
 

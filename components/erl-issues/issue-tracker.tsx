@@ -6,10 +6,15 @@ import {
   CheckCircle2,
   CircleDashed,
   Clock3,
-  LayoutList,
+  Construction,
+  FileText,
+  FolderOpen,
+  IndianRupee,
   RotateCcw,
   Search,
-  Smartphone,
+  SlidersHorizontal,
+  Sparkles,
+  X,
 } from 'lucide-react';
 import {
   useCallback,
@@ -26,20 +31,24 @@ import {
   type IssueStatus,
 } from '@/lib/erl-issues';
 
-type ViewMode = 'list' | 'reel';
+type AppTab = 'civil' | 'fund' | 'documents';
 type StatusFilter = IssueStatus | 'all';
-
-const statusStyles: Record<IssueStatus, string> = {
-  done: 'border-emerald-300 bg-emerald-100 text-emerald-900',
-  'in-progress': 'border-amber-300 bg-amber-100 text-amber-950',
-  'not-done': 'border-rose-300 bg-rose-100 text-rose-950',
-};
 
 const reelStatusStyles: Record<IssueStatus, string> = {
   done: 'border-emerald-300/40 bg-emerald-300/15 text-emerald-100',
   'in-progress': 'border-amber-300/40 bg-amber-300/15 text-amber-100',
   'not-done': 'border-rose-300/40 bg-rose-300/15 text-rose-100',
 };
+
+const appTabs: Array<{
+  id: AppTab;
+  label: string;
+  icon: typeof Construction;
+}> = [
+  { id: 'civil', label: 'Civil', icon: Construction },
+  { id: 'fund', label: 'Fund', icon: IndianRupee },
+  { id: 'documents', label: 'Documents', icon: FolderOpen },
+];
 
 function StatusIcon({
   status,
@@ -54,140 +63,24 @@ function StatusIcon({
   return <CircleDashed size={size} aria-hidden="true" />;
 }
 
-function StatusBadge({
-  status,
-  reel = false,
-}: {
-  status: IssueStatus;
-  reel?: boolean;
-}) {
+function StatusBadge({ status }: { status: IssueStatus }) {
   return (
     <span
-      className={`inline-flex w-fit items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-bold uppercase tracking-[0.08em] ${
-        reel ? reelStatusStyles[status] : statusStyles[status]
-      }`}
+      className={`inline-flex w-fit items-center gap-1.5 rounded-full border px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.09em] ${reelStatusStyles[status]}`}
     >
-      <StatusIcon status={status} />
+      <StatusIcon status={status} size={14} />
       {issueStatusLabels[status]}
     </span>
   );
 }
 
-function SelectFilter({
-  label,
-  value,
-  onChange,
-  options,
-}: {
-  label: string;
-  value: string;
-  onChange: (value: string) => void;
-  options: Array<{ value: string; label: string }>;
-}) {
+function CommentBlock({ title, text }: { title: string; text: string }) {
   return (
-    <label className="grid min-w-[160px] gap-1 text-xs font-bold uppercase tracking-[0.08em] text-slate-500">
-      {label}
-      <select
-        className="min-h-11 rounded-xl border border-slate-200 bg-white px-3 text-sm font-semibold normal-case tracking-normal text-slate-800 shadow-sm outline-none transition focus:border-teal"
-        value={value}
-        onChange={(event) => onChange(event.target.value)}
-      >
-        {options.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </select>
-    </label>
-  );
-}
-
-function IssueListCard({ issue }: { issue: ErlIssue }) {
-  return (
-    <article className="rounded-3xl border border-slate-200 bg-white p-5 shadow-[0_12px_36px_rgb(15_45_54/6%)] sm:p-7">
-      <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
-        <div className="min-w-0 flex-1">
-          <div className="mb-4 flex flex-wrap items-center gap-2">
-            <span className="inline-flex min-h-8 items-center rounded-full bg-slate-950 px-3 text-xs font-black tracking-[0.1em] text-white">
-              ISSUE {String(issue.number).padStart(2, '0')}
-            </span>
-            <StatusBadge status={issue.status} />
-            <span className="rounded-full bg-slate-100 px-3 py-1.5 text-xs font-bold text-slate-700">
-              {formatTower(issue.tower)}
-            </span>
-          </div>
-          <h2 className="max-w-4xl font-heading text-2xl font-semibold leading-tight tracking-[-0.025em] text-ink sm:text-3xl">
-            {issue.title}
-          </h2>
-          <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-sm text-slate-600">
-            <span>
-              <strong className="text-slate-900">Category:</strong>{' '}
-              {issue.category}
-            </span>
-            <span>
-              <strong className="text-slate-900">Owner:</strong> {issue.owner}
-            </span>
-            <span>
-              <strong className="text-slate-900">Raised by:</strong>{' '}
-              {issue.raisedBy}
-            </span>
-          </div>
-        </div>
-      </div>
-
-      <details className="group mt-6 rounded-2xl border border-slate-200 bg-slate-50">
-        <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 px-4 text-sm font-bold text-slate-800">
-          View ERL response and meeting record
-          <span className="text-xs font-semibold text-teal group-open:hidden">
-            Open
-          </span>
-          <span className="hidden text-xs font-semibold text-teal group-open:inline">
-            Close
-          </span>
-        </summary>
-        <div className="grid gap-4 border-t border-slate-200 p-4 lg:grid-cols-2">
-          <CommentBlock title="ERL response" text={issue.erlComment} />
-          <CommentBlock
-            title="TOA–ERL MoM · 29 Aug 2026"
-            text={issue.momComment}
-          />
-        </div>
-      </details>
-    </article>
-  );
-}
-
-function CommentBlock({
-  title,
-  text,
-  dark = false,
-}: {
-  title: string;
-  text: string;
-  dark?: boolean;
-}) {
-  return (
-    <section
-      className={`rounded-2xl border p-4 ${
-        dark
-          ? 'border-white/10 bg-white/[0.06] text-white'
-          : 'border-slate-200 bg-white text-slate-800'
-      }`}
-    >
-      <h3
-        className={`text-xs font-black uppercase tracking-[0.11em] ${
-          dark ? 'text-teal-200' : 'text-teal'
-        }`}
-      >
+    <section className="rounded-2xl border border-white/10 bg-white/[0.06] p-3.5 text-white sm:p-4">
+      <h3 className="text-[10px] font-black uppercase tracking-[0.13em] text-teal-200 sm:text-xs">
         {title}
       </h3>
-      <p
-        className={`mt-2 text-sm leading-6 ${
-          dark
-            ? 'line-clamp-4 text-slate-200 sm:line-clamp-5 lg:line-clamp-none'
-            : 'text-slate-700'
-        }`}
-      >
+      <p className="mt-2 line-clamp-3 text-xs leading-5 text-slate-200 sm:line-clamp-4 sm:text-sm sm:leading-6 lg:line-clamp-5">
         {text || 'No comment recorded.'}
       </p>
     </section>
@@ -206,64 +99,430 @@ function ReelCard({
   return (
     <article
       data-reel-index={position}
-      className="relative flex h-full min-h-full max-h-full snap-start snap-always flex-col overflow-hidden bg-[radial-gradient(circle_at_90%_0%,rgba(246,200,88,0.22),transparent_34%),linear-gradient(145deg,#0d2a35,#092129_55%,#071a20)] p-5 text-white sm:p-10"
+      className="relative flex h-full min-h-full max-h-full snap-start snap-always flex-col overflow-hidden bg-[radial-gradient(circle_at_92%_4%,rgba(246,200,88,0.25),transparent_32%),linear-gradient(145deg,#0d2a35,#092129_55%,#071a20)] p-5 text-white sm:p-8 lg:p-10"
     >
-      <div className="absolute -right-10 top-16 select-none font-heading text-[11rem] font-bold leading-none text-white/[0.035] sm:text-[17rem]">
+      <div className="absolute -right-8 top-14 select-none font-heading text-[10rem] font-bold leading-none text-white/[0.035] sm:text-[15rem] lg:text-[18rem]">
         {issue.number}
       </div>
 
-      <div className="relative z-10 flex items-center justify-between gap-4">
-        <span className="text-xs font-black uppercase tracking-[0.16em] text-slate-300">
+      <div className="relative z-10 flex items-center justify-between gap-3">
+        <span className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-300 sm:text-xs">
           Issue {String(issue.number).padStart(2, '0')} · {position + 1} of{' '}
           {total}
         </span>
-        <StatusBadge status={issue.status} reel />
+        <StatusBadge status={issue.status} />
       </div>
 
-      <div className="relative z-10 my-auto py-4 sm:py-8">
-        <div className="flex flex-wrap gap-2 text-xs font-bold">
+      <div className="relative z-10 my-auto py-4 sm:py-6">
+        <div className="flex flex-wrap gap-2 text-[11px] font-bold sm:text-xs">
           <span className="rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-slate-100">
             {formatTower(issue.tower)}
           </span>
-          <span className="rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-slate-100">
+          <span className="max-w-full truncate rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-slate-100">
             {issue.category}
           </span>
         </div>
-        <h2 className="mt-5 max-w-4xl font-heading text-2xl font-semibold leading-[1.08] tracking-[-0.035em] sm:mt-6 sm:text-5xl">
+
+        <h2 className="mt-4 line-clamp-5 max-w-5xl font-heading text-[1.65rem] font-semibold leading-[1.08] tracking-[-0.035em] sm:mt-6 sm:line-clamp-4 sm:text-4xl lg:text-5xl">
           {issue.title}
         </h2>
 
-        <div className="mt-7 grid gap-3 sm:grid-cols-2">
-          <CommentBlock title="ERL response" text={issue.erlComment} dark />
+        <div className="mt-5 grid gap-2.5 sm:mt-7 sm:grid-cols-2 sm:gap-3">
+          <CommentBlock title="ERL response" text={issue.erlComment} />
           <CommentBlock
             title="TOA–ERL MoM · 29 Aug 2026"
             text={issue.momComment}
-            dark
           />
         </div>
       </div>
 
-      <div className="relative z-10 flex flex-wrap items-center justify-between gap-4 border-t border-white/10 pt-5 text-xs font-semibold text-slate-300">
+      <div className="relative z-10 flex items-center justify-between gap-3 border-t border-white/10 pt-4 text-[11px] font-semibold text-slate-300 sm:pt-5 sm:text-xs">
         <span>
           Owner: {issue.owner} · Raised by: {issue.raisedBy}
         </span>
-        <span className="inline-flex items-center gap-2">
-          <ArrowDown size={14} aria-hidden="true" /> Swipe for next issue
+        <span className="hidden items-center gap-2 sm:inline-flex">
+          <ArrowDown size={14} aria-hidden="true" /> Scroll for next
         </span>
       </div>
     </article>
   );
 }
 
+function SelectFilter({
+  label,
+  value,
+  onChange,
+  options,
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  options: Array<{ value: string; label: string }>;
+}) {
+  return (
+    <label className="grid gap-1.5 text-xs font-black uppercase tracking-[0.09em] text-slate-500">
+      {label}
+      <select
+        className="min-h-12 w-full rounded-2xl border border-slate-200 bg-slate-50 px-3 text-sm font-semibold normal-case tracking-normal text-slate-900 outline-none transition focus:border-teal focus:bg-white"
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+      >
+        {options.map((option) => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </select>
+    </label>
+  );
+}
+
+function CompletionModal({
+  completion,
+  completed,
+  total,
+  onClose,
+}: {
+  completion: number;
+  completed: number;
+  total: number;
+  onClose: () => void;
+}) {
+  const [displayedCompletion, setDisplayedCompletion] = useState(0);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    const reduceMotion = window.matchMedia(
+      '(prefers-reduced-motion: reduce)',
+    ).matches;
+    if (reduceMotion) {
+      const timer = window.setTimeout(
+        () => setDisplayedCompletion(completion),
+        0,
+      );
+      return () => window.clearTimeout(timer);
+    }
+
+    const duration = 1400;
+    const start = performance.now();
+    let frame = 0;
+    const animate = (time: number) => {
+      const progress = Math.min((time - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setDisplayedCompletion(Math.round(completion * eased));
+      if (progress < 1) frame = window.requestAnimationFrame(animate);
+    };
+    frame = window.requestAnimationFrame(animate);
+    return () => window.cancelAnimationFrame(frame);
+  }, [completion]);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => closeButtonRef.current?.focus(), 80);
+    return () => window.clearTimeout(timer);
+  }, []);
+
+  return (
+    <dialog
+      open
+      className="fixed inset-0 z-[100] m-0 grid h-full max-h-none w-full max-w-none place-items-center overflow-y-auto border-0 bg-[#071a20]/88 p-4 backdrop-blur-xl sm:p-8"
+      aria-modal="true"
+      aria-labelledby="completion-title"
+    >
+      <section className="relative w-full max-w-md overflow-hidden rounded-[2rem] border border-white/15 bg-[radial-gradient(circle_at_100%_0%,rgba(246,200,88,0.2),transparent_38%),linear-gradient(160deg,#123641,#0a232b)] p-6 text-white shadow-[0_35px_100px_rgb(0_0_0/45%)] sm:p-8">
+        <div className="absolute -right-10 -top-12 size-44 rounded-full border border-white/[0.06]" />
+        <div className="relative">
+          <p className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[0.17em] text-teal-200">
+            <Sparkles size={14} aria-hidden="true" /> TOA · ERL Progress
+          </p>
+          <h1
+            id="completion-title"
+            className="mt-4 max-w-sm font-heading text-3xl font-semibold leading-tight tracking-[-0.035em] sm:text-4xl"
+          >
+            Verified civil work completion
+          </h1>
+
+          <div className="my-8 flex items-center justify-center">
+            <div
+              className="grid size-48 place-items-center rounded-full p-[10px] shadow-[0_0_70px_rgb(246_200_88/13%)] sm:size-56"
+              style={{
+                background: `conic-gradient(#f6c858 ${displayedCompletion * 3.6}deg, rgba(255,255,255,0.09) 0deg)`,
+              }}
+            >
+              <div className="grid size-full place-items-center rounded-full border border-white/10 bg-[#0b252d] text-center shadow-inner">
+                <div>
+                  <strong
+                    className="block font-heading text-7xl leading-none tracking-[-0.06em] text-white sm:text-8xl"
+                    aria-live="polite"
+                  >
+                    {displayedCompletion}%
+                  </strong>
+                  <span className="mt-2 block text-xs font-bold uppercase tracking-[0.15em] text-slate-400">
+                    Complete
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-white/10 bg-white/[0.06] p-4">
+            <div className="flex items-center justify-between gap-4 text-sm">
+              <span className="text-slate-300">Confirmed as complete</span>
+              <strong className="text-white">
+                {completed} of {total} issues
+              </strong>
+            </div>
+            <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-white/10">
+              <div
+                className="h-full rounded-full bg-sun transition-[width] duration-1000 ease-out"
+                style={{ width: `${displayedCompletion}%` }}
+              />
+            </div>
+          </div>
+
+          <p className="mt-4 text-xs leading-5 text-slate-400">
+            TOA marks work Done only when the available record shows no pending
+            delivery, rework or verification gap.
+          </p>
+
+          <button
+            ref={closeButtonRef}
+            type="button"
+            onClick={onClose}
+            className="mt-6 inline-flex min-h-13 w-full items-center justify-center gap-2 rounded-2xl bg-sun px-5 text-sm font-black text-ink shadow-[0_12px_30px_rgb(246_200_88/18%)] transition hover:bg-[#ffd872]"
+          >
+            <X size={17} aria-hidden="true" /> Close and view tracker
+          </button>
+        </div>
+      </section>
+    </dialog>
+  );
+}
+
+function FilterSheet({
+  open,
+  query,
+  status,
+  category,
+  tower,
+  owner,
+  categories,
+  towers,
+  resultCount,
+  totalCount,
+  onQueryChange,
+  onStatusChange,
+  onCategoryChange,
+  onTowerChange,
+  onOwnerChange,
+  onReset,
+  onClose,
+}: {
+  open: boolean;
+  query: string;
+  status: StatusFilter;
+  category: string;
+  tower: string;
+  owner: string;
+  categories: string[];
+  towers: string[];
+  resultCount: number;
+  totalCount: number;
+  onQueryChange: (value: string) => void;
+  onStatusChange: (value: StatusFilter) => void;
+  onCategoryChange: (value: string) => void;
+  onTowerChange: (value: string) => void;
+  onOwnerChange: (value: string) => void;
+  onReset: () => void;
+  onClose: () => void;
+}) {
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const timer = window.setTimeout(() => closeButtonRef.current?.focus(), 80);
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => {
+      window.clearTimeout(timer);
+      window.removeEventListener('keydown', onKeyDown);
+    };
+  }, [onClose, open]);
+
+  if (!open) return null;
+
+  return (
+    <dialog
+      open
+      className="fixed inset-0 z-[80] m-0 flex h-full max-h-none w-full max-w-none items-end justify-center border-0 bg-transparent p-0"
+      aria-modal="true"
+      aria-labelledby="filter-title"
+    >
+      <button
+        type="button"
+        className="absolute inset-0 bg-ink/55 backdrop-blur-sm"
+        onClick={onClose}
+        aria-label="Close filters"
+      />
+      <section className="relative max-h-[88svh] w-full overflow-y-auto rounded-t-[2rem] border border-b-0 border-slate-200 bg-white px-5 pb-7 pt-3 shadow-[0_-24px_80px_rgb(7_26_32/22%)] sm:mb-5 sm:max-w-2xl sm:rounded-[2rem] sm:border sm:px-7">
+        <div className="mx-auto mb-3 h-1.5 w-12 rounded-full bg-slate-200 sm:hidden" />
+        <div className="flex items-center justify-between gap-4">
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.13em] text-teal">
+              Civil tracker
+            </p>
+            <h2
+              id="filter-title"
+              className="mt-1 font-heading text-3xl font-semibold text-ink"
+            >
+              Filter issues
+            </h2>
+          </div>
+          <button
+            ref={closeButtonRef}
+            type="button"
+            onClick={onClose}
+            className="grid size-11 place-items-center rounded-full bg-slate-100 text-slate-700 transition hover:bg-slate-200"
+            aria-label="Close filters"
+          >
+            <X size={20} />
+          </button>
+        </div>
+
+        <label className="mt-5 flex min-h-12 items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 text-slate-500 focus-within:border-teal focus-within:bg-white">
+          <Search size={18} aria-hidden="true" />
+          <span className="sr-only">Search issues</span>
+          <input
+            className="w-full bg-transparent text-sm font-semibold text-slate-900 outline-none placeholder:font-normal placeholder:text-slate-400"
+            value={query}
+            onChange={(event) => onQueryChange(event.target.value)}
+            placeholder="Search issue number, text or response"
+          />
+        </label>
+
+        <div className="mt-5 grid gap-4 sm:grid-cols-2">
+          <SelectFilter
+            label="Status"
+            value={status}
+            onChange={(value) => onStatusChange(value as StatusFilter)}
+            options={[
+              { value: 'all', label: 'All statuses' },
+              { value: 'done', label: 'Done' },
+              { value: 'in-progress', label: 'In Progress' },
+              { value: 'not-done', label: 'Not Done' },
+            ]}
+          />
+          <SelectFilter
+            label="Category"
+            value={category}
+            onChange={onCategoryChange}
+            options={[
+              { value: 'all', label: 'All categories' },
+              ...categories.map((value) => ({ value, label: value })),
+            ]}
+          />
+          <SelectFilter
+            label="Tower / block"
+            value={tower}
+            onChange={onTowerChange}
+            options={[
+              { value: 'all', label: 'All blocks' },
+              ...towers.map((value) => ({ value, label: formatTower(value) })),
+            ]}
+          />
+          <SelectFilter
+            label="Owner"
+            value={owner}
+            onChange={onOwnerChange}
+            options={[
+              { value: 'all', label: 'All owners' },
+              { value: 'ERL', label: 'ERL' },
+              { value: 'TOA', label: 'TOA' },
+            ]}
+          />
+        </div>
+
+        <div className="mt-6 flex gap-3">
+          <button
+            type="button"
+            onClick={onReset}
+            className="inline-flex min-h-12 flex-1 items-center justify-center gap-2 rounded-2xl border border-slate-200 px-4 text-sm font-black text-slate-700 transition hover:bg-slate-50"
+          >
+            <RotateCcw size={16} /> Reset
+          </button>
+          <button
+            type="button"
+            onClick={onClose}
+            className="min-h-12 flex-[1.4] rounded-2xl bg-ink px-4 text-sm font-black text-white transition hover:bg-[#173b46]"
+          >
+            Show {resultCount} of {totalCount}
+          </button>
+        </div>
+      </section>
+    </dialog>
+  );
+}
+
+function StaticTab({ tab }: { tab: Exclude<AppTab, 'civil'> }) {
+  const isFund = tab === 'fund';
+  const Icon = isFund ? IndianRupee : FileText;
+  const title = isFund ? 'Fund tracking' : 'Project documents';
+  const description = isFund
+    ? 'The financial view will bring collections, expenditure and approval records together.'
+    : 'The documents view will organise handover records, drawings, certificates and meeting files.';
+  const placeholders = isFund
+    ? ['Collection overview', 'Expenditure ledger', 'Approvals']
+    : ['Handover records', 'Drawings & certificates', 'Meeting files'];
+
+  return (
+    <section className="mx-auto w-full max-w-5xl pb-28 pt-5 sm:pt-8">
+      <div className="overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-[0_22px_70px_rgb(16_45_54/8%)]">
+        <div className="bg-[radial-gradient(circle_at_90%_0%,rgba(246,200,88,0.24),transparent_34%),linear-gradient(145deg,#0d2a35,#071a20)] px-6 py-10 text-white sm:px-10 sm:py-14">
+          <span className="grid size-14 place-items-center rounded-2xl bg-sun text-ink">
+            <Icon size={27} aria-hidden="true" />
+          </span>
+          <p className="mt-7 text-xs font-black uppercase tracking-[0.17em] text-teal-200">
+            Next module
+          </p>
+          <h1 className="mt-2 font-heading text-4xl font-semibold tracking-[-0.035em] sm:text-6xl">
+            {title}
+          </h1>
+          <p className="mt-4 max-w-2xl text-sm leading-6 text-slate-300 sm:text-base">
+            {description}
+          </p>
+        </div>
+
+        <div className="grid gap-3 p-5 sm:grid-cols-3 sm:p-8">
+          {placeholders.map((label) => (
+            <div
+              key={label}
+              className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-5"
+            >
+              <div className="h-2 w-10 rounded-full bg-slate-200" />
+              <h2 className="mt-5 font-heading text-xl font-semibold text-ink">
+                {label}
+              </h2>
+              <p className="mt-2 text-sm text-slate-500">Coming soon</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export function IssueTracker({ issues }: { issues: ErlIssue[] }) {
-  const [view, setView] = useState<ViewMode>('list');
+  const [activeTab, setActiveTab] = useState<AppTab>('civil');
+  const [showCompletion, setShowCompletion] = useState(true);
+  const [showFilters, setShowFilters] = useState(false);
   const [query, setQuery] = useState('');
   const [status, setStatus] = useState<StatusFilter>('all');
   const [category, setCategory] = useState('all');
   const [tower, setTower] = useState('all');
   const [owner, setOwner] = useState('all');
   const [activeReel, setActiveReel] = useState(0);
-  const reelRef = useRef<HTMLDivElement>(null);
+  const reelRef = useRef<HTMLElement>(null);
 
   const categories = useMemo(
     () => [...new Set(issues.map((issue) => issue.category))].sort(),
@@ -273,6 +532,13 @@ export function IssueTracker({ issues }: { issues: ErlIssue[] }) {
     () => [...new Set(issues.map((issue) => issue.tower))].sort(),
     [issues],
   );
+  const completed = useMemo(
+    () => issues.filter((issue) => issue.status === 'done').length,
+    [issues],
+  );
+  const completion = issues.length
+    ? Math.round((completed / issues.length) * 100)
+    : 0;
 
   const filteredIssues = useMemo(() => {
     const needle = query.trim().toLowerCase();
@@ -295,18 +561,13 @@ export function IssueTracker({ issues }: { issues: ErlIssue[] }) {
     });
   }, [category, issues, owner, query, status, tower]);
 
-  const counts = useMemo(
-    () => ({
-      done: issues.filter((issue) => issue.status === 'done').length,
-      inProgress: issues.filter((issue) => issue.status === 'in-progress')
-        .length,
-      notDone: issues.filter((issue) => issue.status === 'not-done').length,
-    }),
-    [issues],
-  );
-  const completion = issues.length
-    ? Math.round((counts.done / issues.length) * 100)
-    : 0;
+  const activeFilterCount = [
+    Boolean(query),
+    status !== 'all',
+    category !== 'all',
+    tower !== 'all',
+    owner !== 'all',
+  ].filter(Boolean).length;
 
   const resetFilters = useCallback(() => {
     setQuery('');
@@ -315,6 +576,8 @@ export function IssueTracker({ issues }: { issues: ErlIssue[] }) {
     setTower('all');
     setOwner('all');
   }, []);
+
+  const closeFilters = useCallback(() => setShowFilters(false), []);
 
   const scrollToReel = useCallback(
     (index: number) => {
@@ -332,10 +595,10 @@ export function IssueTracker({ issues }: { issues: ErlIssue[] }) {
 
   useLayoutEffect(() => {
     reelRef.current?.scrollTo({ top: 0, behavior: 'instant' });
-  }, [category, owner, query, status, tower, view]);
+  }, [category, owner, query, status, tower]);
 
   useEffect(() => {
-    if (view !== 'reel' || !reelRef.current) return;
+    if (!reelRef.current || activeTab !== 'civil') return;
     const root = reelRef.current;
     const observer = new IntersectionObserver(
       (entries) => {
@@ -353,224 +616,164 @@ export function IssueTracker({ issues }: { issues: ErlIssue[] }) {
       .querySelectorAll<HTMLElement>('[data-reel-index]')
       .forEach((element) => observer.observe(element));
     return () => observer.disconnect();
-  }, [filteredIssues, view]);
-
-  const filtersActive =
-    Boolean(query) ||
-    status !== 'all' ||
-    category !== 'all' ||
-    tower !== 'all' ||
-    owner !== 'all';
+  }, [activeTab, filteredIssues]);
 
   return (
     <>
-      <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        <div className="rounded-3xl bg-ink p-5 text-white shadow-[0_16px_44px_rgb(16_45_54/16%)]">
-          <p className="text-xs font-black uppercase tracking-[0.14em] text-slate-300">
-            Verified completion
-          </p>
-          <div className="mt-3 flex items-end justify-between gap-4">
-            <strong className="font-heading text-5xl leading-none">
-              {completion}%
-            </strong>
-            <span className="text-sm text-slate-300">
-              {counts.done} of {issues.length}
-            </span>
+      {activeTab === 'civil' ? (
+        <section className="mx-auto w-full max-w-6xl pb-28 pt-4 sm:pt-7">
+          <div className="mb-4 flex items-end justify-between gap-4 px-1 sm:mb-5">
+            <div>
+              <p className="text-[11px] font-black uppercase tracking-[0.15em] text-teal sm:text-xs">
+                Civil delivery
+              </p>
+              <h1 className="mt-1 font-heading text-3xl font-semibold tracking-[-0.035em] text-ink sm:text-4xl">
+                Issue progress
+              </h1>
+              <p className="mt-1 text-xs text-slate-500 sm:text-sm">
+                {filteredIssues.length} of {issues.length} issues · {completion}
+                % verified complete
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setShowFilters(true)}
+              aria-label="Filter issues"
+              className="relative inline-flex min-h-12 items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 text-sm font-black text-ink shadow-[0_8px_26px_rgb(16_45_54/8%)] transition hover:-translate-y-0.5 hover:border-slate-300"
+            >
+              <SlidersHorizontal size={18} aria-hidden="true" />
+              <span className="hidden sm:inline">Filter</span>
+              {activeFilterCount > 0 && (
+                <span className="grid size-5 place-items-center rounded-full bg-teal text-[10px] text-white">
+                  {activeFilterCount}
+                </span>
+              )}
+            </button>
           </div>
-        </div>
-        <SummaryCard status="done" value={counts.done} />
-        <SummaryCard status="in-progress" value={counts.inProgress} />
-        <SummaryCard status="not-done" value={counts.notDone} />
-      </section>
 
-      <section className="mt-6 rounded-3xl border border-slate-200 bg-white p-4 shadow-[0_14px_42px_rgb(15_45_54/6%)] sm:p-5">
-        <div className="flex flex-col gap-4 xl:flex-row xl:items-end">
-          <label className="grid flex-1 gap-1 text-xs font-bold uppercase tracking-[0.08em] text-slate-500">
-            Search issues
-            <span className="flex min-h-11 items-center gap-3 rounded-xl border border-slate-200 bg-white px-3 shadow-sm focus-within:border-teal">
-              <Search size={17} aria-hidden="true" />
-              <input
-                className="w-full bg-transparent text-sm font-semibold normal-case tracking-normal text-slate-900 outline-none placeholder:font-normal placeholder:text-slate-400"
-                value={query}
-                onChange={(event) => setQuery(event.target.value)}
-                placeholder="Number, issue, response…"
-              />
-            </span>
-          </label>
-
-          <fieldset className="flex gap-2 rounded-xl bg-slate-100 p-1">
-            <legend className="sr-only">View mode</legend>
-            <button
-              className={`inline-flex min-h-10 flex-1 items-center justify-center gap-2 rounded-lg px-4 text-sm font-bold transition xl:flex-none ${
-                view === 'list'
-                  ? 'bg-white text-ink shadow-sm'
-                  : 'text-slate-500'
-              }`}
-              type="button"
-              onClick={() => setView('list')}
-              aria-pressed={view === 'list'}
-            >
-              <LayoutList size={17} aria-hidden="true" /> List
-            </button>
-            <button
-              className={`inline-flex min-h-10 flex-1 items-center justify-center gap-2 rounded-lg px-4 text-sm font-bold transition xl:flex-none ${
-                view === 'reel'
-                  ? 'bg-white text-ink shadow-sm'
-                  : 'text-slate-500'
-              }`}
-              type="button"
-              onClick={() => setView('reel')}
-              aria-pressed={view === 'reel'}
-            >
-              <Smartphone size={17} aria-hidden="true" /> Reel
-            </button>
-          </fieldset>
-        </div>
-
-        <div className="mt-4 flex gap-3 overflow-x-auto pb-1">
-          <SelectFilter
-            label="Status"
-            value={status}
-            onChange={(value) => setStatus(value as StatusFilter)}
-            options={[
-              { value: 'all', label: 'All statuses' },
-              { value: 'done', label: 'Done' },
-              { value: 'in-progress', label: 'In Progress' },
-              { value: 'not-done', label: 'Not Done' },
-            ]}
-          />
-          <SelectFilter
-            label="Category"
-            value={category}
-            onChange={setCategory}
-            options={[
-              { value: 'all', label: 'All categories' },
-              ...categories.map((value) => ({ value, label: value })),
-            ]}
-          />
-          <SelectFilter
-            label="Tower / block"
-            value={tower}
-            onChange={setTower}
-            options={[
-              { value: 'all', label: 'All blocks' },
-              ...towers.map((value) => ({ value, label: formatTower(value) })),
-            ]}
-          />
-          <SelectFilter
-            label="Owner"
-            value={owner}
-            onChange={setOwner}
-            options={[
-              { value: 'all', label: 'All owners' },
-              { value: 'ERL', label: 'ERL' },
-              { value: 'TOA', label: 'TOA' },
-            ]}
-          />
-          {filtersActive && (
-            <button
-              type="button"
-              onClick={resetFilters}
-              className="mt-[19px] inline-flex min-h-11 shrink-0 items-center gap-2 rounded-xl px-3 text-sm font-bold text-teal transition hover:bg-teal/10"
-            >
-              <RotateCcw size={16} aria-hidden="true" /> Reset
-            </button>
+          {filteredIssues.length === 0 ? (
+            <div className="grid min-h-[480px] place-items-center rounded-[2rem] border border-dashed border-slate-300 bg-white p-8 text-center">
+              <div>
+                <Search className="mx-auto text-slate-400" size={28} />
+                <h2 className="mt-3 font-heading text-2xl font-semibold text-ink">
+                  No matching issues
+                </h2>
+                <p className="mt-2 text-sm text-slate-500">
+                  Adjust the filters to return to the issue feed.
+                </p>
+                <button
+                  className="mt-4 rounded-full bg-ink px-5 py-3 text-sm font-black text-white"
+                  type="button"
+                  onClick={resetFilters}
+                >
+                  Clear filters
+                </button>
+              </div>
+            </div>
+          ) : (
+            <section className="relative overflow-hidden rounded-[2rem] border border-slate-800 bg-ink shadow-[0_26px_80px_rgb(7_26_32/24%)]">
+              <section
+                ref={reelRef}
+                className="h-[calc(100svh-14rem)] min-h-[500px] max-h-[760px] snap-y snap-mandatory overflow-y-auto overscroll-contain"
+                aria-label="Swipeable civil issue reel"
+              >
+                {filteredIssues.map((issue, index) => (
+                  <ReelCard
+                    key={issue.id}
+                    issue={issue}
+                    position={index}
+                    total={filteredIssues.length}
+                  />
+                ))}
+              </section>
+              <div className="pointer-events-none absolute right-3 top-1/2 z-20 flex -translate-y-1/2 flex-col gap-2 sm:right-4">
+                <button
+                  type="button"
+                  className="pointer-events-auto grid size-10 place-items-center rounded-full border border-white/15 bg-black/35 text-white backdrop-blur disabled:opacity-25 sm:size-11"
+                  onClick={() => scrollToReel(activeReel - 1)}
+                  disabled={activeReel === 0}
+                  aria-label="Previous issue"
+                >
+                  <ArrowUp size={18} />
+                </button>
+                <button
+                  type="button"
+                  className="pointer-events-auto grid size-10 place-items-center rounded-full border border-white/15 bg-black/35 text-white backdrop-blur disabled:opacity-25 sm:size-11"
+                  onClick={() => scrollToReel(activeReel + 1)}
+                  disabled={activeReel === filteredIssues.length - 1}
+                  aria-label="Next issue"
+                >
+                  <ArrowDown size={18} />
+                </button>
+              </div>
+            </section>
           )}
-        </div>
-      </section>
 
-      <div className="my-5 flex flex-wrap items-center justify-between gap-3 text-sm text-slate-600">
-        <p>
-          Showing{' '}
-          <strong className="text-slate-950">{filteredIssues.length}</strong> of{' '}
-          {issues.length} issues
-        </p>
-        <p className="max-w-2xl text-xs leading-5">
-          Status is assessed conservatively for TOA. A delivery is marked Done
-          only when the record shows no remaining work or verification gap.
-        </p>
-      </div>
-
-      {filteredIssues.length === 0 ? (
-        <div className="grid min-h-72 place-items-center rounded-3xl border border-dashed border-slate-300 bg-white p-8 text-center">
-          <div>
-            <Search className="mx-auto text-slate-400" size={28} />
-            <h2 className="mt-3 font-heading text-2xl font-semibold text-ink">
-              No matching issues
-            </h2>
-            <button
-              className="mt-3 text-sm font-bold text-teal"
-              type="button"
-              onClick={resetFilters}
-            >
-              Clear filters
-            </button>
-          </div>
-        </div>
-      ) : view === 'list' ? (
-        <section className="grid gap-4" aria-label="Issue list">
-          {filteredIssues.map((issue) => (
-            <IssueListCard key={issue.id} issue={issue} />
-          ))}
+          <p className="mx-auto mt-4 max-w-2xl text-center text-[11px] leading-5 text-slate-500 sm:text-xs">
+            Status is assessed conservatively for TOA. Done requires no pending
+            delivery, rework or verification gap.
+          </p>
         </section>
       ) : (
-        <section className="relative overflow-hidden rounded-[2rem] border border-slate-800 bg-ink shadow-[0_26px_80px_rgb(7_26_32/24%)]">
-          <section
-            ref={reelRef}
-            className="h-[calc(100svh-10rem)] min-h-[620px] max-h-[820px] snap-y snap-mandatory overflow-y-auto overscroll-contain"
-            aria-label="Swipeable issue reel"
-          >
-            {filteredIssues.map((issue, index) => (
-              <ReelCard
-                key={issue.id}
-                issue={issue}
-                position={index}
-                total={filteredIssues.length}
-              />
-            ))}
-          </section>
-          <div className="pointer-events-none absolute right-4 top-1/2 z-20 flex -translate-y-1/2 flex-col gap-2">
-            <button
-              type="button"
-              className="pointer-events-auto grid size-11 place-items-center rounded-full border border-white/15 bg-black/30 text-white backdrop-blur disabled:opacity-30"
-              onClick={() => scrollToReel(activeReel - 1)}
-              disabled={activeReel === 0}
-              aria-label="Previous issue"
-            >
-              <ArrowUp size={18} />
-            </button>
-            <button
-              type="button"
-              className="pointer-events-auto grid size-11 place-items-center rounded-full border border-white/15 bg-black/30 text-white backdrop-blur disabled:opacity-30"
-              onClick={() => scrollToReel(activeReel + 1)}
-              disabled={activeReel === filteredIssues.length - 1}
-              aria-label="Next issue"
-            >
-              <ArrowDown size={18} />
-            </button>
-          </div>
-        </section>
+        <StaticTab tab={activeTab} />
       )}
-    </>
-  );
-}
 
-function SummaryCard({
-  status,
-  value,
-}: {
-  status: IssueStatus;
-  value: number;
-}) {
-  return (
-    <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-[0_12px_36px_rgb(15_45_54/5%)]">
-      <StatusBadge status={status} />
-      <div className="mt-4 flex items-end justify-between gap-4">
-        <strong className="font-heading text-5xl leading-none text-ink">
-          {value}
-        </strong>
-        <span className="text-sm text-slate-500">issues</span>
-      </div>
-    </div>
+      <nav
+        className="fixed bottom-3 left-1/2 z-50 flex w-[calc(100%-1.5rem)] max-w-[520px] -translate-x-1/2 items-center gap-1 rounded-[1.6rem] border border-white/70 bg-white/88 p-1.5 shadow-[0_18px_60px_rgb(16_45_54/20%)] backdrop-blur-2xl sm:bottom-5"
+        aria-label="Progress sections"
+      >
+        {appTabs.map(({ id, label, icon: Icon }) => {
+          const selected = activeTab === id;
+          return (
+            <button
+              key={id}
+              type="button"
+              onClick={() => {
+                setActiveTab(id);
+                setShowFilters(false);
+              }}
+              className={`flex min-h-14 flex-1 flex-col items-center justify-center gap-1 rounded-[1.15rem] px-2 text-[10px] font-black transition sm:flex-row sm:gap-2 sm:text-xs ${
+                selected
+                  ? 'bg-ink text-white shadow-sm'
+                  : 'text-slate-500 hover:bg-slate-100 hover:text-ink'
+              }`}
+              aria-current={selected ? 'page' : undefined}
+            >
+              <Icon size={19} aria-hidden="true" />
+              {label}
+            </button>
+          );
+        })}
+      </nav>
+
+      {showCompletion && (
+        <CompletionModal
+          completion={completion}
+          completed={completed}
+          total={issues.length}
+          onClose={() => setShowCompletion(false)}
+        />
+      )}
+
+      <FilterSheet
+        open={showFilters}
+        query={query}
+        status={status}
+        category={category}
+        tower={tower}
+        owner={owner}
+        categories={categories}
+        towers={towers}
+        resultCount={filteredIssues.length}
+        totalCount={issues.length}
+        onQueryChange={setQuery}
+        onStatusChange={setStatus}
+        onCategoryChange={setCategory}
+        onTowerChange={setTower}
+        onOwnerChange={setOwner}
+        onReset={resetFilters}
+        onClose={closeFilters}
+      />
+    </>
   );
 }
