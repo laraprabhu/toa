@@ -79,29 +79,29 @@
 }
 
 .erl-tracker-theme {
-  --erl-page: #edf4f1;
-  --erl-reel: #f7faf8;
-  --erl-surface: rgb(255 255 255 / 92%);
+  --erl-page: #ffffff;
+  --erl-reel: #ffffff;
+  --erl-surface: rgb(255 255 255 / 96%);
   --erl-surface-solid: #ffffff;
-  --erl-surface-muted: #f4f8f6;
+  --erl-surface-muted: #f7f7f6;
   --erl-text: #123138;
-  --erl-muted: #5d7075;
+  --erl-muted: #59656b;
   --erl-accent: #0e756b;
   --erl-accent-soft: rgb(14 117 107 / 9%);
   --erl-accent-border: rgb(14 117 107 / 21%);
   --erl-gold: #9a6400;
   --erl-gold-soft: rgb(205 145 20 / 10%);
   --erl-gold-border: rgb(171 112 0 / 24%);
-  --erl-border: rgb(20 63 69 / 14%);
-  --erl-chip: rgb(14 72 72 / 6%);
-  --erl-hover: rgb(14 117 107 / 7%);
-  --erl-selected: rgb(14 117 107 / 11%);
-  --erl-ring: rgb(14 117 107 / 8%);
+  --erl-border: rgb(15 23 42 / 12%);
+  --erl-chip: rgb(15 23 42 / 5%);
+  --erl-hover: rgb(15 23 42 / 4%);
+  --erl-selected: rgb(15 23 42 / 7%);
+  --erl-ring: rgb(15 23 42 / 5%);
   --erl-shadow: rgb(14 117 107 / 19%);
-  --erl-progress-track: rgb(18 49 56 / 10%);
+  --erl-progress-track: rgb(15 23 42 / 9%);
   --erl-progress-label: #123138;
-  --erl-dialog-overlay: rgb(16 45 54 / 18%);
-  --erl-modal-overlay: rgb(226 238 234 / 88%);
+  --erl-dialog-overlay: rgb(15 23 42 / 16%);
+  --erl-modal-overlay: rgb(248 250 252 / 92%);
   color-scheme: light;
   background: var(--erl-page);
   color: var(--erl-text);
