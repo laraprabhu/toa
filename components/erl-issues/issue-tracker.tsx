@@ -693,22 +693,23 @@ function FundTab() {
         </header>
 
         <LiveFundTotal />
-        <FundReferenceDetails />
 
         <section className="mt-6 rounded-[2rem] border border-white/10 bg-white/[0.045] p-5 sm:mt-8 sm:p-8">
           <div className="flex items-end justify-between gap-4">
             <div>
               <p className="text-[10px] font-black uppercase tracking-[0.16em] text-teal-200 sm:text-xs">
-                Revised dues
+                Amount breakdown
               </p>
               <h2 className="mt-2 font-heading text-3xl font-semibold tracking-[-0.035em] sm:text-4xl">
-                Amount breakdown
+                Revised dues as on today
               </h2>
             </div>
             <span className="hidden rounded-full border border-white/10 bg-white/[0.06] px-3 py-1.5 text-xs font-bold text-slate-300 sm:inline-flex">
               6 components
             </span>
           </div>
+
+          <FundReferenceDetails />
 
           <ol className="mt-6 grid gap-3 md:grid-cols-2">
             {fundDues.map((due, index) => (
@@ -771,14 +772,16 @@ function FundTab() {
               </dd>
             </div>
             <div className="flex items-center justify-between gap-4 py-3">
-              <dt className="text-sm text-slate-300">Additional interest</dt>
+              <dt className="text-sm text-slate-300">
+                Additional interest as on today
+              </dt>
               <dd className="shrink-0 font-bold text-white">
                 {formatRupees(14_132_161)}
               </dd>
             </div>
             <div className="flex items-center justify-between gap-4 py-3">
               <dt className="text-sm font-bold text-teal-100">
-                Total accumulated interest
+                Total accumulated interest as on today
               </dt>
               <dd className="shrink-0 font-black text-sun">
                 {formatRupees(21_556_136)}
