@@ -1013,7 +1013,7 @@ export function IssueTracker({ issues }: { issues: ErlIssue[] }) {
       )}
 
       <nav
-        className="fixed bottom-4 left-1/2 z-50 flex w-[calc(100%-1.5rem)] max-w-[520px] -translate-x-1/2 items-center gap-1 rounded-[1.6rem] border border-white/15 bg-[#071a20]/94 p-1.5 shadow-[0_0_38px_rgb(45_212_191/25%)] ring-1 ring-inset ring-white/[0.05] backdrop-blur-2xl sm:bottom-6"
+        className="fixed bottom-4 left-1/2 z-50 flex w-[calc(100%-1.5rem)] max-w-[520px] -translate-x-1/2 items-center gap-1 rounded-[1.6rem] border border-white/15 bg-[#071a20]/94 p-1.5 shadow-[0_0_38px_rgb(96_165_250/28%)] ring-1 ring-inset ring-white/[0.05] backdrop-blur-2xl sm:bottom-6"
         aria-label="Progress sections"
       >
         {appTabs.map(({ id, label, icon: Icon }) => {
