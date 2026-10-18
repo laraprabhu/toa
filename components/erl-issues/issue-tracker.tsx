@@ -564,7 +564,6 @@ function LiveFundTotal() {
   }, []);
 
   const elapsedMs = Math.max(0, now - fundBaselineTimestamp);
-  const elapsedSeconds = Math.floor(elapsedMs / 1_000);
   const liveTotal =
     fundBaselineTotal +
     (elapsedMs / (24 * 60 * 60 * 1_000)) * fundDailyInterest;
@@ -590,48 +589,58 @@ function LiveFundTotal() {
           className="mt-6 block overflow-hidden font-heading text-[clamp(2rem,9vw,5rem)] font-semibold leading-none tracking-[-0.055em] text-white"
           aria-label={`Current total due is ${formatRupees(liveTotal, 2)}`}
         >
-          <span key={elapsedSeconds} className="fund-total-tick">
-            {formatRupees(liveTotal, 2)}
-          </span>
+          <span>{formatRupees(liveTotal, 2)}</span>
         </output>
       </div>
     </section>
   );
 }
 
-function FundReferenceDetails() {
+function ImportantFacts() {
   return (
     <section
-      className="mt-4 grid gap-3 sm:mt-5 sm:grid-cols-2"
-      aria-label="Fund reference details"
+      className="mt-6 rounded-[2rem] border border-white/10 bg-white/[0.045] p-5 sm:p-8"
+      aria-labelledby="important-facts-title"
     >
-      <article className="flex items-center gap-4 rounded-2xl border border-white/10 bg-white/[0.055] p-4 sm:p-5">
-        <span className="grid size-11 shrink-0 place-items-center rounded-xl border border-sun/20 bg-sun/10 text-sun">
-          <Calculator size={21} aria-hidden="true" />
-        </span>
-        <div>
-          <p className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">
-            Interest percentage
-          </p>
-          <p className="mt-1 font-heading text-2xl font-semibold text-white sm:text-3xl">
-            12.4% <span className="text-base text-slate-300">per annum</span>
-          </p>
-        </div>
-      </article>
+      <p className="text-[10px] font-black uppercase tracking-[0.15em] text-teal-200">
+        Facts for calculation
+      </p>
+      <h2
+        id="important-facts-title"
+        className="mt-1 font-heading text-3xl font-semibold tracking-[-0.035em] sm:text-4xl"
+      >
+        Important Facts
+      </h2>
 
-      <article className="flex items-center gap-4 rounded-2xl border border-white/10 bg-white/[0.055] p-4 sm:p-5">
-        <span className="grid size-11 shrink-0 place-items-center rounded-xl border border-teal-300/20 bg-teal-300/10 text-teal-200">
-          <ShieldCheck size={21} aria-hidden="true" />
-        </span>
-        <div>
-          <p className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">
-            RERA order received
-          </p>
-          <p className="mt-1 font-heading text-2xl font-semibold text-white sm:text-3xl">
-            September 2022
-          </p>
-        </div>
-      </article>
+      <div className="mt-6 grid gap-3 sm:grid-cols-2">
+        <article className="flex items-center gap-4 rounded-2xl border border-white/10 bg-[#0b252d] p-4 sm:p-5">
+          <span className="grid size-11 shrink-0 place-items-center rounded-xl border border-sun/20 bg-sun/10 text-sun">
+            <Calculator size={21} aria-hidden="true" />
+          </span>
+          <div>
+            <p className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">
+              Interest percentage
+            </p>
+            <p className="mt-1 font-heading text-2xl font-semibold text-white sm:text-3xl">
+              12.4% <span className="text-base text-slate-300">per annum</span>
+            </p>
+          </div>
+        </article>
+
+        <article className="flex items-center gap-4 rounded-2xl border border-white/10 bg-[#0b252d] p-4 sm:p-5">
+          <span className="grid size-11 shrink-0 place-items-center rounded-xl border border-teal-300/20 bg-teal-300/10 text-teal-200">
+            <ShieldCheck size={21} aria-hidden="true" />
+          </span>
+          <div>
+            <p className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">
+              RERA order received
+            </p>
+            <p className="mt-1 font-heading text-2xl font-semibold text-white sm:text-3xl">
+              September 2022
+            </p>
+          </div>
+        </article>
+      </div>
     </section>
   );
 }
@@ -741,8 +750,6 @@ function FundTab() {
               {formatRupees(fundBaselineTotal)}
             </strong>
           </div>
-
-          <FundReferenceDetails />
         </section>
 
         <section className="mt-6 rounded-[2rem] border border-white/10 bg-white/[0.045] p-5 sm:p-8">
@@ -785,6 +792,8 @@ function FundTab() {
             </div>
           </dl>
         </section>
+
+        <ImportantFacts />
       </div>
     </section>
   );
