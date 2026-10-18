@@ -94,6 +94,25 @@ function formatRupees(value: number, decimals = 0) {
   }).format(value);
 }
 
+function useLiveFundTotal() {
+  const [now, setNow] = useState(fundBaselineTimestamp);
+
+  useEffect(() => {
+    const update = () => setNow(Date.now());
+    const initialUpdate = window.setTimeout(update, 0);
+    const interval = window.setInterval(update, 1_000);
+    return () => {
+      window.clearTimeout(initialUpdate);
+      window.clearInterval(interval);
+    };
+  }, []);
+
+  const elapsedMs = Math.max(0, now - fundBaselineTimestamp);
+  return (
+    fundBaselineTotal + (elapsedMs / (24 * 60 * 60 * 1_000)) * fundDailyInterest
+  );
+}
+
 function StatusIcon({
   status,
   size = 16,
@@ -274,6 +293,8 @@ function CompletionModal({
 }) {
   const [displayedCompletion, setDisplayedCompletion] = useState(0);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const liveFundTotal = useLiveFundTotal();
+  const fundTargetCrores = (liveFundTotal / 10_000_000).toFixed(2);
 
   useEffect(() => {
     const reduceMotion = window.matchMedia(
@@ -328,7 +349,11 @@ function CompletionModal({
                 value: `${completed} of ${total}`,
                 progress: displayedCompletion,
               },
-              { label: 'Fund transfer', value: '0 of 5.2 Crs', progress: 0 },
+              {
+                label: 'Fund transfer',
+                value: `0 of ${fundTargetCrores} Crs`,
+                progress: 0,
+              },
               { label: 'Documents', value: 'No docs', progress: 0 },
             ].map((row, index) => (
               <div key={row.label}>
@@ -338,14 +363,24 @@ function CompletionModal({
                     {row.value}
                   </strong>
                 </div>
+                <progress
+                  className="sr-only"
+                  max={100}
+                  value={row.progress}
+                  aria-label={`${row.label} progress`}
+                />
                 <div
-                  className="modal-progress-track mt-3 h-2.5 overflow-hidden rounded-full bg-white/10"
+                  className="modal-progress-track relative mt-3 h-9 overflow-hidden rounded-xl bg-white/10"
                   style={{ animationDelay: `${index * 140}ms` }}
+                  aria-hidden="true"
                 >
                   <div
-                    className="h-full rounded-full bg-sun transition-[width] duration-1000 ease-out"
+                    className="absolute inset-y-0 left-0 rounded-xl bg-sun transition-[width] duration-1000 ease-out"
                     style={{ width: `${row.progress}%` }}
                   />
+                  <span className="relative z-10 grid h-full place-items-center text-[11px] font-black text-white">
+                    {Math.round(row.progress)}%
+                  </span>
                 </div>
               </div>
             ))}
@@ -532,22 +567,7 @@ function FilterSheet({
 }
 
 function LiveFundTotal() {
-  const [now, setNow] = useState(fundBaselineTimestamp);
-
-  useEffect(() => {
-    const update = () => setNow(Date.now());
-    const initialUpdate = window.setTimeout(update, 0);
-    const interval = window.setInterval(update, 1_000);
-    return () => {
-      window.clearTimeout(initialUpdate);
-      window.clearInterval(interval);
-    };
-  }, []);
-
-  const elapsedMs = Math.max(0, now - fundBaselineTimestamp);
-  const liveTotal =
-    fundBaselineTotal +
-    (elapsedMs / (24 * 60 * 60 * 1_000)) * fundDailyInterest;
+  const liveTotal = useLiveFundTotal();
 
   return (
     <section className="relative overflow-hidden rounded-[2rem] border border-teal-300/20 bg-[#0b2a32] p-5 shadow-[0_0_48px_rgb(45_212_191/14%)] sm:p-8">
