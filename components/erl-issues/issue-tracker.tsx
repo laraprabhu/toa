@@ -107,10 +107,17 @@ function ReelCard({
         {issue.number}
       </div>
 
-      <div className="relative z-10 flex items-center justify-between gap-3">
-        <span className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-300 sm:text-xs">
-          Issue {String(issue.number).padStart(2, '0')} · {position + 1} of{' '}
-          {total}
+      <div className="relative z-10 flex flex-wrap items-center justify-between gap-3">
+        <span className="inline-flex items-center gap-2 rounded-xl border border-teal-300/20 bg-black/25 px-3 py-2 text-xs font-black uppercase tracking-[0.1em] shadow-[0_8px_24px_rgb(0_0_0/18%)] backdrop-blur sm:text-sm">
+          <span className="text-white">
+            Issue {String(issue.number).padStart(2, '0')}
+          </span>
+          <span className="text-teal-300/60" aria-hidden="true">
+            ·
+          </span>
+          <span className="text-teal-100">
+            {position + 1} of {total}
+          </span>
         </span>
         <StatusBadge status={issue.status} />
       </div>
