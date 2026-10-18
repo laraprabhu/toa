@@ -6,7 +6,6 @@ import {
   CircleDashed,
   Clock3,
   Construction,
-  FileText,
   FolderOpen,
   Hand,
   IndianRupee,
@@ -793,46 +792,11 @@ function FundTab() {
 }
 
 function DocumentsTab() {
-  const placeholders = [
-    'Handover records',
-    'Drawings & certificates',
-    'Meeting files',
-  ];
-
   return (
-    <section className="h-svh overflow-y-auto bg-[#f3f6f5] px-5 pb-28 pt-6 sm:px-8 sm:pb-32 sm:pt-10">
-      <div className="mx-auto w-full max-w-5xl overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-[0_22px_70px_rgb(16_45_54/8%)]">
-        <div className="bg-[radial-gradient(circle_at_90%_0%,rgba(246,200,88,0.24),transparent_34%),linear-gradient(145deg,#0d2a35,#071a20)] px-6 py-10 text-white sm:px-10 sm:py-14">
-          <span className="grid size-14 place-items-center rounded-2xl bg-sun text-ink">
-            <FileText size={27} aria-hidden="true" />
-          </span>
-          <p className="mt-7 text-xs font-black uppercase tracking-[0.17em] text-teal-200">
-            Next module
-          </p>
-          <h1 className="mt-2 font-heading text-4xl font-semibold tracking-[-0.035em] sm:text-6xl">
-            Project documents
-          </h1>
-          <p className="mt-4 max-w-2xl text-sm leading-6 text-slate-300 sm:text-base">
-            The documents view will organise handover records, drawings,
-            certificates and meeting files.
-          </p>
-        </div>
-
-        <div className="grid gap-3 p-5 sm:grid-cols-3 sm:p-8">
-          {placeholders.map((label) => (
-            <div
-              key={label}
-              className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-5"
-            >
-              <div className="h-2 w-10 rounded-full bg-slate-200" />
-              <h2 className="mt-5 font-heading text-xl font-semibold text-ink">
-                {label}
-              </h2>
-              <p className="mt-2 text-sm text-slate-500">Coming soon</p>
-            </div>
-          ))}
-        </div>
-      </div>
+    <section className="grid h-svh place-items-center bg-[#071a20] px-5 pb-24 text-center text-white">
+      <p className="font-heading text-2xl font-semibold tracking-[-0.025em] text-slate-300 sm:text-3xl">
+        No data loaded yet
+      </p>
     </section>
   );
 }
