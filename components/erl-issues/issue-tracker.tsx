@@ -709,8 +709,6 @@ function FundTab() {
             </span>
           </div>
 
-          <FundReferenceDetails />
-
           <ol className="mt-6 grid gap-3 md:grid-cols-2">
             {fundDues.map((due, index) => (
               <li
@@ -747,6 +745,8 @@ function FundTab() {
               {formatRupees(fundBaselineTotal)}
             </strong>
           </div>
+
+          <FundReferenceDetails />
         </section>
 
         <section className="mt-6 rounded-[2rem] border border-white/10 bg-white/[0.045] p-5 sm:p-8">
@@ -781,7 +781,7 @@ function FundTab() {
             </div>
             <div className="flex items-center justify-between gap-4 py-3">
               <dt className="text-sm font-bold text-teal-100">
-                Total accumulated interest as on today
+                Total accumulated interest
               </dt>
               <dd className="shrink-0 font-black text-sun">
                 {formatRupees(21_556_136)}
