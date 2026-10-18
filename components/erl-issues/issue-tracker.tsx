@@ -67,7 +67,7 @@ const fundDues = [
     amount: 21_556_136,
   },
   {
-    label: 'Common amenities maintenance withheld by the promoter',
+    label: 'Common area maintenance withheld by the promoter',
     amount: 3_030_123,
   },
   {
@@ -718,7 +718,7 @@ function FundTab() {
             {fundDues.map((due, index) => (
               <li
                 key={due.label}
-                className="flex min-h-32 flex-col justify-between rounded-2xl border border-white/10 bg-[#0b252d] p-4 sm:p-5"
+                className="rounded-2xl border border-white/10 bg-[#0b252d] p-4 sm:p-5"
               >
                 <div className="flex items-start gap-3">
                   <span className="grid size-7 shrink-0 place-items-center rounded-lg bg-white/[0.07] text-[10px] font-black text-teal-200">
@@ -735,7 +735,7 @@ function FundTab() {
                     )}
                   </div>
                 </div>
-                <strong className="mt-5 pl-10 font-heading text-2xl font-semibold tracking-[-0.03em] text-sun sm:text-3xl">
+                <strong className="mt-3 block pl-10 font-heading text-2xl font-semibold tracking-[-0.03em] text-sun sm:text-3xl">
                   {formatRupees(due.amount)}
                 </strong>
               </li>
@@ -753,19 +753,12 @@ function FundTab() {
         </section>
 
         <section className="mt-6 rounded-[2rem] border border-white/10 bg-white/[0.045] p-5 sm:p-8">
-          <div className="flex items-center gap-3">
-            <span className="grid size-10 place-items-center rounded-xl bg-teal-300/10 text-teal-200">
-              <Calculator size={20} aria-hidden="true" />
-            </span>
-            <div>
-              <p className="text-[10px] font-black uppercase tracking-[0.15em] text-teal-200">
-                Interest breakup
-              </p>
-              <h2 className="mt-1 font-heading text-2xl font-semibold">
-                Accumulated interest
-              </h2>
-            </div>
-          </div>
+          <p className="text-[10px] font-black uppercase tracking-[0.15em] text-teal-200">
+            Interest breakup
+          </p>
+          <h2 className="mt-1 font-heading text-2xl font-semibold">
+            Accumulated interest
+          </h2>
 
           <dl className="mt-6 divide-y divide-white/10">
             <div className="flex items-center justify-between gap-4 py-3">
