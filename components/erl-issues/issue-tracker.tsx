@@ -332,6 +332,7 @@ function CompletionModal({
       className="fixed inset-0 z-[100] m-0 grid h-full max-h-none w-full max-w-none place-items-center overflow-y-auto border-0 bg-[#071a20]/88 p-4 backdrop-blur-xl sm:p-8"
       aria-modal="true"
       aria-labelledby="completion-title"
+      aria-describedby="completion-summary"
     >
       <section className="w-full max-w-md rounded-[2rem] border border-white/15 bg-[#0b252d] p-6 text-white shadow-[0_35px_100px_rgb(0_0_0/45%)] sm:p-8">
         <div>
@@ -339,10 +340,18 @@ function CompletionModal({
             id="completion-title"
             className="font-heading text-3xl font-semibold leading-tight tracking-[-0.035em] sm:text-4xl"
           >
-            ERL Progress Tracker For Owners
+            ERL Progress Tracker
           </h1>
 
-          <div className="mt-8 space-y-6">
+          <p
+            id="completion-summary"
+            className="mt-3 text-sm font-medium leading-relaxed text-white/70 sm:text-base"
+          >
+            The owners plan to issue the NOC once all three categories reach
+            100%. Close this window to view detailed information.
+          </p>
+
+          <div className="mt-7 space-y-6">
             {[
               {
                 label: 'Civil works',
