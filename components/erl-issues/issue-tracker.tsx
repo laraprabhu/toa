@@ -138,10 +138,25 @@ function ReelCard({
         </div>
       </div>
 
-      <div className="relative z-10 flex items-center justify-between gap-3 border-t border-white/10 pt-4 text-[11px] font-semibold text-slate-300 sm:pt-5 sm:text-xs">
-        <span>
-          Owner: {issue.owner} · Raised by: {issue.raisedBy}
-        </span>
+      <div className="relative z-10 flex items-center justify-between gap-3 border-t border-white/10 pt-4 sm:pt-5">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="inline-flex items-center gap-2 rounded-full border border-teal-300/20 bg-teal-300/[0.08] px-3 py-1.5">
+            <span className="text-[9px] font-black uppercase tracking-[0.12em] text-teal-200">
+              Owner
+            </span>
+            <strong className="text-[11px] text-white sm:text-xs">
+              {issue.owner}
+            </strong>
+          </span>
+          <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.07] px-3 py-1.5">
+            <span className="text-[9px] font-black uppercase tracking-[0.12em] text-slate-400">
+              Raised by
+            </span>
+            <strong className="text-[11px] text-white sm:text-xs">
+              {issue.raisedBy}
+            </strong>
+          </span>
+        </div>
         <span className="hidden items-center gap-2 sm:inline-flex">
           <ArrowDown size={14} aria-hidden="true" /> Scroll for next
         </span>
@@ -625,7 +640,7 @@ export function IssueTracker({ issues }: { issues: ErlIssue[] }) {
       {activeTab === 'civil' ? (
         <section className="relative h-svh w-full overflow-hidden bg-ink">
           <div className="pointer-events-none absolute inset-x-0 top-0 z-30 bg-gradient-to-b from-[#071a20] via-[#071a20]/80 to-transparent px-3 pb-10 pt-3 sm:px-5 sm:pb-12 sm:pt-5">
-            <div className="pointer-events-auto mx-auto flex max-w-6xl items-center justify-between gap-3 rounded-2xl border border-white/10 bg-black/25 p-2.5 text-white shadow-[0_18px_52px_rgb(0_0_0/48%)] backdrop-blur-xl sm:p-3">
+            <div className="pointer-events-auto mx-auto flex max-w-6xl items-center justify-between gap-3 rounded-2xl border border-white/10 bg-black/25 p-2.5 text-white shadow-[0_14px_38px_rgb(45_212_191/20%)] backdrop-blur-xl sm:p-3">
               <div className="min-w-0 pl-1">
                 <p className="truncate text-[11px] font-black uppercase tracking-[0.15em] text-teal-200 sm:text-sm lg:text-base">
                   TOA · ERL Civil Progress
@@ -741,7 +756,7 @@ export function IssueTracker({ issues }: { issues: ErlIssue[] }) {
               }}
               className={`relative flex min-h-14 flex-1 flex-col items-center justify-center gap-1 rounded-[1.15rem] px-2 text-[10px] font-black transition sm:flex-row sm:gap-2 sm:text-xs ${
                 selected
-                  ? 'bg-white/[0.13] text-white shadow-[0_6px_24px_rgb(246_200_88/32%)] ring-1 ring-inset ring-white/15'
+                  ? 'bg-white/[0.13] text-white shadow-[0_6px_18px_rgb(0_0_0/28%)] ring-1 ring-inset ring-white/15'
                   : 'text-slate-400 hover:bg-white/[0.05] hover:text-white'
               }`}
               aria-current={selected ? 'page' : undefined}
