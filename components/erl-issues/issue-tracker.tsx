@@ -101,7 +101,7 @@ function ReelCard({
   return (
     <article
       data-reel-index={position}
-      className="relative flex h-full min-h-full max-h-full snap-start snap-always flex-col overflow-hidden bg-[radial-gradient(circle_at_92%_4%,rgba(246,200,88,0.25),transparent_32%),linear-gradient(145deg,#0d2a35,#092129_55%,#071a20)] px-5 pb-5 pt-28 text-white sm:px-8 sm:pb-8 sm:pt-32 lg:px-10 lg:pb-10 lg:pt-36"
+      className="relative flex h-full min-h-full max-h-full snap-start snap-always flex-col overflow-hidden bg-[radial-gradient(circle_at_92%_4%,rgba(246,200,88,0.25),transparent_32%),linear-gradient(145deg,#0d2a35,#092129_55%,#071a20)] px-5 pb-5 pt-40 text-white sm:px-8 sm:pb-8 sm:pt-44 lg:px-10 lg:pb-10"
     >
       <div className="absolute -right-8 top-14 select-none font-heading text-[10rem] font-bold leading-none text-white/[0.035] sm:text-[15rem] lg:text-[18rem]">
         {issue.number}
@@ -538,6 +538,15 @@ export function IssueTracker({ issues }: { issues: ErlIssue[] }) {
     () => issues.filter((issue) => issue.status === 'done').length,
     [issues],
   );
+  const statusCounts = useMemo(
+    () => ({
+      done: completed,
+      inProgress: issues.filter((issue) => issue.status === 'in-progress')
+        .length,
+      notDone: issues.filter((issue) => issue.status === 'not-done').length,
+    }),
+    [completed, issues],
+  );
   const completion = issues.length
     ? Math.round((completed / issues.length) * 100)
     : 0;
@@ -624,39 +633,72 @@ export function IssueTracker({ issues }: { issues: ErlIssue[] }) {
     <>
       {activeTab === 'civil' ? (
         <section className="relative h-[calc(100svh-5.5rem)] w-full overflow-hidden bg-ink">
-          <div className="pointer-events-none absolute inset-x-0 top-0 z-30 bg-gradient-to-b from-[#071a20] via-[#071a20]/80 to-transparent px-3 pb-10 pt-3 sm:px-5 sm:pb-12 sm:pt-5">
-            <div className="pointer-events-auto mx-auto flex max-w-6xl items-center justify-between gap-3 rounded-2xl border border-white/10 bg-black/25 p-2.5 text-white shadow-[0_12px_40px_rgb(0_0_0/20%)] backdrop-blur-xl sm:p-3">
-              <div className="min-w-0 pl-1">
-                <p className="truncate text-[10px] font-black uppercase tracking-[0.16em] text-teal-200 sm:text-xs">
-                  TOA · ERL Civil Progress
-                </p>
-                <p className="mt-0.5 truncate text-xs font-semibold text-slate-300 sm:text-sm">
-                  {filteredIssues.length} of {issues.length} issues ·{' '}
-                  {completion}% verified
-                </p>
-              </div>
-              <div className="flex shrink-0 items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => setShowFilters(true)}
-                  aria-label="Filter issues"
-                  className="relative inline-flex size-11 items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/10 text-sm font-black text-white transition hover:bg-white/15 sm:w-auto sm:px-4"
-                >
-                  <SlidersHorizontal size={18} aria-hidden="true" />
-                  <span className="hidden sm:inline">Filter</span>
-                  {activeFilterCount > 0 && (
-                    <span className="absolute -right-1 -top-1 grid size-5 place-items-center rounded-full bg-sun text-[10px] text-ink sm:static">
-                      {activeFilterCount}
+          <div className="pointer-events-none absolute inset-x-0 top-0 z-30 bg-gradient-to-b from-[#071a20] via-[#071a20]/85 to-transparent px-3 pb-10 pt-3 sm:px-5 sm:pb-12 sm:pt-5">
+            <div className="pointer-events-auto mx-auto max-w-7xl rounded-[1.4rem] border border-white/10 bg-black/30 p-3 text-white shadow-[0_16px_50px_rgb(0_0_0/25%)] backdrop-blur-2xl sm:p-4">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="truncate text-[10px] font-black uppercase tracking-[0.16em] text-teal-200 sm:text-xs">
+                    TOA · ERL Civil Progress
+                  </p>
+                  <div className="mt-1 flex items-baseline gap-2">
+                    <strong className="font-heading text-[2rem] font-semibold leading-none tracking-[-0.04em] text-white sm:text-4xl">
+                      {completion}%
+                    </strong>
+                    <span className="truncate text-[11px] font-bold text-slate-300 sm:text-sm">
+                      verified · {filteredIssues.length}/{issues.length} shown
                     </span>
-                  )}
-                </button>
-                <a
-                  href={siteHref('/erl-issues/admin')}
-                  className="grid size-11 place-items-center rounded-xl border border-white/10 bg-white/10 text-white transition hover:bg-white/15"
-                  aria-label="Open issue administration"
-                >
-                  <ShieldCheck size={18} aria-hidden="true" />
-                </a>
+                  </div>
+                </div>
+                <div className="flex shrink-0 items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setShowFilters(true)}
+                    aria-label="Filter issues"
+                    className="relative inline-flex h-12 items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/10 px-3 text-sm font-black text-white transition hover:bg-white/15 sm:px-4"
+                  >
+                    <SlidersHorizontal size={19} aria-hidden="true" />
+                    <span>Filter</span>
+                    {activeFilterCount > 0 && (
+                      <span className="absolute -right-1 -top-1 grid size-5 place-items-center rounded-full bg-sun text-[10px] text-ink sm:static">
+                        {activeFilterCount}
+                      </span>
+                    )}
+                  </button>
+                  <a
+                    href={siteHref('/erl-issues/admin')}
+                    className="grid size-12 place-items-center rounded-2xl border border-white/10 bg-white/10 text-white transition hover:bg-white/15"
+                    aria-label="Open issue administration"
+                  >
+                    <ShieldCheck size={19} aria-hidden="true" />
+                  </a>
+                </div>
+              </div>
+
+              <div className="mt-3 grid grid-cols-3 divide-x divide-white/10 border-t border-white/10 pt-2.5">
+                <div className="pr-2">
+                  <p className="text-[9px] font-black uppercase tracking-[0.12em] text-emerald-300 sm:text-[10px]">
+                    Done
+                  </p>
+                  <p className="mt-0.5 text-sm font-black sm:text-base">
+                    {statusCounts.done}
+                  </p>
+                </div>
+                <div className="px-2 sm:px-4">
+                  <p className="text-[9px] font-black uppercase tracking-[0.1em] text-amber-300 sm:text-[10px]">
+                    In progress
+                  </p>
+                  <p className="mt-0.5 text-sm font-black sm:text-base">
+                    {statusCounts.inProgress}
+                  </p>
+                </div>
+                <div className="pl-2 sm:pl-4">
+                  <p className="text-[9px] font-black uppercase tracking-[0.1em] text-rose-300 sm:text-[10px]">
+                    Not done
+                  </p>
+                  <p className="mt-0.5 text-sm font-black sm:text-base">
+                    {statusCounts.notDone}
+                  </p>
+                </div>
               </div>
             </div>
           </div>
@@ -724,7 +766,7 @@ export function IssueTracker({ issues }: { issues: ErlIssue[] }) {
       )}
 
       <nav
-        className="fixed bottom-3 left-1/2 z-50 flex w-[calc(100%-1.5rem)] max-w-[520px] -translate-x-1/2 items-center gap-1 rounded-[1.6rem] border border-white/70 bg-white/88 p-1.5 shadow-[0_18px_60px_rgb(16_45_54/20%)] backdrop-blur-2xl sm:bottom-5"
+        className="fixed bottom-3 left-1/2 z-50 flex w-[calc(100%-1.5rem)] max-w-[520px] -translate-x-1/2 items-center gap-1 rounded-[1.6rem] border border-white/10 bg-[#071a20]/94 p-1.5 shadow-[0_22px_70px_rgb(0_0_0/40%)] backdrop-blur-2xl sm:bottom-5"
         aria-label="Progress sections"
       >
         {appTabs.map(({ id, label, icon: Icon }) => {
@@ -737,15 +779,22 @@ export function IssueTracker({ issues }: { issues: ErlIssue[] }) {
                 setActiveTab(id);
                 setShowFilters(false);
               }}
-              className={`flex min-h-14 flex-1 flex-col items-center justify-center gap-1 rounded-[1.15rem] px-2 text-[10px] font-black transition sm:flex-row sm:gap-2 sm:text-xs ${
+              className={`relative flex min-h-14 flex-1 flex-col items-center justify-center gap-1 rounded-[1.15rem] px-2 text-[10px] font-black transition sm:flex-row sm:gap-2 sm:text-xs ${
                 selected
-                  ? 'bg-ink text-white shadow-sm'
-                  : 'text-slate-500 hover:bg-slate-100 hover:text-ink'
+                  ? 'bg-white/[0.09] text-white shadow-sm ring-1 ring-inset ring-white/10'
+                  : 'text-slate-400 hover:bg-white/[0.05] hover:text-white'
               }`}
               aria-current={selected ? 'page' : undefined}
             >
-              <Icon size={19} aria-hidden="true" />
-              {label}
+              {selected && (
+                <span className="absolute top-1 h-0.5 w-6 rounded-full bg-sun" />
+              )}
+              <Icon
+                className={selected ? 'text-sun' : undefined}
+                size={19}
+                aria-hidden="true"
+              />
+              <span>{label}</span>
             </button>
           );
         })}
