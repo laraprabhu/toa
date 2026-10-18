@@ -101,7 +101,7 @@ function ReelCard({
   return (
     <article
       data-reel-index={position}
-      className="relative flex h-full min-h-full max-h-full snap-start snap-always flex-col overflow-hidden bg-[radial-gradient(circle_at_92%_4%,rgba(246,200,88,0.25),transparent_32%),linear-gradient(145deg,#0d2a35,#092129_55%,#071a20)] px-5 pb-5 pt-28 text-white sm:px-8 sm:pb-8 sm:pt-32 lg:px-10 lg:pb-10 lg:pt-36"
+      className="relative flex h-full min-h-full max-h-full snap-start snap-always flex-col overflow-hidden bg-[radial-gradient(circle_at_92%_4%,rgba(246,200,88,0.25),transparent_32%),linear-gradient(145deg,#0d2a35,#092129_55%,#071a20)] px-5 pb-28 pt-28 text-white sm:px-8 sm:pt-32 lg:px-10 lg:pt-36"
     >
       <div className="absolute -right-8 top-14 select-none font-heading text-[10rem] font-bold leading-none text-white/[0.035] sm:text-[15rem] lg:text-[18rem]">
         {issue.number}
@@ -478,7 +478,7 @@ function StaticTab({ tab }: { tab: Exclude<AppTab, 'civil'> }) {
     : ['Handover records', 'Drawings & certificates', 'Meeting files'];
 
   return (
-    <section className="h-[calc(100svh-5.5rem)] overflow-y-auto bg-[#f3f6f5] px-5 py-6 sm:px-8 sm:py-10">
+    <section className="h-svh overflow-y-auto bg-[#f3f6f5] px-5 pb-28 pt-6 sm:px-8 sm:pb-32 sm:pt-10">
       <div className="mx-auto w-full max-w-5xl overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-[0_22px_70px_rgb(16_45_54/8%)]">
         <div className="bg-[radial-gradient(circle_at_90%_0%,rgba(246,200,88,0.24),transparent_34%),linear-gradient(145deg,#0d2a35,#071a20)] px-6 py-10 text-white sm:px-10 sm:py-14">
           <span className="grid size-14 place-items-center rounded-2xl bg-sun text-ink">
@@ -623,7 +623,7 @@ export function IssueTracker({ issues }: { issues: ErlIssue[] }) {
   return (
     <>
       {activeTab === 'civil' ? (
-        <section className="relative h-[calc(100svh-5.5rem)] w-full overflow-hidden bg-ink">
+        <section className="relative h-svh w-full overflow-hidden bg-ink">
           <div className="pointer-events-none absolute inset-x-0 top-0 z-30 bg-gradient-to-b from-[#071a20] via-[#071a20]/80 to-transparent px-3 pb-10 pt-3 sm:px-5 sm:pb-12 sm:pt-5">
             <div className="pointer-events-auto mx-auto flex max-w-6xl items-center justify-between gap-3 rounded-2xl border border-white/10 bg-black/25 p-2.5 text-white shadow-[0_18px_52px_rgb(0_0_0/48%)] backdrop-blur-xl sm:p-3">
               <div className="min-w-0 pl-1">
@@ -664,7 +664,7 @@ export function IssueTracker({ issues }: { issues: ErlIssue[] }) {
           </div>
 
           {filteredIssues.length === 0 ? (
-            <div className="grid h-full place-items-center bg-ink p-8 pt-28 text-center text-white">
+            <div className="grid h-full place-items-center bg-ink px-8 pb-28 pt-28 text-center text-white">
               <div>
                 <Search className="mx-auto text-slate-500" size={28} />
                 <h2 className="mt-3 font-heading text-2xl font-semibold">
@@ -726,7 +726,7 @@ export function IssueTracker({ issues }: { issues: ErlIssue[] }) {
       )}
 
       <nav
-        className="fixed bottom-4 left-1/2 z-50 flex w-[calc(100%-1.5rem)] max-w-[520px] -translate-x-1/2 items-center gap-1 rounded-[1.6rem] border border-white/15 bg-black/40 p-1.5 shadow-[0_-14px_42px_rgb(0_0_0/38%),0_18px_55px_rgb(0_0_0/58%)] ring-1 ring-inset ring-white/[0.05] backdrop-blur-2xl sm:bottom-6"
+        className="fixed bottom-4 left-1/2 z-50 flex w-[calc(100%-1.5rem)] max-w-[520px] -translate-x-1/2 items-center gap-1 rounded-[1.6rem] border border-white/15 bg-[#071a20]/94 p-1.5 shadow-[0_-14px_42px_rgb(0_0_0/38%),0_18px_55px_rgb(0_0_0/58%)] ring-1 ring-inset ring-white/[0.05] backdrop-blur-2xl sm:bottom-6"
         aria-label="Progress sections"
       >
         {appTabs.map(({ id, label, icon: Icon }) => {
