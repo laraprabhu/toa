@@ -78,6 +78,127 @@
   --sun: #f6c858;
 }
 
+.erl-tracker-theme {
+  --erl-page: #edf4f1;
+  --erl-reel: #f7faf8;
+  --erl-surface: rgb(255 255 255 / 92%);
+  --erl-surface-solid: #ffffff;
+  --erl-surface-muted: #f4f8f6;
+  --erl-text: #123138;
+  --erl-muted: #5d7075;
+  --erl-accent: #0e756b;
+  --erl-accent-soft: rgb(14 117 107 / 9%);
+  --erl-accent-border: rgb(14 117 107 / 21%);
+  --erl-gold: #9a6400;
+  --erl-gold-soft: rgb(205 145 20 / 10%);
+  --erl-gold-border: rgb(171 112 0 / 24%);
+  --erl-border: rgb(20 63 69 / 14%);
+  --erl-chip: rgb(14 72 72 / 6%);
+  --erl-hover: rgb(14 117 107 / 7%);
+  --erl-selected: rgb(14 117 107 / 11%);
+  --erl-ring: rgb(14 117 107 / 8%);
+  --erl-shadow: rgb(14 117 107 / 19%);
+  --erl-progress-track: rgb(18 49 56 / 10%);
+  --erl-progress-label: #123138;
+  --erl-dialog-overlay: rgb(16 45 54 / 18%);
+  --erl-modal-overlay: rgb(226 238 234 / 88%);
+  color-scheme: light;
+  background: var(--erl-page);
+  color: var(--erl-text);
+}
+
+.erl-tracker-theme[data-theme='dark'] {
+  --erl-page: #071a20;
+  --erl-reel: #0b222a;
+  --erl-surface: rgb(7 26 32 / 94%);
+  --erl-surface-solid: #0b252d;
+  --erl-surface-muted: #0b252d;
+  --erl-text: #ffffff;
+  --erl-muted: #b3c0c8;
+  --erl-accent: #9ee8dd;
+  --erl-accent-soft: rgb(94 234 212 / 8%);
+  --erl-accent-border: rgb(94 234 212 / 20%);
+  --erl-gold: #f6c858;
+  --erl-gold-soft: rgb(246 200 88 / 8%);
+  --erl-gold-border: rgb(246 200 88 / 25%);
+  --erl-border: rgb(255 255 255 / 10%);
+  --erl-chip: rgb(255 255 255 / 7%);
+  --erl-hover: rgb(255 255 255 / 5%);
+  --erl-selected: rgb(255 255 255 / 13%);
+  --erl-ring: rgb(255 255 255 / 5%);
+  --erl-shadow: rgb(45 212 191 / 25%);
+  --erl-progress-track: rgb(255 255 255 / 10%);
+  --erl-progress-label: #ffffff;
+  --erl-dialog-overlay: rgb(0 0 0 / 20%);
+  --erl-modal-overlay: rgb(7 26 32 / 88%);
+  color-scheme: dark;
+}
+
+.erl-top-bar,
+.erl-bottom-nav,
+.erl-floating-card {
+  border-color: var(--erl-border);
+  background: var(--erl-surface);
+  color: var(--erl-text);
+}
+
+.erl-icon-button {
+  border-color: var(--erl-border);
+  background: var(--erl-chip);
+  color: var(--erl-text);
+}
+
+.erl-icon-button:hover {
+  background: var(--erl-selected);
+}
+
+.erl-soft-card,
+.erl-number-chip,
+.erl-chip {
+  border-color: var(--erl-border);
+  background: var(--erl-chip);
+  color: var(--erl-text);
+}
+
+.erl-modal-card,
+.erl-filter-sheet,
+.erl-section-card {
+  border-color: var(--erl-border);
+  background: var(--erl-surface-solid);
+  color: var(--erl-text);
+}
+
+.erl-live-total {
+  border-color: var(--erl-accent-border);
+  background: var(--erl-surface-solid);
+}
+
+.erl-sub-card {
+  border-color: var(--erl-border);
+  background: var(--erl-surface-muted);
+}
+
+.erl-input {
+  border-color: var(--erl-border);
+  background: var(--erl-surface-muted);
+  color: var(--erl-text);
+}
+
+.erl-input:focus,
+.erl-input:focus-within {
+  border-color: var(--erl-accent);
+  background: var(--erl-surface-solid);
+}
+
+.erl-secondary-button {
+  border-color: var(--erl-border);
+  color: var(--erl-text);
+}
+
+.erl-secondary-button:hover {
+  background: var(--erl-hover);
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

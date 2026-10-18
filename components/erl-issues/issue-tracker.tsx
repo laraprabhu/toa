@@ -9,10 +9,12 @@ import {
   FolderOpen,
   Hand,
   IndianRupee,
+  Moon,
   RotateCcw,
   Search,
   ShieldCheck,
   SlidersHorizontal,
+  Sun,
   X,
 } from 'lucide-react';
 import {
@@ -33,11 +35,14 @@ import { siteHref } from '@/lib/site-path';
 
 type AppTab = 'civil' | 'fund' | 'documents';
 type StatusFilter = IssueStatus | 'all';
+type ColorTheme = 'dark' | 'light';
 
 const reelStatusStyles: Record<IssueStatus, string> = {
-  done: 'border-emerald-300/40 bg-emerald-300/15 text-emerald-100',
-  'in-progress': 'border-amber-300/40 bg-amber-300/15 text-amber-100',
-  'not-done': 'border-rose-300/40 bg-rose-300/15 text-rose-100',
+  done: 'border-emerald-600/25 bg-emerald-500/10 text-emerald-800 dark:border-emerald-300/40 dark:bg-emerald-300/15 dark:text-emerald-100',
+  'in-progress':
+    'border-amber-600/30 bg-amber-500/12 text-amber-800 dark:border-amber-300/40 dark:bg-amber-300/15 dark:text-amber-100',
+  'not-done':
+    'border-rose-600/25 bg-rose-500/10 text-rose-800 dark:border-rose-300/40 dark:bg-rose-300/15 dark:text-rose-100',
 };
 
 const appTabs: Array<{
@@ -51,6 +56,7 @@ const appTabs: Array<{
 ];
 
 const swipeHintStorageKey = 'toa-erl-swipe-hint-dismissed-v2';
+const colorThemeStorageKey = 'toa-erl-color-theme';
 const fundBaselineTotal = 52_479_710;
 const fundDailyInterest = 9_402.64;
 const fundBaselineTimestamp = Date.UTC(2026, 9, 16, 18, 30);
@@ -126,6 +132,32 @@ function StatusIcon({
   return <CircleDashed size={size} aria-hidden="true" />;
 }
 
+function ThemeToggle({
+  theme,
+  onToggle,
+}: {
+  theme: ColorTheme;
+  onToggle: () => void;
+}) {
+  const isDark = theme === 'dark';
+
+  return (
+    <button
+      type="button"
+      onClick={onToggle}
+      className="erl-icon-button grid size-10 shrink-0 place-items-center rounded-xl border transition hover:-translate-y-0.5 sm:size-12"
+      aria-label={`Switch to ${isDark ? 'light' : 'dark'} mode`}
+      title={`Switch to ${isDark ? 'light' : 'dark'} mode`}
+    >
+      {isDark ? (
+        <Sun size={19} aria-hidden="true" />
+      ) : (
+        <Moon size={19} aria-hidden="true" />
+      )}
+    </button>
+  );
+}
+
 function StatusBadge({ status }: { status: IssueStatus }) {
   return (
     <span
@@ -139,11 +171,11 @@ function StatusBadge({ status }: { status: IssueStatus }) {
 
 function CommentBlock({ title, text }: { title: string; text: string }) {
   return (
-    <section className="rounded-2xl border border-white/10 bg-white/[0.06] p-3.5 text-white sm:p-4">
-      <h3 className="text-[10px] font-black uppercase tracking-[0.13em] text-teal-200 sm:text-xs">
+    <section className="erl-soft-card rounded-2xl border p-3.5 sm:p-4">
+      <h3 className="text-[10px] font-black uppercase tracking-[0.13em] text-[var(--erl-accent)] sm:text-xs">
         {title}
       </h3>
-      <p className="mt-2 line-clamp-3 text-xs leading-5 text-slate-200 sm:line-clamp-4 sm:text-sm sm:leading-6 lg:line-clamp-5">
+      <p className="mt-2 line-clamp-3 text-xs leading-5 text-[var(--erl-muted)] sm:line-clamp-4 sm:text-sm sm:leading-6 lg:line-clamp-5">
         {text || 'No comment recorded.'}
       </p>
     </section>
@@ -154,26 +186,26 @@ function SwipeHint({ onDismiss }: { onDismiss: () => void }) {
   return (
     <dialog
       open
-      className="absolute inset-0 z-40 m-0 grid h-full max-h-none w-full max-w-none place-items-center border-0 bg-black/15 px-6 backdrop-blur-[2px]"
+      className="absolute inset-0 z-40 m-0 grid h-full max-h-none w-full max-w-none place-items-center border-0 bg-[var(--erl-dialog-overlay)] px-6 backdrop-blur-[2px]"
       aria-modal="true"
       aria-labelledby="swipe-hint-title"
     >
-      <div className="relative w-full max-w-[260px] rounded-[1.75rem] border border-teal-300/20 bg-[#071a20]/94 px-6 pb-5 pt-5 text-center text-white shadow-[0_0_42px_rgb(45_212_191/24%)] backdrop-blur-xl">
+      <div className="erl-floating-card relative w-full max-w-[260px] rounded-[1.75rem] border px-6 pb-5 pt-5 text-center shadow-[0_0_42px_var(--erl-shadow)] backdrop-blur-xl">
         <button
           type="button"
           onClick={onDismiss}
-          className="absolute right-3 top-3 grid size-9 place-items-center rounded-full border border-white/10 bg-white/10 text-white transition hover:bg-white/15"
+          className="erl-icon-button absolute right-3 top-3 grid size-9 place-items-center rounded-full border transition"
           aria-label="Close swipe tutorial"
         >
           <X size={17} aria-hidden="true" />
         </button>
-        <p className="text-[10px] font-black uppercase tracking-[0.16em] text-teal-200">
+        <p className="text-[10px] font-black uppercase tracking-[0.16em] text-[var(--erl-accent)]">
           Browse the tracker
         </p>
         <div className="relative mx-auto mt-2 h-28 w-20">
-          <span className="swipe-demo-hand absolute inset-x-0 bottom-0 mx-auto grid size-14 place-items-center rounded-full border border-white/15 bg-white/10 text-white shadow-lg">
+          <span className="swipe-demo-hand erl-icon-button absolute inset-x-0 bottom-0 mx-auto grid size-14 place-items-center rounded-full border shadow-lg">
             <span
-              className="absolute -right-1 -top-1 size-3 rounded-full border border-teal-200/70 animate-ping"
+              className="absolute -right-1 -top-1 size-3 animate-ping rounded-full border border-[var(--erl-accent)]"
               aria-hidden="true"
             />
             <Hand size={29} aria-hidden="true" />
@@ -206,17 +238,20 @@ function ReelCard({
   return (
     <article
       data-reel-index={position}
-      className="relative flex h-full min-h-full max-h-full snap-start snap-always flex-col overflow-hidden bg-[#0b222a] px-5 pb-28 pt-28 text-white sm:px-8 sm:pt-32 lg:px-10 lg:pt-36"
+      className="relative flex h-full min-h-full max-h-full snap-start snap-always flex-col overflow-hidden bg-[var(--erl-reel)] px-5 pb-28 pt-28 text-[var(--erl-text)] sm:px-8 sm:pt-32 lg:px-10 lg:pt-36"
     >
       <div className="relative z-10 flex flex-wrap items-center justify-between gap-3">
-        <span className="inline-flex items-center gap-2 rounded-xl border border-teal-300/20 bg-black/25 px-3 py-2 text-xs font-black uppercase tracking-[0.1em] shadow-[0_8px_24px_rgb(0_0_0/18%)] backdrop-blur sm:text-sm">
-          <span className="text-white">
+        <span className="erl-number-chip inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-xs font-black uppercase tracking-[0.1em] shadow-[0_8px_24px_rgb(0_0_0/12%)] backdrop-blur sm:text-sm">
+          <span className="text-[var(--erl-text)]">
             Issue {String(issue.number).padStart(2, '0')}
           </span>
-          <span className="text-teal-300/60" aria-hidden="true">
+          <span
+            className="text-[var(--erl-accent)] opacity-60"
+            aria-hidden="true"
+          >
             ·
           </span>
-          <span className="text-teal-100">
+          <span className="text-[var(--erl-accent)]">
             {position + 1} of {total}
           </span>
         </span>
@@ -225,10 +260,10 @@ function ReelCard({
 
       <div className="relative z-10 my-auto py-4 sm:py-6">
         <div className="flex flex-wrap gap-2 text-[11px] font-bold sm:text-xs">
-          <span className="rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-slate-100">
+          <span className="erl-chip rounded-full border px-3 py-1.5">
             {formatTower(issue.tower)}
           </span>
-          <span className="max-w-full truncate rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-slate-100">
+          <span className="erl-chip max-w-full truncate rounded-full border px-3 py-1.5">
             {issue.category}
           </span>
         </div>
@@ -246,21 +281,21 @@ function ReelCard({
         </div>
       </div>
 
-      <div className="relative z-10 border-t border-white/10 pt-4 sm:pt-5">
+      <div className="relative z-10 border-t border-[var(--erl-border)] pt-4 sm:pt-5">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="inline-flex items-center gap-2 rounded-full border border-teal-300/20 bg-teal-300/[0.08] px-3 py-1.5">
-            <span className="text-[9px] font-black uppercase tracking-[0.12em] text-teal-200">
+          <span className="inline-flex items-center gap-2 rounded-full border border-[var(--erl-accent-border)] bg-[var(--erl-accent-soft)] px-3 py-1.5">
+            <span className="text-[9px] font-black uppercase tracking-[0.12em] text-[var(--erl-accent)]">
               Owner
             </span>
-            <strong className="text-[11px] text-white sm:text-xs">
+            <strong className="text-[11px] text-[var(--erl-text)] sm:text-xs">
               {issue.owner}
             </strong>
           </span>
-          <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.07] px-3 py-1.5">
-            <span className="text-[9px] font-black uppercase tracking-[0.12em] text-slate-400">
+          <span className="erl-chip inline-flex items-center gap-2 rounded-full border px-3 py-1.5">
+            <span className="text-[9px] font-black uppercase tracking-[0.12em] text-[var(--erl-muted)]">
               Raised by
             </span>
-            <strong className="text-[11px] text-white sm:text-xs">
+            <strong className="text-[11px] text-[var(--erl-text)] sm:text-xs">
               {issue.raisedBy}
             </strong>
           </span>
@@ -282,10 +317,10 @@ function SelectFilter({
   options: Array<{ value: string; label: string }>;
 }) {
   return (
-    <label className="grid gap-1.5 text-xs font-black uppercase tracking-[0.09em] text-slate-500">
+    <label className="grid gap-1.5 text-xs font-black uppercase tracking-[0.09em] text-[var(--erl-muted)]">
       {label}
       <select
-        className="min-h-12 w-full rounded-2xl border border-slate-200 bg-slate-50 px-3 text-sm font-semibold normal-case tracking-normal text-slate-900 outline-none transition focus:border-teal focus:bg-white"
+        className="erl-input min-h-12 w-full rounded-2xl border px-3 text-sm font-semibold normal-case tracking-normal outline-none transition"
         value={value}
         onChange={(event) => onChange(event.target.value)}
       >
@@ -348,12 +383,12 @@ function CompletionModal({
   return (
     <dialog
       open
-      className="fixed inset-0 z-[100] m-0 grid h-full max-h-none w-full max-w-none place-items-center overflow-y-auto border-0 bg-[#071a20]/88 p-4 backdrop-blur-xl sm:p-8"
+      className="fixed inset-0 z-[100] m-0 grid h-full max-h-none w-full max-w-none place-items-center overflow-y-auto border-0 bg-[var(--erl-modal-overlay)] p-4 backdrop-blur-xl sm:p-8"
       aria-modal="true"
       aria-labelledby="completion-title"
       aria-describedby="completion-summary"
     >
-      <section className="w-full max-w-md rounded-[2rem] border border-white/15 bg-[#0b252d] p-6 text-white shadow-[0_35px_100px_rgb(0_0_0/45%)] sm:p-8">
+      <section className="erl-modal-card w-full max-w-md rounded-[2rem] border p-6 shadow-[0_35px_100px_rgb(0_0_0/28%)] sm:p-8">
         <div>
           <h1
             id="completion-title"
@@ -364,7 +399,7 @@ function CompletionModal({
 
           <p
             id="completion-summary"
-            className="mt-3 text-sm font-medium leading-relaxed text-white/70 sm:text-base"
+            className="mt-3 text-sm font-medium leading-relaxed text-[var(--erl-muted)] sm:text-base"
           >
             The owners plan to issue the NOC once all three categories reach
             100%. Close this window to view detailed information.
@@ -386,8 +421,10 @@ function CompletionModal({
             ].map((row, index) => (
               <div key={row.label}>
                 <div className="flex items-center justify-between gap-4 text-sm sm:text-base">
-                  <span className="font-bold text-white">{row.label}</span>
-                  <strong className="text-sm text-slate-300">
+                  <span className="font-bold text-[var(--erl-text)]">
+                    {row.label}
+                  </span>
+                  <strong className="text-sm text-[var(--erl-muted)]">
                     {row.value}
                   </strong>
                 </div>
@@ -398,7 +435,7 @@ function CompletionModal({
                   aria-label={`${row.label} progress`}
                 />
                 <div
-                  className="modal-progress-track relative mt-3 h-9 overflow-hidden rounded-xl bg-white/10"
+                  className="modal-progress-track relative mt-3 h-9 overflow-hidden rounded-xl bg-[var(--erl-progress-track)]"
                   style={{ animationDelay: `${index * 140}ms` }}
                   aria-hidden="true"
                 >
@@ -406,7 +443,7 @@ function CompletionModal({
                     className="absolute inset-y-0 left-0 rounded-xl bg-sun transition-[width] duration-1000 ease-out"
                     style={{ width: `${row.progress}%` }}
                   />
-                  <span className="relative z-10 grid h-full place-items-center text-[11px] font-black text-white">
+                  <span className="relative z-10 grid h-full place-items-center text-[11px] font-black text-[var(--erl-progress-label)]">
                     {Math.round(row.progress)}%
                   </span>
                 </div>
@@ -491,12 +528,12 @@ function FilterSheet({
     >
       <button
         type="button"
-        className="absolute inset-0 bg-ink/55 backdrop-blur-sm"
+        className="absolute inset-0 bg-[var(--erl-dialog-overlay)] backdrop-blur-sm"
         onClick={onClose}
         aria-label="Close filters"
       />
-      <section className="relative max-h-[88svh] w-full overflow-y-auto rounded-t-[2rem] border border-b-0 border-slate-200 bg-white px-5 pb-7 pt-3 shadow-[0_-24px_80px_rgb(7_26_32/22%)] sm:mb-5 sm:max-w-2xl sm:rounded-[2rem] sm:border sm:px-7">
-        <div className="mx-auto mb-3 h-1.5 w-12 rounded-full bg-slate-200 sm:hidden" />
+      <section className="erl-filter-sheet relative max-h-[88svh] w-full overflow-y-auto rounded-t-[2rem] border border-b-0 px-5 pb-7 pt-3 shadow-[0_-24px_80px_rgb(7_26_32/18%)] sm:mb-5 sm:max-w-2xl sm:rounded-[2rem] sm:border sm:px-7">
+        <div className="mx-auto mb-3 h-1.5 w-12 rounded-full bg-[var(--erl-border)] sm:hidden" />
         <div className="flex items-center justify-between gap-4">
           <div>
             <p className="text-xs font-black uppercase tracking-[0.13em] text-teal">
@@ -504,7 +541,7 @@ function FilterSheet({
             </p>
             <h2
               id="filter-title"
-              className="mt-1 font-heading text-3xl font-semibold text-ink"
+              className="mt-1 font-heading text-3xl font-semibold text-[var(--erl-text)]"
             >
               Filter issues
             </h2>
@@ -513,18 +550,18 @@ function FilterSheet({
             ref={closeButtonRef}
             type="button"
             onClick={onClose}
-            className="grid size-11 place-items-center rounded-full bg-slate-100 text-slate-700 transition hover:bg-slate-200"
+            className="erl-icon-button grid size-11 place-items-center rounded-full border transition"
             aria-label="Close filters"
           >
             <X size={20} />
           </button>
         </div>
 
-        <label className="mt-5 flex min-h-12 items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 text-slate-500 focus-within:border-teal focus-within:bg-white">
+        <label className="erl-input mt-5 flex min-h-12 items-center gap-3 rounded-2xl border px-4 text-[var(--erl-muted)]">
           <Search size={18} aria-hidden="true" />
           <span className="sr-only">Search issues</span>
           <input
-            className="w-full bg-transparent text-sm font-semibold text-slate-900 outline-none placeholder:font-normal placeholder:text-slate-400"
+            className="w-full bg-transparent text-sm font-semibold text-[var(--erl-text)] outline-none placeholder:font-normal placeholder:text-[var(--erl-muted)]"
             value={query}
             onChange={(event) => onQueryChange(event.target.value)}
             placeholder="Search issue number, text or response"
@@ -577,7 +614,7 @@ function FilterSheet({
           <button
             type="button"
             onClick={onReset}
-            className="inline-flex min-h-12 flex-1 items-center justify-center gap-2 rounded-2xl border border-slate-200 px-4 text-sm font-black text-slate-700 transition hover:bg-slate-50"
+            className="erl-secondary-button inline-flex min-h-12 flex-1 items-center justify-center gap-2 rounded-2xl border px-4 text-sm font-black transition"
           >
             <RotateCcw size={16} /> Reset
           </button>
@@ -598,14 +635,14 @@ function LiveFundTotal() {
   const liveTotal = useLiveFundTotal();
 
   return (
-    <section className="relative overflow-hidden rounded-[2rem] border border-teal-300/20 bg-[#0b2a32] p-5 shadow-[0_0_48px_rgb(45_212_191/14%)] sm:p-8">
-      <div className="pointer-events-none absolute -right-16 -top-20 size-64 rounded-full border border-teal-200/[0.07]" />
+    <section className="erl-live-total relative overflow-hidden rounded-[2rem] border p-5 shadow-[0_0_48px_var(--erl-shadow)] sm:p-8">
+      <div className="pointer-events-none absolute -right-16 -top-20 size-64 rounded-full border border-[var(--erl-accent-border)]" />
       <div className="relative">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <p className="text-[10px] font-black uppercase tracking-[0.17em] text-teal-200 sm:text-xs">
+          <p className="text-[10px] font-black uppercase tracking-[0.17em] text-[var(--erl-accent)] sm:text-xs">
             Live total due from ERL
           </p>
-          <span className="inline-flex items-center gap-2 rounded-full border border-emerald-300/20 bg-emerald-300/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.12em] text-emerald-100">
+          <span className="inline-flex items-center gap-2 rounded-full border border-emerald-600/20 bg-emerald-500/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.12em] text-emerald-800 dark:border-emerald-300/20 dark:bg-emerald-300/10 dark:text-emerald-100">
             <span className="relative flex size-2">
               <span className="absolute inline-flex size-full animate-ping rounded-full bg-emerald-300 opacity-70" />
               <span className="relative inline-flex size-2 rounded-full bg-emerald-300" />
@@ -615,7 +652,7 @@ function LiveFundTotal() {
         </div>
 
         <output
-          className="mt-6 block overflow-hidden font-heading text-[clamp(2rem,9vw,5rem)] font-semibold leading-none tracking-[-0.055em] text-white"
+          className="mt-6 block overflow-hidden font-heading text-[clamp(2rem,9vw,5rem)] font-semibold leading-none tracking-[-0.055em] text-[var(--erl-text)]"
           aria-label={`Current total due is ${formatRupees(liveTotal, 2)}`}
         >
           <span>{formatRupees(liveTotal, 2)}</span>
@@ -628,10 +665,10 @@ function LiveFundTotal() {
 function ImportantFacts() {
   return (
     <section
-      className="mt-6 rounded-[2rem] border border-white/10 bg-white/[0.045] p-5 sm:p-8"
+      className="erl-section-card mt-6 rounded-[2rem] border p-5 sm:p-8"
       aria-labelledby="important-facts-title"
     >
-      <p className="text-[10px] font-black uppercase tracking-[0.15em] text-teal-200">
+      <p className="text-[10px] font-black uppercase tracking-[0.15em] text-[var(--erl-accent)]">
         Facts for calculation
       </p>
       <h2
@@ -642,29 +679,32 @@ function ImportantFacts() {
       </h2>
 
       <div className="mt-6 grid gap-3 sm:grid-cols-2">
-        <article className="flex items-center gap-4 rounded-2xl border border-white/10 bg-[#0b252d] p-4 sm:p-5">
-          <span className="grid size-11 shrink-0 place-items-center rounded-xl border border-sun/20 bg-sun/10 text-sun">
+        <article className="erl-sub-card flex items-center gap-4 rounded-2xl border p-4 sm:p-5">
+          <span className="grid size-11 shrink-0 place-items-center rounded-xl border border-[var(--erl-gold-border)] bg-[var(--erl-gold-soft)] text-[var(--erl-gold)]">
             <Calculator size={21} aria-hidden="true" />
           </span>
           <div>
-            <p className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">
+            <p className="text-[10px] font-black uppercase tracking-[0.14em] text-[var(--erl-muted)]">
               Interest percentage
             </p>
-            <p className="mt-1 font-heading text-2xl font-semibold text-white sm:text-3xl">
-              12.4% <span className="text-base text-slate-300">per annum</span>
+            <p className="mt-1 font-heading text-2xl font-semibold text-[var(--erl-text)] sm:text-3xl">
+              12.4%{' '}
+              <span className="text-base text-[var(--erl-muted)]">
+                per annum
+              </span>
             </p>
           </div>
         </article>
 
-        <article className="flex items-center gap-4 rounded-2xl border border-white/10 bg-[#0b252d] p-4 sm:p-5">
-          <span className="grid size-11 shrink-0 place-items-center rounded-xl border border-teal-300/20 bg-teal-300/10 text-teal-200">
+        <article className="erl-sub-card flex items-center gap-4 rounded-2xl border p-4 sm:p-5">
+          <span className="grid size-11 shrink-0 place-items-center rounded-xl border border-[var(--erl-accent-border)] bg-[var(--erl-accent-soft)] text-[var(--erl-accent)]">
             <ShieldCheck size={21} aria-hidden="true" />
           </span>
           <div>
-            <p className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">
+            <p className="text-[10px] font-black uppercase tracking-[0.14em] text-[var(--erl-muted)]">
               RERA order received
             </p>
-            <p className="mt-1 font-heading text-2xl font-semibold text-white sm:text-3xl">
+            <p className="mt-1 font-heading text-2xl font-semibold text-[var(--erl-text)] sm:text-3xl">
               September 2022
             </p>
           </div>
@@ -703,23 +743,32 @@ function TodayStamp() {
   );
 }
 
-function FundTab() {
+function FundTab({
+  theme,
+  onToggleTheme,
+}: {
+  theme: ColorTheme;
+  onToggleTheme: () => void;
+}) {
   return (
-    <section className="h-svh overflow-y-auto bg-[#071a20] px-4 pb-32 pt-5 text-white sm:px-8 sm:pb-36 sm:pt-9">
+    <section className="h-svh overflow-y-auto bg-[var(--erl-page)] px-4 pb-32 pt-5 text-[var(--erl-text)] sm:px-8 sm:pb-36 sm:pt-9">
       <div className="mx-auto w-full max-w-6xl">
         <header className="mb-6 sm:mb-8">
-          <div className="flex items-center gap-3 text-teal-200">
-            <span className="grid size-11 place-items-center rounded-2xl border border-teal-300/20 bg-teal-300/10">
-              <IndianRupee size={22} aria-hidden="true" />
-            </span>
-            <div>
-              <p className="text-[10px] font-black uppercase tracking-[0.17em]">
-                TOA · Financial claim
-              </p>
-              <p className="mt-1 text-xs text-slate-400">
-                Promoter: ERL · <TodayStamp />
-              </p>
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex items-center gap-3 text-[var(--erl-accent)]">
+              <span className="grid size-11 place-items-center rounded-2xl border border-[var(--erl-accent-border)] bg-[var(--erl-accent-soft)]">
+                <IndianRupee size={22} aria-hidden="true" />
+              </span>
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-[0.17em]">
+                  TOA · Financial claim
+                </p>
+                <p className="mt-1 text-xs text-[var(--erl-muted)]">
+                  Promoter: ERL · <TodayStamp />
+                </p>
+              </div>
             </div>
+            <ThemeToggle theme={theme} onToggle={onToggleTheme} />
           </div>
           <h1 className="mt-5 max-w-4xl font-heading text-4xl font-semibold leading-[0.98] tracking-[-0.045em] sm:text-6xl lg:text-7xl">
             Revised dues payable by the promoter (ERL)
@@ -728,17 +777,17 @@ function FundTab() {
 
         <LiveFundTotal />
 
-        <section className="mt-6 rounded-[2rem] border border-white/10 bg-white/[0.045] p-5 sm:mt-8 sm:p-8">
+        <section className="erl-section-card mt-6 rounded-[2rem] border p-5 sm:mt-8 sm:p-8">
           <div className="flex items-end justify-between gap-4">
             <div>
-              <p className="text-[10px] font-black uppercase tracking-[0.16em] text-teal-200 sm:text-xs">
+              <p className="text-[10px] font-black uppercase tracking-[0.16em] text-[var(--erl-accent)] sm:text-xs">
                 Amount breakdown
               </p>
               <h2 className="mt-2 font-heading text-3xl font-semibold tracking-[-0.035em] sm:text-4xl">
                 Revised dues as on today
               </h2>
             </div>
-            <span className="hidden rounded-full border border-white/10 bg-white/[0.06] px-3 py-1.5 text-xs font-bold text-slate-300 sm:inline-flex">
+            <span className="erl-chip hidden rounded-full border px-3 py-1.5 text-xs font-bold sm:inline-flex">
               6 components
             </span>
           </div>
@@ -747,68 +796,70 @@ function FundTab() {
             {fundDues.map((due, index) => (
               <li
                 key={due.label}
-                className="rounded-2xl border border-white/10 bg-[#0b252d] p-4 sm:p-5"
+                className="erl-sub-card rounded-2xl border p-4 sm:p-5"
               >
                 <div className="flex items-start gap-3">
-                  <span className="grid size-7 shrink-0 place-items-center rounded-lg bg-white/[0.07] text-[10px] font-black text-teal-200">
+                  <span className="grid size-7 shrink-0 place-items-center rounded-lg bg-[var(--erl-chip)] text-[10px] font-black text-[var(--erl-accent)]">
                     {String(index + 1).padStart(2, '0')}
                   </span>
                   <div>
-                    <h3 className="text-sm font-bold leading-5 text-white sm:text-base">
+                    <h3 className="text-sm font-bold leading-5 text-[var(--erl-text)] sm:text-base">
                       {due.label}
                     </h3>
                     {'period' in due && (
-                      <p className="mt-1 text-xs text-slate-400">
+                      <p className="mt-1 text-xs text-[var(--erl-muted)]">
                         {due.period}
                       </p>
                     )}
                   </div>
                 </div>
-                <strong className="mt-3 block pl-10 font-heading text-2xl font-semibold tracking-[-0.03em] text-sun sm:text-3xl">
+                <strong className="mt-3 block pl-10 font-heading text-2xl font-semibold tracking-[-0.03em] text-[var(--erl-gold)] sm:text-3xl">
                   {formatRupees(due.amount)}
                 </strong>
               </li>
             ))}
           </ol>
 
-          <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-sun/25 bg-sun/[0.08] p-4 sm:p-5">
-            <span className="text-xs font-black uppercase tracking-[0.13em] text-sun">
+          <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[var(--erl-gold-border)] bg-[var(--erl-gold-soft)] p-4 sm:p-5">
+            <span className="text-xs font-black uppercase tracking-[0.13em] text-[var(--erl-gold)]">
               Total revised dues as on today
             </span>
-            <strong className="font-heading text-2xl font-semibold text-white sm:text-3xl">
+            <strong className="font-heading text-2xl font-semibold text-[var(--erl-text)] sm:text-3xl">
               {formatRupees(fundBaselineTotal)}
             </strong>
           </div>
         </section>
 
-        <section className="mt-6 rounded-[2rem] border border-white/10 bg-white/[0.045] p-5 sm:p-8">
-          <p className="text-[10px] font-black uppercase tracking-[0.15em] text-teal-200">
+        <section className="erl-section-card mt-6 rounded-[2rem] border p-5 sm:p-8">
+          <p className="text-[10px] font-black uppercase tracking-[0.15em] text-[var(--erl-accent)]">
             Interest breakup
           </p>
           <h2 className="mt-1 font-heading text-2xl font-semibold">
             Accumulated interest
           </h2>
 
-          <dl className="mt-6 divide-y divide-white/10">
+          <dl className="mt-6 divide-y divide-[var(--erl-border)]">
             <div className="flex items-center justify-between gap-4 py-3">
-              <dt className="text-sm text-slate-300">Up to 5 September 2022</dt>
-              <dd className="shrink-0 font-bold text-white">
+              <dt className="text-sm text-[var(--erl-muted)]">
+                Up to 5 September 2022
+              </dt>
+              <dd className="shrink-0 font-bold text-[var(--erl-text)]">
                 {formatRupees(7_423_975)}
               </dd>
             </div>
             <div className="flex items-center justify-between gap-4 py-3">
-              <dt className="text-sm text-slate-300">
+              <dt className="text-sm text-[var(--erl-muted)]">
                 Additional interest as on today
               </dt>
-              <dd className="shrink-0 font-bold text-white">
+              <dd className="shrink-0 font-bold text-[var(--erl-text)]">
                 {formatRupees(14_132_161)}
               </dd>
             </div>
             <div className="flex items-center justify-between gap-4 py-3">
-              <dt className="text-sm font-bold text-teal-100">
+              <dt className="text-sm font-bold text-[var(--erl-accent)]">
                 Total accumulated interest
               </dt>
-              <dd className="shrink-0 font-black text-sun">
+              <dd className="shrink-0 font-black text-[var(--erl-gold)]">
                 {formatRupees(21_556_136)}
               </dd>
             </div>
@@ -821,10 +872,19 @@ function FundTab() {
   );
 }
 
-function DocumentsTab() {
+function DocumentsTab({
+  theme,
+  onToggleTheme,
+}: {
+  theme: ColorTheme;
+  onToggleTheme: () => void;
+}) {
   return (
-    <section className="grid h-svh place-items-center bg-[#071a20] px-5 pb-24 text-center text-white">
-      <p className="font-heading text-2xl font-semibold tracking-[-0.025em] text-slate-300 sm:text-3xl">
+    <section className="relative grid h-svh place-items-center bg-[var(--erl-page)] px-5 pb-24 text-center text-[var(--erl-text)]">
+      <div className="absolute right-4 top-4 sm:right-6 sm:top-6">
+        <ThemeToggle theme={theme} onToggle={onToggleTheme} />
+      </div>
+      <p className="font-heading text-2xl font-semibold tracking-[-0.025em] text-[var(--erl-muted)] sm:text-3xl">
         No data loaded yet
       </p>
     </section>
@@ -833,6 +893,7 @@ function DocumentsTab() {
 
 export function IssueTracker({ issues }: { issues: ErlIssue[] }) {
   const [activeTab, setActiveTab] = useState<AppTab>('civil');
+  const [theme, setTheme] = useState<ColorTheme>('dark');
   const [showCompletion, setShowCompletion] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
   const [query, setQuery] = useState('');
@@ -898,6 +959,18 @@ export function IssueTracker({ issues }: { issues: ErlIssue[] }) {
 
   const closeFilters = useCallback(() => setShowFilters(false), []);
 
+  const toggleTheme = useCallback(() => {
+    setTheme((current) => {
+      const next = current === 'dark' ? 'light' : 'dark';
+      try {
+        window.localStorage.setItem(colorThemeStorageKey, next);
+      } catch {
+        // The theme still changes for this visit when storage is unavailable.
+      }
+      return next;
+    });
+  }, []);
+
   const dismissSwipeHint = useCallback(() => {
     setShowSwipeHint(false);
     try {
@@ -911,6 +984,17 @@ export function IssueTracker({ issues }: { issues: ErlIssue[] }) {
     reelRef.current?.scrollTo({ top: 0, behavior: 'instant' });
   }, [category, owner, query, status, tower]);
 
+  useLayoutEffect(() => {
+    try {
+      const savedTheme = window.localStorage.getItem(colorThemeStorageKey);
+      if (savedTheme === 'dark' || savedTheme === 'light') {
+        setTheme(savedTheme);
+      }
+    } catch {
+      // Dark mode remains the first-visit default when storage is unavailable.
+    }
+  }, []);
+
   useEffect(() => {
     let shouldShow = true;
     try {
@@ -922,28 +1006,31 @@ export function IssueTracker({ issues }: { issues: ErlIssue[] }) {
   }, []);
 
   return (
-    <>
+    <div
+      className={`erl-tracker-theme h-svh overflow-hidden ${theme === 'dark' ? 'dark' : ''}`}
+      data-theme={theme}
+    >
       {activeTab === 'civil' ? (
-        <section className="relative h-svh w-full overflow-hidden bg-ink">
+        <section className="relative h-svh w-full overflow-hidden bg-[var(--erl-page)]">
           <div className="pointer-events-none absolute inset-x-0 top-0 z-30 px-3 pb-10 pt-3 sm:px-5 sm:pb-12 sm:pt-5">
-            <div className="pointer-events-auto mx-auto flex max-w-6xl items-center justify-between gap-3 rounded-2xl border border-white/10 bg-black/25 p-2.5 text-white shadow-[0_14px_38px_rgb(45_212_191/20%)] backdrop-blur-xl sm:p-3">
+            <div className="erl-top-bar pointer-events-auto mx-auto flex max-w-6xl items-center justify-between gap-3 rounded-2xl border p-2 shadow-[0_14px_38px_var(--erl-shadow)] backdrop-blur-xl sm:p-3">
               <div className="min-w-0 pl-1">
-                <p className="truncate text-[11px] font-black uppercase tracking-[0.15em] text-teal-200 sm:text-sm lg:text-base">
+                <p className="truncate text-[10px] font-black uppercase tracking-[0.12em] text-[var(--erl-accent)] sm:text-sm sm:tracking-[0.15em] lg:text-base">
                   ERL Civil Issues Tracker
                 </p>
-                <p className="mt-1 truncate text-[13px] font-semibold text-slate-300 sm:text-base lg:text-lg">
+                <p className="mt-1 truncate text-xs font-semibold text-[var(--erl-muted)] sm:text-base lg:text-lg">
                   Total Issues: {issues.length} ·{' '}
-                  <span className="font-black text-white">
+                  <span className="font-black text-[var(--erl-text)]">
                     {completion}% Completed
                   </span>
                 </p>
               </div>
-              <div className="flex shrink-0 items-center gap-2">
+              <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
                 <button
                   type="button"
                   onClick={() => setShowFilters(true)}
                   aria-label="Filter issues"
-                  className="relative inline-flex size-11 items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/10 text-sm font-black text-white transition hover:bg-white/15 sm:h-12 sm:w-auto sm:px-4 sm:text-base"
+                  className="erl-icon-button relative inline-flex size-10 items-center justify-center gap-2 rounded-xl border text-sm font-black transition hover:-translate-y-0.5 sm:h-12 sm:w-auto sm:px-4 sm:text-base"
                 >
                   <SlidersHorizontal size={19} aria-hidden="true" />
                   <span className="hidden sm:inline">Filter</span>
@@ -953,9 +1040,10 @@ export function IssueTracker({ issues }: { issues: ErlIssue[] }) {
                     </span>
                   )}
                 </button>
+                <ThemeToggle theme={theme} onToggle={toggleTheme} />
                 <a
                   href={siteHref('/erl-issues/admin')}
-                  className="grid size-11 place-items-center rounded-xl border border-white/10 bg-white/10 text-white transition hover:bg-white/15 sm:size-12"
+                  className="erl-icon-button grid size-10 place-items-center rounded-xl border transition hover:-translate-y-0.5 sm:size-12"
                   aria-label="Open issue synchronization"
                 >
                   <ShieldCheck size={19} aria-hidden="true" />
@@ -965,13 +1053,13 @@ export function IssueTracker({ issues }: { issues: ErlIssue[] }) {
           </div>
 
           {filteredIssues.length === 0 ? (
-            <div className="grid h-full place-items-center bg-ink px-8 pb-28 pt-28 text-center text-white">
+            <div className="grid h-full place-items-center bg-[var(--erl-page)] px-8 pb-28 pt-28 text-center text-[var(--erl-text)]">
               <div>
-                <Search className="mx-auto text-slate-500" size={28} />
+                <Search className="mx-auto text-[var(--erl-muted)]" size={28} />
                 <h2 className="mt-3 font-heading text-2xl font-semibold">
                   No matching issues
                 </h2>
-                <p className="mt-2 text-sm text-slate-400">
+                <p className="mt-2 text-sm text-[var(--erl-muted)]">
                   Adjust the filters to return to the issue feed.
                 </p>
                 <button
@@ -984,7 +1072,7 @@ export function IssueTracker({ issues }: { issues: ErlIssue[] }) {
               </div>
             </div>
           ) : (
-            <section className="relative h-full overflow-hidden bg-ink">
+            <section className="relative h-full overflow-hidden bg-[var(--erl-page)]">
               <section
                 ref={reelRef}
                 className="h-full snap-y snap-mandatory overflow-y-auto overscroll-contain"
@@ -1007,13 +1095,13 @@ export function IssueTracker({ issues }: { issues: ErlIssue[] }) {
           )}
         </section>
       ) : activeTab === 'fund' ? (
-        <FundTab />
+        <FundTab theme={theme} onToggleTheme={toggleTheme} />
       ) : (
-        <DocumentsTab />
+        <DocumentsTab theme={theme} onToggleTheme={toggleTheme} />
       )}
 
       <nav
-        className="fixed bottom-4 left-1/2 z-50 flex w-[calc(100%-1.5rem)] max-w-[520px] -translate-x-1/2 items-center gap-1 rounded-[1.6rem] border border-white/15 bg-[#071a20]/94 p-1.5 shadow-[0_0_38px_rgb(45_212_191/25%)] ring-1 ring-inset ring-white/[0.05] backdrop-blur-2xl sm:bottom-6"
+        className="erl-bottom-nav fixed bottom-4 left-1/2 z-50 flex w-[calc(100%-1.5rem)] max-w-[520px] -translate-x-1/2 items-center gap-1 rounded-[1.6rem] border p-1.5 shadow-[0_0_38px_var(--erl-shadow)] ring-1 ring-inset ring-[var(--erl-ring)] backdrop-blur-2xl sm:bottom-6"
         aria-label="Progress sections"
       >
         {appTabs.map(({ id, label, icon: Icon }) => {
@@ -1028,8 +1116,8 @@ export function IssueTracker({ issues }: { issues: ErlIssue[] }) {
               }}
               className={`relative flex min-h-14 flex-1 flex-col items-center justify-center gap-1 rounded-[1.15rem] px-2 text-[10px] font-black transition sm:flex-row sm:gap-2 sm:text-xs ${
                 selected
-                  ? 'bg-white/[0.13] text-white shadow-[0_6px_18px_rgb(0_0_0/28%)] ring-1 ring-inset ring-white/15'
-                  : 'text-slate-400 hover:bg-white/[0.05] hover:text-white'
+                  ? 'bg-[var(--erl-selected)] text-[var(--erl-text)] shadow-[0_6px_18px_rgb(0_0_0/16%)] ring-1 ring-inset ring-[var(--erl-border)]'
+                  : 'text-[var(--erl-muted)] hover:bg-[var(--erl-hover)] hover:text-[var(--erl-text)]'
               }`}
               aria-current={selected ? 'page' : undefined}
             >
@@ -1037,7 +1125,7 @@ export function IssueTracker({ issues }: { issues: ErlIssue[] }) {
                 <span className="absolute top-1 h-0.5 w-6 rounded-full bg-sun" />
               )}
               <Icon
-                className={selected ? 'text-sun' : undefined}
+                className={selected ? 'text-[var(--erl-gold)]' : undefined}
                 size={19}
                 aria-hidden="true"
               />
@@ -1075,6 +1163,6 @@ export function IssueTracker({ issues }: { issues: ErlIssue[] }) {
         onReset={resetFilters}
         onClose={closeFilters}
       />
-    </>
+    </div>
   );
 }
