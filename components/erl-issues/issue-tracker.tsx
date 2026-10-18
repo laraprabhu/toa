@@ -594,18 +594,44 @@ function LiveFundTotal() {
             {formatRupees(liveTotal, 2)}
           </span>
         </output>
-
-        <div className="mt-7">
-          <div className="rounded-2xl border border-white/10 bg-black/15 p-4">
-            <span className="text-[10px] font-black uppercase tracking-[0.13em] text-slate-400">
-              Revised dues as on today
-            </span>
-            <strong className="mt-2 block text-lg text-white sm:text-xl">
-              {formatRupees(fundBaselineTotal)}
-            </strong>
-          </div>
-        </div>
       </div>
+    </section>
+  );
+}
+
+function FundReferenceDetails() {
+  return (
+    <section
+      className="mt-4 grid gap-3 sm:mt-5 sm:grid-cols-2"
+      aria-label="Fund reference details"
+    >
+      <article className="flex items-center gap-4 rounded-2xl border border-white/10 bg-white/[0.055] p-4 sm:p-5">
+        <span className="grid size-11 shrink-0 place-items-center rounded-xl border border-sun/20 bg-sun/10 text-sun">
+          <Calculator size={21} aria-hidden="true" />
+        </span>
+        <div>
+          <p className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">
+            Interest percentage
+          </p>
+          <p className="mt-1 font-heading text-2xl font-semibold text-white sm:text-3xl">
+            12.4% <span className="text-base text-slate-300">per annum</span>
+          </p>
+        </div>
+      </article>
+
+      <article className="flex items-center gap-4 rounded-2xl border border-white/10 bg-white/[0.055] p-4 sm:p-5">
+        <span className="grid size-11 shrink-0 place-items-center rounded-xl border border-teal-300/20 bg-teal-300/10 text-teal-200">
+          <ShieldCheck size={21} aria-hidden="true" />
+        </span>
+        <div>
+          <p className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">
+            RERA order received
+          </p>
+          <p className="mt-1 font-heading text-2xl font-semibold text-white sm:text-3xl">
+            September 2022
+          </p>
+        </div>
+      </article>
     </section>
   );
 }
@@ -667,6 +693,7 @@ function FundTab() {
         </header>
 
         <LiveFundTotal />
+        <FundReferenceDetails />
 
         <section className="mt-6 rounded-[2rem] border border-white/10 bg-white/[0.045] p-5 sm:mt-8 sm:p-8">
           <div className="flex items-end justify-between gap-4">
