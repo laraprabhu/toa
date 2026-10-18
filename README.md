@@ -1,6 +1,6 @@
-# TOA Noticeboard
+# TOA Resident Hub
 
-A mobile-first communication hub for residents. The public site is a static GitHub Pages application. Announcements and the administrator allowlist live as JSON in this repository; there is no announcement database.
+A mobile-first communication hub for residents. The public site is a static GitHub Pages application. Announcements, ERL issues and their administrator allowlists live as JSON in this repository; there is no database.
 
 ## Architecture
 
@@ -15,6 +15,9 @@ A mobile-first communication hub for residents. The public site is a static GitH
 - **Attachments:** admins can attach up to five PDF, Word, Excel, PowerPoint, TXT or CSV files, limited to 10 MB each and 25 MB total per notice. The Worker validates and stores them under `public/attachments/announcement-N/`, and the notice displays download links after its complete message.
 - **Short resident links:** every published notice is available at `https://laraprabhu.github.io/toa/<announcement-number>/`.
 - **Publishing:** each content commit triggers the Pages workflow, so residents see the new version after the build finishes.
+- **ERL issue tracker:** `https://laraprabhu.github.io/toa/erl-issues/` provides searchable list and swipeable reel views for owners.
+- **ERL issue source:** `content/erl-issues/issues.json`, with permanent numbering in `content/erl-issues/issue-sequence.json`.
+- **Separate issue admins:** `content/erl-issues/admins.json` controls only the ERL issue console at `/erl-issues/admin/`; noticeboard access remains independent.
 
 GitHub Pages cannot securely hold a GitHub write credential or verify Google authorization by itself. The Worker is therefore required for secure editing, but it stores no announcement or resident data.
 
@@ -28,7 +31,7 @@ Requirements: Node.js 22 or newer.
 4. Run the site: `npm run dev`
 5. In another terminal, run the admin service: `npm run worker:dev`
 
-The resident hub works without the Worker. The Worker is only needed for the admin console.
+The resident hub works without the Worker. The Worker is only needed for the admin consoles.
 
 ## Add administrators
 
@@ -38,7 +41,7 @@ Avoid committing plain email addresses when the repository is public. Generate a
 npm run admin:hash -- committee.member@gmail.com
 ```
 
-Place the result in `content/admins.json`:
+Place the result in `content/admins.json` for noticeboard access, or in `content/erl-issues/admins.json` for ERL issue access:
 
 ```json
 {
@@ -61,7 +64,7 @@ The Worker also accepts an `email` field for a private repository, but hashes ar
 3. Add `http://localhost:3000` and the GitHub Pages origin, such as `https://owner.github.io`, to **Authorized JavaScript origins**.
 4. Save the client ID as the GitHub repository variable `GOOGLE_CLIENT_ID`.
 
-Only authentication is delegated to Google. Authorization is always enforced against `content/admins.json` by the Worker.
+Only authentication is delegated to Google. Authorization is always enforced against the relevant repository allowlist by the Worker.
 
 ## GitHub and Cloudflare configuration
 
@@ -98,6 +101,18 @@ Announcements support:
 - optional action label and URL.
 
 The admin console can create, edit and delete announcements, generate a WhatsApp-ready summary, and keeps every change—including generated preview images—in Git history. Its private notice preview renders unsaved text and images entirely in the administrator's browser, so a notice can be reviewed without saving, reserving a number, or making it available to residents. Editing an announcement regenerates the same numbered image and changes its preview version so newly shared links do not reuse stale WhatsApp metadata.
+
+## ERL issue tracker
+
+The public tracker supports free-text search and filtering by status, category, tower/block and owner. It offers a compact list as well as a full-height vertical reel that can be swiped, scrolled or controlled with its previous/next buttons.
+
+Issue status is intentionally conservative from TOA's perspective:
+
+- **Done:** the available record shows a clean delivery with no remaining work, rework or verification gap.
+- **In Progress:** work is actively underway, or completion is claimed but still needs verification or closure.
+- **Not Done:** only a promise, acknowledgement, discussion or future action is recorded.
+
+The ERL issue admin console can add, edit and delete issues. Every save is committed to `content/erl-issues/issues.json`, so Git history provides a simple audit trail. Supported statuses are limited to `Done`, `In Progress` and `Not Done`.
 
 ## Security notes
 

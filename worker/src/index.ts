@@ -55,6 +55,22 @@ interface AnnouncementAttachment {
   size: number;
 }
 
+interface ErlIssue {
+  number: number;
+  id: string;
+  title: string;
+  tower: string;
+  category: string;
+  raisedBy: 'TOA' | 'ERL';
+  owner: 'TOA' | 'ERL';
+  status: 'done' | 'not-done' | 'in-progress';
+  startDate?: string | null;
+  etaDate?: string | null;
+  erlComment: string;
+  momComment: string;
+  updatedOn: string;
+}
+
 type GitHubFile<T> = { content: T; sha: string };
 
 const googleKeys = createRemoteJWKSet(
@@ -69,6 +85,8 @@ const categories = new Set([
 ]);
 const statuses = new Set(['draft', 'published']);
 const priorities = new Set(['normal', 'high']);
+const issueStatuses = new Set(['done', 'not-done', 'in-progress']);
+const issueParties = new Set(['TOA', 'ERL']);
 const attachmentMimeTypes: Record<string, string[]> = {
   pdf: ['application/pdf'],
   doc: ['application/msword'],
@@ -133,7 +151,22 @@ const worker = {
         return json(result, 200, corsHeaders);
       }
 
-      const admin = await requireAdmin(request, env);
+      if (/^\/api\/erl-issues(?:\/|$)/.test(url.pathname)) {
+        const issueAdmin = await requireAdmin(
+          request,
+          env,
+          'content/erl-issues/admins.json',
+        );
+        return await handleIssueRequest(
+          request,
+          url,
+          env,
+          issueAdmin,
+          corsHeaders,
+        );
+      }
+
+      const admin = await requireAdmin(request, env, 'content/admins.json');
       if (
         request.method === 'GET' &&
         url.pathname === '/api/publication-status'
@@ -385,8 +418,9 @@ const worker = {
       const id = match[1] ? decodeURIComponent(match[1]) : undefined;
       if (request.method === 'POST' && !id) {
         const candidate = validateAnnouncement(await request.json());
-        const { content: existingAnnouncements } =
-          await getRepoJson<Announcement[]>('content/announcements.json', env);
+        const { content: existingAnnouncements } = await getRepoJson<
+          Announcement[]
+        >('content/announcements.json', env);
         if (existingAnnouncements.some((item) => item.id === candidate.id)) {
           throw new HttpError(
             409,
@@ -489,7 +523,83 @@ export class AnnouncementViewCounter extends DurableObject<Env> {
   }
 }
 
-async function requireAdmin(request: Request, env: Env) {
+async function handleIssueRequest(
+  request: Request,
+  url: URL,
+  env: Env,
+  admin: { email: string; name?: string },
+  corsHeaders: Record<string, string>,
+) {
+  const match = url.pathname.match(/^\/api\/erl-issues(?:\/([^/]+))?\/?$/);
+  if (!match) return json({ error: 'Not found.' }, 404, corsHeaders);
+
+  if (request.method === 'GET' && !match[1]) {
+    const { content } = await getRepoJson<ErlIssue[]>(
+      'content/erl-issues/issues.json',
+      env,
+    );
+    return json({ issues: content, admin }, 200, corsHeaders);
+  }
+
+  const id = match[1] ? decodeURIComponent(match[1]) : undefined;
+  if (request.method === 'POST' && !id) {
+    const candidate = validateIssue(await request.json());
+    if (candidate.number !== 0) {
+      throw new HttpError(400, 'A new issue number is assigned automatically.');
+    }
+    const { content: existingIssues } = await getRepoJson<ErlIssue[]>(
+      'content/erl-issues/issues.json',
+      env,
+    );
+    if (existingIssues.some((item) => item.id === candidate.id)) {
+      throw new HttpError(
+        409,
+        'This issue has already been saved. Refresh and try again.',
+      );
+    }
+    const number = await allocateIssueNumber(env);
+    const result = await mutateIssues(env, admin.email, (items) => {
+      if (items.some((item) => item.id === candidate.id)) {
+        throw new HttpError(
+          409,
+          'This issue has already been saved. Refresh and try again.',
+        );
+      }
+      return [...items, { ...candidate, number }];
+    });
+    return json({ issues: result, admin }, 201, corsHeaders);
+  }
+
+  if (request.method === 'PUT' && id) {
+    const candidate = validateIssue(await request.json());
+    if (candidate.id !== id) {
+      throw new HttpError(400, 'The issue ID cannot be changed.');
+    }
+    const result = await mutateIssues(env, admin.email, (items) => {
+      const existing = items.find((item) => item.id === id);
+      if (!existing) throw new HttpError(404, 'Issue not found.');
+      if (existing.number !== candidate.number) {
+        throw new HttpError(400, 'The issue number cannot be changed.');
+      }
+      return items.map((item) => (item.id === id ? candidate : item));
+    });
+    return json({ issues: result, admin }, 200, corsHeaders);
+  }
+
+  if (request.method === 'DELETE' && id) {
+    const result = await mutateIssues(env, admin.email, (items) => {
+      if (!items.some((item) => item.id === id)) {
+        throw new HttpError(404, 'Issue not found.');
+      }
+      return items.filter((item) => item.id !== id);
+    });
+    return json({ issues: result, admin }, 200, corsHeaders);
+  }
+
+  return json({ error: 'Method not allowed.' }, 405, corsHeaders);
+}
+
+async function requireAdmin(request: Request, env: Env, allowlistPath: string) {
   const authorization = request.headers.get('Authorization') ?? '';
   if (!authorization.startsWith('Bearer '))
     throw new HttpError(401, 'Google sign-in is required.');
@@ -514,7 +624,7 @@ async function requireAdmin(request: Request, env: Env) {
     throw new HttpError(401, 'A verified Google email is required.');
 
   const { content } = await getRepoJson<{ admins: AdminRecord[] }>(
-    'content/admins.json',
+    allowlistPath,
     env,
   );
   const emailHash = await sha256(email);
@@ -566,6 +676,77 @@ async function mutateAnnouncements(
   throw new HttpError(
     409,
     'The repository changed while saving. Please try again.',
+  );
+}
+
+async function mutateIssues(
+  env: Env,
+  adminEmail: string,
+  mutate: (items: ErlIssue[]) => ErlIssue[],
+) {
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    const file = await getRepoJson<ErlIssue[]>(
+      'content/erl-issues/issues.json',
+      env,
+    );
+    const next = mutate(file.content).sort((a, b) => a.number - b.number);
+    try {
+      await putRepoJson(
+        'content/erl-issues/issues.json',
+        next,
+        file.sha,
+        env,
+        `Update ERL issues via TOA admin (${adminEmail})`,
+      );
+      return next;
+    } catch (error) {
+      if (
+        !(error instanceof HttpError) ||
+        error.status !== 409 ||
+        attempt === 1
+      ) {
+        throw error;
+      }
+    }
+  }
+  throw new HttpError(
+    409,
+    'The repository changed while saving. Please try again.',
+  );
+}
+
+async function allocateIssueNumber(env: Env) {
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    const sequence = await getRepoJson<{ nextNumber: number }>(
+      'content/erl-issues/issue-sequence.json',
+      env,
+    );
+    const number = sequence.content.nextNumber;
+    if (!Number.isInteger(number) || number < 1) {
+      throw new HttpError(500, 'The issue sequence is invalid.');
+    }
+    try {
+      await putRepoJson(
+        'content/erl-issues/issue-sequence.json',
+        { nextNumber: number + 1 },
+        sequence.sha,
+        env,
+        `Reserve ERL issue #${number}`,
+      );
+      return number;
+    } catch (error) {
+      if (
+        !(error instanceof HttpError) ||
+        error.status !== 409 ||
+        attempt === 2
+      ) {
+        throw error;
+      }
+    }
+  }
+  throw new HttpError(
+    409,
+    'Unable to reserve an issue number. Please try again.',
   );
 }
 
@@ -757,6 +938,69 @@ function githubFetch(path: string, env: Env, init?: RequestInit) {
     ...init,
     headers,
   });
+}
+
+function validateIssue(input: unknown): ErlIssue {
+  if (!input || typeof input !== 'object') {
+    throw new HttpError(400, 'Issue data is required.');
+  }
+  const value = input as Record<string, unknown>;
+  if (!Number.isInteger(value.number) || Number(value.number) < 0) {
+    throw new HttpError(400, 'Issue number must be a whole number.');
+  }
+  if (
+    typeof value.id !== 'string' ||
+    !/^[a-zA-Z0-9][a-zA-Z0-9-]{2,80}$/.test(value.id)
+  ) {
+    throw new HttpError(400, 'Issue ID is invalid.');
+  }
+  for (const field of ['title', 'tower', 'category'] as const) {
+    if (typeof value[field] !== 'string' || !value[field].trim()) {
+      throw new HttpError(400, `${field} is required.`);
+    }
+  }
+  if (String(value.title).length > 1_000) {
+    throw new HttpError(400, 'Issue description is too long.');
+  }
+  if (String(value.tower).length > 80 || String(value.category).length > 160) {
+    throw new HttpError(400, 'Tower or category is too long.');
+  }
+  if (!issueParties.has(String(value.raisedBy))) {
+    throw new HttpError(400, 'Raised by must be TOA or ERL.');
+  }
+  if (!issueParties.has(String(value.owner))) {
+    throw new HttpError(400, 'Owner must be TOA or ERL.');
+  }
+  if (!issueStatuses.has(String(value.status))) {
+    throw new HttpError(400, 'Issue status is invalid.');
+  }
+  validateOptionalIssueDate(value.startDate, 'Start date');
+  validateOptionalIssueDate(value.etaDate, 'ETA date');
+  for (const field of ['erlComment', 'momComment'] as const) {
+    if (typeof value[field] !== 'string') {
+      throw new HttpError(400, `${field} must be text.`);
+    }
+    if (value[field].length > 8_000) {
+      throw new HttpError(400, `${field} is too long.`);
+    }
+  }
+  if (typeof value.updatedOn !== 'string' || !validIsoDate(value.updatedOn)) {
+    throw new HttpError(400, 'Updated date is invalid.');
+  }
+  return value as unknown as ErlIssue;
+}
+
+function validateOptionalIssueDate(value: unknown, label: string) {
+  if (value === undefined || value === null || value === '') return;
+  if (typeof value !== 'string' || !validIsoDate(value)) {
+    throw new HttpError(400, `${label} is invalid.`);
+  }
+}
+
+function validIsoDate(value: string) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+  const date = new Date(`${value}T00:00:00.000Z`);
+  return !Number.isNaN(date.getTime()) && date.toISOString().startsWith(value);
 }
 
 function validateAnnouncement(input: unknown): Announcement {
