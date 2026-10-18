@@ -2,7 +2,6 @@
 
 import {
   ArrowLeft,
-  CheckCircle2,
   ExternalLink,
   LogOut,
   RefreshCw,
@@ -35,19 +34,12 @@ type IssueSummary = {
   issues: unknown[];
   admin: Admin;
 };
-type SyncSummary = {
-  issues: unknown[];
-  admin: Admin;
-  changed: boolean;
-  changedCount: number;
-  importedCount: number;
-  removedCount: number;
-  syncedOn: string;
-};
 
 const authSessionStorageKey = 'toa-erl-issues-admin-session-v2';
 const googleSheetUrl =
   'https://docs.google.com/spreadsheets/d/13DREMQUny0iHV71Lc8GbUjSmGQR3LixC/edit?usp=sharing';
+const githubSyncWorkflowUrl =
+  'https://github.com/laraprabhu/toa/actions/workflows/sync-erl-issues.yml';
 
 export function IssueAdminConsole({
   apiUrl,
@@ -61,8 +53,6 @@ export function IssueAdminConsole({
   const [admin, setAdmin] = useState<Admin | null>(null);
   const [issueCount, setIssueCount] = useState<number | null>(null);
   const [loadingSession, setLoadingSession] = useState(configured);
-  const [syncing, setSyncing] = useState(false);
-  const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const googleButtonRef = useRef<HTMLDivElement>(null);
 
@@ -151,43 +141,12 @@ export function IssueAdminConsole({
     };
   }, [authorize, configured, googleClientId, token]);
 
-  async function syncNow() {
-    if (!token || syncing) return;
-    setSyncing(true);
-    setError('');
-    setMessage('');
-    try {
-      const result = await apiRequest<SyncSummary>(
-        apiUrl,
-        '/api/erl-issues/sync',
-        token,
-        { method: 'POST' },
-      );
-      setAdmin(result.admin);
-      setIssueCount(result.importedCount);
-      setMessage(
-        result.changed
-          ? `Synced ${result.importedCount} issues. ${result.changedCount} changed and ${result.removedCount} removed.`
-          : `The tracker is already up to date. ${result.importedCount} issues checked.`,
-      );
-    } catch (requestError) {
-      setError(
-        requestError instanceof Error
-          ? requestError.message
-          : 'Unable to synchronize the tracker.',
-      );
-    } finally {
-      setSyncing(false);
-    }
-  }
-
   function signOut() {
     window.sessionStorage.removeItem(authSessionStorageKey);
     window.google?.accounts.id.disableAutoSelect();
     setToken('');
     setAdmin(null);
     setIssueCount(null);
-    setMessage('');
     setError('');
   }
 
@@ -276,19 +235,21 @@ export function IssueAdminConsole({
                     </div>
                   </div>
 
-                  <button
-                    type="button"
-                    onClick={() => void syncNow()}
-                    disabled={syncing}
-                    className="mt-5 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl bg-sun px-5 text-sm font-black text-ink transition hover:bg-[#ffd872] disabled:cursor-wait disabled:opacity-70"
+                  <p className="mt-4 text-xs leading-5 text-slate-400">
+                    GitHub will confirm repository access before allowing a
+                    manual sync.
+                  </p>
+
+                  <a
+                    href={githubSyncWorkflowUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="mt-5 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl bg-sun px-5 text-sm font-black text-ink transition hover:bg-[#ffd872]"
                   >
-                    <RefreshCw
-                      className={syncing ? 'animate-spin' : undefined}
-                      size={18}
-                      aria-hidden="true"
-                    />
-                    {syncing ? 'Syncing…' : 'Sync now'}
-                  </button>
+                    <RefreshCw size={18} aria-hidden="true" />
+                    Open force sync
+                    <ExternalLink size={16} aria-hidden="true" />
+                  </a>
 
                   <a
                     href={googleSheetUrl}
@@ -303,12 +264,6 @@ export function IssueAdminConsole({
               </>
             )}
 
-            {message && (
-              <Notice tone="success">
-                <CheckCircle2 className="shrink-0" size={18} />
-                {message}
-              </Notice>
-            )}
             {error && <Notice tone="error">{error}</Notice>}
           </div>
         </section>
