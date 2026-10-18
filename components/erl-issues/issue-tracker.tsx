@@ -643,12 +643,12 @@ export function IssueTracker({ issues }: { issues: ErlIssue[] }) {
             <div className="pointer-events-auto mx-auto flex max-w-6xl items-center justify-between gap-3 rounded-2xl border border-white/10 bg-black/25 p-2.5 text-white shadow-[0_14px_38px_rgb(45_212_191/20%)] backdrop-blur-xl sm:p-3">
               <div className="min-w-0 pl-1">
                 <p className="truncate text-[11px] font-black uppercase tracking-[0.15em] text-teal-200 sm:text-sm lg:text-base">
-                  TOA · ERL Civil Progress
+                  ERL Civil Issues Tracker
                 </p>
                 <p className="mt-1 truncate text-[13px] font-semibold text-slate-300 sm:text-base lg:text-lg">
-                  {filteredIssues.length} of {issues.length} issues ·{' '}
+                  Total Issues: {issues.length} ·{' '}
                   <span className="font-black text-white">
-                    {completion}% verified
+                    {completion}% Completed
                   </span>
                 </p>
               </div>
