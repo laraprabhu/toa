@@ -684,12 +684,8 @@ function FundTab() {
             </div>
           </div>
           <h1 className="mt-5 max-w-4xl font-heading text-4xl font-semibold leading-[0.98] tracking-[-0.045em] sm:text-6xl lg:text-7xl">
-            Revised dues payable by the promoter
+            Revised dues payable by the promoter (ERL)
           </h1>
-          <p className="mt-4 max-w-2xl text-sm leading-6 text-slate-300 sm:text-base">
-            A clear view of the revised amount payable by ERL and its supporting
-            breakup.
-          </p>
         </header>
 
         <LiveFundTotal />
