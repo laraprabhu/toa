@@ -50,7 +50,7 @@ const appTabs: Array<{
   { id: 'documents', label: 'Documents', icon: FolderOpen },
 ];
 
-const swipeHintStorageKey = 'toa-erl-swipe-hint-seen';
+const swipeHintStorageKey = 'toa-erl-swipe-hint-dismissed-v2';
 const fundBaselineTotal = 52_479_710;
 const fundDailyInterest = 9_402.64;
 const fundBaselineTimestamp = Date.UTC(2026, 9, 16, 18, 30);
@@ -150,13 +150,23 @@ function CommentBlock({ title, text }: { title: string; text: string }) {
   );
 }
 
-function SwipeHint() {
+function SwipeHint({ onDismiss }: { onDismiss: () => void }) {
   return (
-    <output
-      className="pointer-events-none absolute inset-0 z-40 grid place-items-center px-6"
-      aria-live="polite"
+    <dialog
+      open
+      className="absolute inset-0 z-40 m-0 grid h-full max-h-none w-full max-w-none place-items-center border-0 bg-black/15 px-6 backdrop-blur-[2px]"
+      aria-modal="true"
+      aria-labelledby="swipe-hint-title"
     >
-      <div className="w-full max-w-[240px] rounded-[1.75rem] border border-teal-300/20 bg-[#071a20]/94 px-6 pb-5 pt-4 text-center text-white shadow-[0_0_42px_rgb(45_212_191/24%)] backdrop-blur-xl">
+      <div className="relative w-full max-w-[260px] rounded-[1.75rem] border border-teal-300/20 bg-[#071a20]/94 px-6 pb-5 pt-5 text-center text-white shadow-[0_0_42px_rgb(45_212_191/24%)] backdrop-blur-xl">
+        <button
+          type="button"
+          onClick={onDismiss}
+          className="absolute right-3 top-3 grid size-9 place-items-center rounded-full border border-white/10 bg-white/10 text-white transition hover:bg-white/15"
+          aria-label="Close swipe tutorial"
+        >
+          <X size={17} aria-hidden="true" />
+        </button>
         <p className="text-[10px] font-black uppercase tracking-[0.16em] text-teal-200">
           Browse the tracker
         </p>
@@ -169,9 +179,18 @@ function SwipeHint() {
             <Hand size={29} aria-hidden="true" />
           </span>
         </div>
-        <p className="text-sm font-black">Swipe up for the next issue</p>
+        <p id="swipe-hint-title" className="text-sm font-black">
+          Swipe up for the next issue
+        </p>
+        <button
+          type="button"
+          onClick={onDismiss}
+          className="mt-5 inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-sun px-4 text-sm font-black text-ink transition hover:bg-[#ffd872]"
+        >
+          Got it
+        </button>
       </div>
-    </output>
+    </dialog>
   );
 }
 
@@ -879,6 +898,15 @@ export function IssueTracker({ issues }: { issues: ErlIssue[] }) {
 
   const closeFilters = useCallback(() => setShowFilters(false), []);
 
+  const dismissSwipeHint = useCallback(() => {
+    setShowSwipeHint(false);
+    try {
+      window.localStorage.setItem(swipeHintStorageKey, 'true');
+    } catch {
+      // The hint can still be dismissed when storage is unavailable.
+    }
+  }, []);
+
   useLayoutEffect(() => {
     reelRef.current?.scrollTo({ top: 0, behavior: 'instant' });
   }, [category, owner, query, status, tower]);
@@ -892,19 +920,6 @@ export function IssueTracker({ issues }: { issues: ErlIssue[] }) {
     const timer = window.setTimeout(() => setShowSwipeHint(shouldShow), 0);
     return () => window.clearTimeout(timer);
   }, []);
-
-  useEffect(() => {
-    if (!showSwipeHint || showCompletion || activeTab !== 'civil') return;
-
-    try {
-      window.localStorage.setItem(swipeHintStorageKey, 'true');
-    } catch {
-      // The hint still works when storage is unavailable.
-    }
-
-    const timer = window.setTimeout(() => setShowSwipeHint(false), 3400);
-    return () => window.clearTimeout(timer);
-  }, [activeTab, showCompletion, showSwipeHint]);
 
   return (
     <>
@@ -988,7 +1003,7 @@ export function IssueTracker({ issues }: { issues: ErlIssue[] }) {
           )}
 
           {showSwipeHint && !showCompletion && filteredIssues.length > 1 && (
-            <SwipeHint />
+            <SwipeHint onDismiss={dismissSwipeHint} />
           )}
         </section>
       ) : activeTab === 'fund' ? (
