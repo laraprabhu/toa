@@ -1,14 +1,13 @@
 'use client';
 
 import {
-  ArrowDown,
-  ArrowUp,
   CheckCircle2,
   CircleDashed,
   Clock3,
   Construction,
   FileText,
   FolderOpen,
+  Hand,
   IndianRupee,
   RotateCcw,
   Search,
@@ -52,6 +51,8 @@ const appTabs: Array<{
   { id: 'documents', label: 'Documents', icon: FolderOpen },
 ];
 
+const swipeHintStorageKey = 'toa-erl-swipe-hint-seen';
+
 function StatusIcon({
   status,
   size = 16,
@@ -89,6 +90,31 @@ function CommentBlock({ title, text }: { title: string; text: string }) {
   );
 }
 
+function SwipeHint() {
+  return (
+    <output
+      className="pointer-events-none absolute inset-0 z-40 grid place-items-center px-6"
+      aria-live="polite"
+    >
+      <div className="w-full max-w-[240px] rounded-[1.75rem] border border-teal-300/20 bg-[#071a20]/94 px-6 pb-5 pt-4 text-center text-white shadow-[0_0_42px_rgb(45_212_191/24%)] backdrop-blur-xl">
+        <p className="text-[10px] font-black uppercase tracking-[0.16em] text-teal-200">
+          Browse the tracker
+        </p>
+        <div className="relative mx-auto mt-2 h-28 w-20">
+          <span className="swipe-demo-hand absolute inset-x-0 bottom-0 mx-auto grid size-14 place-items-center rounded-full border border-white/15 bg-white/10 text-white shadow-lg">
+            <span
+              className="absolute -right-1 -top-1 size-3 rounded-full border border-teal-200/70 animate-ping"
+              aria-hidden="true"
+            />
+            <Hand size={29} aria-hidden="true" />
+          </span>
+        </div>
+        <p className="text-sm font-black">Swipe up for the next issue</p>
+      </div>
+    </output>
+  );
+}
+
 function ReelCard({
   issue,
   position,
@@ -101,12 +127,8 @@ function ReelCard({
   return (
     <article
       data-reel-index={position}
-      className="relative flex h-full min-h-full max-h-full snap-start snap-always flex-col overflow-hidden bg-[radial-gradient(circle_at_92%_4%,rgba(246,200,88,0.25),transparent_32%),linear-gradient(145deg,#0d2a35,#092129_55%,#071a20)] px-5 pb-28 pt-28 text-white sm:px-8 sm:pt-32 lg:px-10 lg:pt-36"
+      className="relative flex h-full min-h-full max-h-full snap-start snap-always flex-col overflow-hidden bg-[#0b222a] px-5 pb-28 pt-28 text-white sm:px-8 sm:pt-32 lg:px-10 lg:pt-36"
     >
-      <div className="absolute -right-8 top-14 select-none font-heading text-[10rem] font-bold leading-none text-white/[0.035] sm:text-[15rem] lg:text-[18rem]">
-        {issue.number}
-      </div>
-
       <div className="relative z-10 flex flex-wrap items-center justify-between gap-3">
         <span className="inline-flex items-center gap-2 rounded-xl border border-teal-300/20 bg-black/25 px-3 py-2 text-xs font-black uppercase tracking-[0.1em] shadow-[0_8px_24px_rgb(0_0_0/18%)] backdrop-blur sm:text-sm">
           <span className="text-white">
@@ -145,7 +167,7 @@ function ReelCard({
         </div>
       </div>
 
-      <div className="relative z-10 flex items-center justify-between gap-3 border-t border-white/10 pt-4 sm:pt-5">
+      <div className="relative z-10 border-t border-white/10 pt-4 sm:pt-5">
         <div className="flex flex-wrap items-center gap-2">
           <span className="inline-flex items-center gap-2 rounded-full border border-teal-300/20 bg-teal-300/[0.08] px-3 py-1.5">
             <span className="text-[9px] font-black uppercase tracking-[0.12em] text-teal-200">
@@ -164,9 +186,6 @@ function ReelCard({
             </strong>
           </span>
         </div>
-        <span className="hidden items-center gap-2 sm:inline-flex">
-          <ArrowDown size={14} aria-hidden="true" /> Scroll for next
-        </span>
       </div>
     </article>
   );
@@ -545,7 +564,7 @@ export function IssueTracker({ issues }: { issues: ErlIssue[] }) {
   const [category, setCategory] = useState('all');
   const [tower, setTower] = useState('all');
   const [owner, setOwner] = useState('all');
-  const [activeReel, setActiveReel] = useState(0);
+  const [showSwipeHint, setShowSwipeHint] = useState(false);
   const reelRef = useRef<HTMLElement>(null);
 
   const categories = useMemo(
@@ -603,50 +622,38 @@ export function IssueTracker({ issues }: { issues: ErlIssue[] }) {
 
   const closeFilters = useCallback(() => setShowFilters(false), []);
 
-  const scrollToReel = useCallback(
-    (index: number) => {
-      const bounded = Math.max(0, Math.min(index, filteredIssues.length - 1));
-      const root = reelRef.current;
-      const target = root?.querySelector<HTMLElement>(
-        `[data-reel-index="${bounded}"]`,
-      );
-      if (root && target) {
-        root.scrollTo({ top: target.offsetTop, behavior: 'smooth' });
-      }
-    },
-    [filteredIssues.length],
-  );
-
   useLayoutEffect(() => {
     reelRef.current?.scrollTo({ top: 0, behavior: 'instant' });
   }, [category, owner, query, status, tower]);
 
   useEffect(() => {
-    if (!reelRef.current || activeTab !== 'civil') return;
-    const root = reelRef.current;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-        const index = Number(
-          (visible?.target as HTMLElement | undefined)?.dataset.reelIndex,
-        );
-        if (Number.isInteger(index)) setActiveReel(index);
-      },
-      { root, threshold: [0.55, 0.75] },
-    );
-    root
-      .querySelectorAll<HTMLElement>('[data-reel-index]')
-      .forEach((element) => observer.observe(element));
-    return () => observer.disconnect();
-  }, [activeTab, filteredIssues]);
+    let shouldShow = true;
+    try {
+      shouldShow = window.localStorage.getItem(swipeHintStorageKey) !== 'true';
+    } catch {}
+
+    const timer = window.setTimeout(() => setShowSwipeHint(shouldShow), 0);
+    return () => window.clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    if (!showSwipeHint || showCompletion || activeTab !== 'civil') return;
+
+    try {
+      window.localStorage.setItem(swipeHintStorageKey, 'true');
+    } catch {
+      // The hint still works when storage is unavailable.
+    }
+
+    const timer = window.setTimeout(() => setShowSwipeHint(false), 3400);
+    return () => window.clearTimeout(timer);
+  }, [activeTab, showCompletion, showSwipeHint]);
 
   return (
     <>
       {activeTab === 'civil' ? (
         <section className="relative h-svh w-full overflow-hidden bg-ink">
-          <div className="pointer-events-none absolute inset-x-0 top-0 z-30 bg-gradient-to-b from-[#071a20] via-[#071a20]/80 to-transparent px-3 pb-10 pt-3 sm:px-5 sm:pb-12 sm:pt-5">
+          <div className="pointer-events-none absolute inset-x-0 top-0 z-30 px-3 pb-10 pt-3 sm:px-5 sm:pb-12 sm:pt-5">
             <div className="pointer-events-auto mx-auto flex max-w-6xl items-center justify-between gap-3 rounded-2xl border border-white/10 bg-black/25 p-2.5 text-white shadow-[0_14px_38px_rgb(45_212_191/20%)] backdrop-blur-xl sm:p-3">
               <div className="min-w-0 pl-1">
                 <p className="truncate text-[11px] font-black uppercase tracking-[0.15em] text-teal-200 sm:text-sm lg:text-base">
@@ -720,27 +727,11 @@ export function IssueTracker({ issues }: { issues: ErlIssue[] }) {
                   />
                 ))}
               </section>
-              <div className="pointer-events-none absolute right-3 top-1/2 z-20 flex -translate-y-1/2 flex-col gap-2 sm:right-4">
-                <button
-                  type="button"
-                  className="pointer-events-auto grid size-10 place-items-center rounded-full border border-white/15 bg-black/35 text-white backdrop-blur disabled:opacity-25 sm:size-11"
-                  onClick={() => scrollToReel(activeReel - 1)}
-                  disabled={activeReel === 0}
-                  aria-label="Previous issue"
-                >
-                  <ArrowUp size={18} />
-                </button>
-                <button
-                  type="button"
-                  className="pointer-events-auto grid size-10 place-items-center rounded-full border border-white/15 bg-black/35 text-white backdrop-blur disabled:opacity-25 sm:size-11"
-                  onClick={() => scrollToReel(activeReel + 1)}
-                  disabled={activeReel === filteredIssues.length - 1}
-                  aria-label="Next issue"
-                >
-                  <ArrowDown size={18} />
-                </button>
-              </div>
             </section>
+          )}
+
+          {showSwipeHint && !showCompletion && filteredIssues.length > 1 && (
+            <SwipeHint />
           )}
         </section>
       ) : (
