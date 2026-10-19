@@ -114,6 +114,7 @@
 .erl-app-shell {
   border-inline: 1px solid var(--erl-border);
   box-shadow: 0 0 48px rgb(0 0 0 / 10%);
+  container-type: inline-size;
 }
 
 @media (max-width: 640px) {
