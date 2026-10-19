@@ -775,8 +775,8 @@
     "status": "not-done",
     "startDate": null,
     "etaDate": null,
-    "erlComment": "",
-    "momComment": "",
+    "erlComment": "No comments from ERL yet",
+    "momComment": "Awaiting response from ERL",
     "updatedOn": "2026-10-19"
   },
   {
@@ -790,8 +790,8 @@
     "status": "not-done",
     "startDate": null,
     "etaDate": null,
-    "erlComment": "",
-    "momComment": "",
+    "erlComment": "No comments from ERL yet",
+    "momComment": "Awaiting response from ERL",
     "updatedOn": "2026-10-19"
   },
   {
@@ -805,8 +805,8 @@
     "status": "not-done",
     "startDate": null,
     "etaDate": null,
-    "erlComment": "",
-    "momComment": "",
+    "erlComment": "No comments from ERL yet",
+    "momComment": "Awaiting response from ERL",
     "updatedOn": "2026-10-19"
   },
   {
@@ -820,8 +820,8 @@
     "status": "not-done",
     "startDate": null,
     "etaDate": null,
-    "erlComment": "",
-    "momComment": "",
+    "erlComment": "No comments from ERL yet",
+    "momComment": "Awaiting response from ERL",
     "updatedOn": "2026-10-19"
   }
 ]
