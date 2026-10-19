@@ -283,7 +283,7 @@ function ReelCard({
 
       <div className="relative z-10 border-t border-[var(--erl-border)] pt-4 sm:pt-5">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="inline-flex items-center gap-2 rounded-full border border-[var(--erl-accent-border)] bg-[var(--erl-accent-soft)] px-3 py-1.5">
+          <span className="erl-meta-pill inline-flex items-center gap-2 rounded-full border px-3 py-1.5">
             <span className="text-[9px] font-black uppercase tracking-[0.12em] text-[var(--erl-accent)]">
               Owner
             </span>
@@ -291,7 +291,7 @@ function ReelCard({
               {issue.owner}
             </strong>
           </span>
-          <span className="erl-chip inline-flex items-center gap-2 rounded-full border px-3 py-1.5">
+          <span className="erl-meta-pill inline-flex items-center gap-2 rounded-full border px-3 py-1.5">
             <span className="text-[9px] font-black uppercase tracking-[0.12em] text-[var(--erl-muted)]">
               Raised by
             </span>
@@ -636,7 +636,6 @@ function LiveFundTotal() {
 
   return (
     <section className="erl-live-total relative overflow-hidden rounded-[2rem] border p-5 shadow-[0_0_48px_var(--erl-shadow)] sm:p-8">
-      <div className="pointer-events-none absolute -right-16 -top-20 size-64 rounded-full border border-[var(--erl-accent-border)]" />
       <div className="relative">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <p className="text-[10px] font-black uppercase tracking-[0.17em] text-[var(--erl-accent)] sm:text-xs">
@@ -1013,7 +1012,7 @@ export function IssueTracker({ issues }: { issues: ErlIssue[] }) {
       {activeTab === 'civil' ? (
         <section className="relative h-svh w-full overflow-hidden bg-[var(--erl-page)]">
           <div className="pointer-events-none absolute inset-x-0 top-0 z-30 px-3 pb-10 pt-3 sm:px-5 sm:pb-12 sm:pt-5">
-            <div className="erl-top-bar pointer-events-auto mx-auto flex max-w-6xl items-center justify-between gap-3 rounded-2xl border p-2 shadow-[0_14px_38px_var(--erl-shadow)] backdrop-blur-xl sm:p-3">
+            <div className="erl-top-bar pointer-events-auto mx-auto flex max-w-6xl items-center justify-between gap-3 rounded-2xl border p-2 shadow-[0_14px_38px_var(--erl-nav-shadow)] backdrop-blur-xl sm:p-3">
               <div className="min-w-0 pl-1">
                 <p className="truncate text-[10px] font-black uppercase tracking-[0.12em] text-[var(--erl-accent)] sm:text-sm sm:tracking-[0.15em] lg:text-base">
                   ERL Civil Issues Tracker
@@ -1101,7 +1100,7 @@ export function IssueTracker({ issues }: { issues: ErlIssue[] }) {
       )}
 
       <nav
-        className="erl-bottom-nav fixed bottom-4 left-1/2 z-50 flex w-[calc(100%-1.5rem)] max-w-[520px] -translate-x-1/2 items-center gap-1 rounded-[1.6rem] border p-1.5 shadow-[0_0_38px_var(--erl-shadow)] ring-1 ring-inset ring-[var(--erl-ring)] backdrop-blur-2xl sm:bottom-6"
+        className="erl-bottom-nav fixed bottom-4 left-1/2 z-50 flex w-[calc(100%-1.5rem)] max-w-[520px] -translate-x-1/2 items-center gap-1 rounded-[1.6rem] border p-1.5 shadow-[0_0_38px_var(--erl-nav-shadow)] ring-1 ring-inset ring-[var(--erl-ring)] backdrop-blur-2xl sm:bottom-6"
         aria-label="Progress sections"
       >
         {appTabs.map(({ id, label, icon: Icon }) => {

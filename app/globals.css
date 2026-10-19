@@ -83,7 +83,7 @@
   --erl-reel: #ffffff;
   --erl-surface: rgb(255 255 255 / 96%);
   --erl-surface-solid: #ffffff;
-  --erl-surface-muted: #f7f7f6;
+  --erl-surface-muted: #fbfbfb;
   --erl-text: #123138;
   --erl-muted: #59656b;
   --erl-accent: #0e756b;
@@ -93,11 +93,15 @@
   --erl-gold-soft: rgb(205 145 20 / 10%);
   --erl-gold-border: rgb(171 112 0 / 24%);
   --erl-border: rgb(15 23 42 / 12%);
-  --erl-chip: rgb(15 23 42 / 5%);
+  --erl-chip: rgb(15 23 42 / 3%);
+  --erl-card-soft: #fafafa;
+  --erl-pill: #fcfcfc;
+  --erl-pill-border: rgb(15 23 42 / 8%);
   --erl-hover: rgb(15 23 42 / 4%);
   --erl-selected: rgb(15 23 42 / 7%);
   --erl-ring: rgb(15 23 42 / 5%);
   --erl-shadow: rgb(14 117 107 / 19%);
+  --erl-nav-shadow: rgb(0 0 0 / 18%);
   --erl-progress-track: rgb(15 23 42 / 9%);
   --erl-progress-label: #123138;
   --erl-dialog-overlay: rgb(15 23 42 / 16%);
@@ -123,10 +127,14 @@
   --erl-gold-border: rgb(246 200 88 / 25%);
   --erl-border: rgb(255 255 255 / 10%);
   --erl-chip: rgb(255 255 255 / 7%);
+  --erl-card-soft: rgb(255 255 255 / 6%);
+  --erl-pill: rgb(255 255 255 / 7%);
+  --erl-pill-border: rgb(255 255 255 / 10%);
   --erl-hover: rgb(255 255 255 / 5%);
   --erl-selected: rgb(255 255 255 / 13%);
   --erl-ring: rgb(255 255 255 / 5%);
   --erl-shadow: rgb(45 212 191 / 25%);
+  --erl-nav-shadow: rgb(45 212 191 / 25%);
   --erl-progress-track: rgb(255 255 255 / 10%);
   --erl-progress-label: #ffffff;
   --erl-dialog-overlay: rgb(0 0 0 / 20%);
@@ -152,11 +160,17 @@
   background: var(--erl-selected);
 }
 
-.erl-soft-card,
-.erl-number-chip,
-.erl-chip {
+.erl-soft-card {
   border-color: var(--erl-border);
-  background: var(--erl-chip);
+  background: var(--erl-card-soft);
+  color: var(--erl-text);
+}
+
+.erl-number-chip,
+.erl-chip,
+.erl-meta-pill {
+  border-color: var(--erl-pill-border);
+  background: var(--erl-pill);
   color: var(--erl-text);
 }
 
