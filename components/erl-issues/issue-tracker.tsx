@@ -24,6 +24,7 @@ import {
   useMemo,
   useRef,
   useState,
+  type ReactNode,
 } from 'react';
 import {
   formatTower,
@@ -155,6 +156,34 @@ function ThemeToggle({
         <Moon size={19} aria-hidden="true" />
       )}
     </button>
+  );
+}
+
+function TrackerTopBar({
+  title,
+  summary,
+  actions,
+}: {
+  title: string;
+  summary: ReactNode;
+  actions: ReactNode;
+}) {
+  return (
+    <div className="pointer-events-none absolute inset-x-0 top-0 z-30 px-3 pb-10 pt-3 sm:px-5 sm:pb-12 sm:pt-5">
+      <div className="erl-top-bar pointer-events-auto mx-auto flex max-w-6xl items-center justify-between gap-3 rounded-2xl border p-2 shadow-[0_14px_38px_var(--erl-nav-shadow)] backdrop-blur-xl sm:p-3">
+        <div className="min-w-0 pl-1">
+          <p className="truncate text-[10px] font-black uppercase tracking-[0.12em] text-[var(--erl-accent)] sm:text-sm sm:tracking-[0.15em] lg:text-base">
+            {title}
+          </p>
+          <p className="mt-1 truncate text-xs font-semibold text-[var(--erl-muted)] sm:text-base lg:text-lg">
+            {summary}
+          </p>
+        </div>
+        <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
+          {actions}
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -443,7 +472,7 @@ function CompletionModal({
                     className="absolute inset-y-0 left-0 rounded-xl bg-sun transition-[width] duration-1000 ease-out"
                     style={{ width: `${row.progress}%` }}
                   />
-                  <span className="relative z-10 grid h-full place-items-center text-[11px] font-black text-[var(--erl-progress-label)]">
+                  <span className="relative z-10 grid h-full place-items-center text-sm font-bold tabular-nums text-[var(--erl-progress-label)] sm:text-base">
                     {Math.round(row.progress)}%
                   </span>
                 </div>
@@ -750,122 +779,121 @@ function FundTab({
   onToggleTheme: () => void;
 }) {
   return (
-    <section className="h-svh overflow-y-auto bg-[var(--erl-page)] px-4 pb-32 pt-5 text-[var(--erl-text)] sm:px-8 sm:pb-36 sm:pt-9">
-      <div className="mx-auto w-full max-w-6xl">
-        <header className="mb-6 sm:mb-8">
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex items-center gap-3 text-[var(--erl-accent)]">
-              <span className="grid size-11 place-items-center rounded-2xl border border-[var(--erl-accent-border)] bg-[var(--erl-accent-soft)]">
-                <IndianRupee size={22} aria-hidden="true" />
-              </span>
+    <section className="relative h-svh overflow-hidden bg-[var(--erl-page)] text-[var(--erl-text)]">
+      <TrackerTopBar
+        title="ERL Fund Transfer Tracker"
+        summary={
+          <>
+            Promoter: ERL · <TodayStamp />
+          </>
+        }
+        actions={<ThemeToggle theme={theme} onToggle={onToggleTheme} />}
+      />
+
+      <div className="h-full overflow-y-auto px-4 pb-32 pt-28 sm:px-8 sm:pb-36 sm:pt-32">
+        <div className="mx-auto w-full max-w-6xl">
+          <header className="mb-6 sm:mb-8">
+            <p className="text-[10px] font-black uppercase tracking-[0.17em] text-[var(--erl-accent)] sm:text-xs">
+              TOA · Financial claim
+            </p>
+            <h1 className="mt-3 max-w-4xl font-heading text-4xl font-semibold leading-[0.98] tracking-[-0.045em] sm:text-6xl lg:text-7xl">
+              Revised dues payable by the promoter (ERL)
+            </h1>
+          </header>
+
+          <LiveFundTotal />
+
+          <section className="erl-section-card mt-6 rounded-[2rem] border p-5 sm:mt-8 sm:p-8">
+            <div className="flex items-end justify-between gap-4">
               <div>
-                <p className="text-[10px] font-black uppercase tracking-[0.17em]">
-                  TOA · Financial claim
+                <p className="text-[10px] font-black uppercase tracking-[0.16em] text-[var(--erl-accent)] sm:text-xs">
+                  Amount breakdown
                 </p>
-                <p className="mt-1 text-xs text-[var(--erl-muted)]">
-                  Promoter: ERL · <TodayStamp />
-                </p>
+                <h2 className="mt-2 font-heading text-3xl font-semibold tracking-[-0.035em] sm:text-4xl">
+                  Revised dues as on today
+                </h2>
               </div>
+              <span className="erl-chip hidden rounded-full border px-3 py-1.5 text-xs font-bold sm:inline-flex">
+                6 components
+              </span>
             </div>
-            <ThemeToggle theme={theme} onToggle={onToggleTheme} />
-          </div>
-          <h1 className="mt-5 max-w-4xl font-heading text-4xl font-semibold leading-[0.98] tracking-[-0.045em] sm:text-6xl lg:text-7xl">
-            Revised dues payable by the promoter (ERL)
-          </h1>
-        </header>
 
-        <LiveFundTotal />
-
-        <section className="erl-section-card mt-6 rounded-[2rem] border p-5 sm:mt-8 sm:p-8">
-          <div className="flex items-end justify-between gap-4">
-            <div>
-              <p className="text-[10px] font-black uppercase tracking-[0.16em] text-[var(--erl-accent)] sm:text-xs">
-                Amount breakdown
-              </p>
-              <h2 className="mt-2 font-heading text-3xl font-semibold tracking-[-0.035em] sm:text-4xl">
-                Revised dues as on today
-              </h2>
-            </div>
-            <span className="erl-chip hidden rounded-full border px-3 py-1.5 text-xs font-bold sm:inline-flex">
-              6 components
-            </span>
-          </div>
-
-          <ol className="mt-6 grid gap-3 md:grid-cols-2">
-            {fundDues.map((due, index) => (
-              <li
-                key={due.label}
-                className="erl-sub-card rounded-2xl border p-4 sm:p-5"
-              >
-                <div className="flex items-start gap-3">
-                  <span className="grid size-7 shrink-0 place-items-center rounded-lg bg-[var(--erl-chip)] text-[10px] font-black text-[var(--erl-accent)]">
-                    {String(index + 1).padStart(2, '0')}
-                  </span>
-                  <div>
-                    <h3 className="text-sm font-bold leading-5 text-[var(--erl-text)] sm:text-base">
-                      {due.label}
-                    </h3>
-                    {'period' in due && (
-                      <p className="mt-1 text-xs text-[var(--erl-muted)]">
-                        {due.period}
-                      </p>
-                    )}
+            <ol className="mt-6 grid gap-3 md:grid-cols-2">
+              {fundDues.map((due, index) => (
+                <li
+                  key={due.label}
+                  className="erl-sub-card rounded-2xl border p-4 sm:p-5"
+                >
+                  <div className="flex items-start gap-3">
+                    <span className="grid size-7 shrink-0 place-items-center rounded-lg bg-[var(--erl-chip)] text-[10px] font-black text-[var(--erl-accent)]">
+                      {String(index + 1).padStart(2, '0')}
+                    </span>
+                    <div>
+                      <h3 className="text-sm font-bold leading-5 text-[var(--erl-text)] sm:text-base">
+                        {due.label}
+                      </h3>
+                      {'period' in due && (
+                        <p className="mt-1 text-xs text-[var(--erl-muted)]">
+                          {due.period}
+                        </p>
+                      )}
+                    </div>
                   </div>
-                </div>
-                <strong className="mt-3 block pl-10 font-heading text-2xl font-semibold tracking-[-0.03em] text-[var(--erl-gold)] sm:text-3xl">
-                  {formatRupees(due.amount)}
-                </strong>
-              </li>
-            ))}
-          </ol>
+                  <strong className="mt-3 block pl-10 font-heading text-2xl font-semibold tracking-[-0.03em] text-[var(--erl-gold)] sm:text-3xl">
+                    {formatRupees(due.amount)}
+                  </strong>
+                </li>
+              ))}
+            </ol>
 
-          <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[var(--erl-gold-border)] bg-[var(--erl-gold-soft)] p-4 sm:p-5">
-            <span className="text-xs font-black uppercase tracking-[0.13em] text-[var(--erl-gold)]">
-              Total revised dues as on today
-            </span>
-            <strong className="font-heading text-2xl font-semibold text-[var(--erl-text)] sm:text-3xl">
-              {formatRupees(fundBaselineTotal)}
-            </strong>
-          </div>
-        </section>
-
-        <section className="erl-section-card mt-6 rounded-[2rem] border p-5 sm:p-8">
-          <p className="text-[10px] font-black uppercase tracking-[0.15em] text-[var(--erl-accent)]">
-            Interest breakup
-          </p>
-          <h2 className="mt-1 font-heading text-2xl font-semibold">
-            Accumulated interest
-          </h2>
-
-          <dl className="mt-6 divide-y divide-[var(--erl-border)]">
-            <div className="flex items-center justify-between gap-4 py-3">
-              <dt className="text-sm text-[var(--erl-muted)]">
-                Up to 5 September 2022
-              </dt>
-              <dd className="shrink-0 font-bold text-[var(--erl-text)]">
-                {formatRupees(7_423_975)}
-              </dd>
+            <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[var(--erl-gold-border)] bg-[var(--erl-gold-soft)] p-4 sm:p-5">
+              <span className="text-xs font-black uppercase tracking-[0.13em] text-[var(--erl-gold)]">
+                Total revised dues as on today
+              </span>
+              <strong className="font-heading text-2xl font-semibold text-[var(--erl-text)] sm:text-3xl">
+                {formatRupees(fundBaselineTotal)}
+              </strong>
             </div>
-            <div className="flex items-center justify-between gap-4 py-3">
-              <dt className="text-sm text-[var(--erl-muted)]">
-                Additional interest as on today
-              </dt>
-              <dd className="shrink-0 font-bold text-[var(--erl-text)]">
-                {formatRupees(14_132_161)}
-              </dd>
-            </div>
-            <div className="flex items-center justify-between gap-4 py-3">
-              <dt className="text-sm font-bold text-[var(--erl-accent)]">
-                Total accumulated interest
-              </dt>
-              <dd className="shrink-0 font-black text-[var(--erl-gold)]">
-                {formatRupees(21_556_136)}
-              </dd>
-            </div>
-          </dl>
-        </section>
+          </section>
 
-        <ImportantFacts />
+          <section className="erl-section-card mt-6 rounded-[2rem] border p-5 sm:p-8">
+            <p className="text-[10px] font-black uppercase tracking-[0.15em] text-[var(--erl-accent)]">
+              Interest breakup
+            </p>
+            <h2 className="mt-1 font-heading text-2xl font-semibold">
+              Accumulated interest
+            </h2>
+
+            <dl className="mt-6 divide-y divide-[var(--erl-border)]">
+              <div className="flex items-center justify-between gap-4 py-3">
+                <dt className="text-sm text-[var(--erl-muted)]">
+                  Up to 5 September 2022
+                </dt>
+                <dd className="shrink-0 font-bold text-[var(--erl-text)]">
+                  {formatRupees(7_423_975)}
+                </dd>
+              </div>
+              <div className="flex items-center justify-between gap-4 py-3">
+                <dt className="text-sm text-[var(--erl-muted)]">
+                  Additional interest as on today
+                </dt>
+                <dd className="shrink-0 font-bold text-[var(--erl-text)]">
+                  {formatRupees(14_132_161)}
+                </dd>
+              </div>
+              <div className="flex items-center justify-between gap-4 py-3">
+                <dt className="text-sm font-bold text-[var(--erl-accent)]">
+                  Total accumulated interest
+                </dt>
+                <dd className="shrink-0 font-black text-[var(--erl-gold)]">
+                  {formatRupees(21_556_136)}
+                </dd>
+              </div>
+            </dl>
+          </section>
+
+          <ImportantFacts />
+        </div>
       </div>
     </section>
   );
@@ -1011,20 +1039,18 @@ export function IssueTracker({ issues }: { issues: ErlIssue[] }) {
     >
       {activeTab === 'civil' ? (
         <section className="relative h-svh w-full overflow-hidden bg-[var(--erl-page)]">
-          <div className="pointer-events-none absolute inset-x-0 top-0 z-30 px-3 pb-10 pt-3 sm:px-5 sm:pb-12 sm:pt-5">
-            <div className="erl-top-bar pointer-events-auto mx-auto flex max-w-6xl items-center justify-between gap-3 rounded-2xl border p-2 shadow-[0_14px_38px_var(--erl-nav-shadow)] backdrop-blur-xl sm:p-3">
-              <div className="min-w-0 pl-1">
-                <p className="truncate text-[10px] font-black uppercase tracking-[0.12em] text-[var(--erl-accent)] sm:text-sm sm:tracking-[0.15em] lg:text-base">
-                  ERL Civil Issues Tracker
-                </p>
-                <p className="mt-1 truncate text-xs font-semibold text-[var(--erl-muted)] sm:text-base lg:text-lg">
-                  Total Issues: {issues.length} ·{' '}
-                  <span className="font-black text-[var(--erl-text)]">
-                    {completion}% Completed
-                  </span>
-                </p>
-              </div>
-              <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
+          <TrackerTopBar
+            title="ERL Civil Issues Tracker"
+            summary={
+              <>
+                Total Issues: {issues.length} ·{' '}
+                <span className="font-black text-[var(--erl-text)]">
+                  {completion}% Completed
+                </span>
+              </>
+            }
+            actions={
+              <>
                 <button
                   type="button"
                   onClick={() => setShowFilters(true)}
@@ -1047,9 +1073,9 @@ export function IssueTracker({ issues }: { issues: ErlIssue[] }) {
                 >
                   <ShieldCheck size={19} aria-hidden="true" />
                 </a>
-              </div>
-            </div>
-          </div>
+              </>
+            }
+          />
 
           {filteredIssues.length === 0 ? (
             <div className="grid h-full place-items-center bg-[var(--erl-page)] px-8 pb-28 pt-28 text-center text-[var(--erl-text)]">
