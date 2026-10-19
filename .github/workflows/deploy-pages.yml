@@ -16,6 +16,9 @@ on:
       - 'package-lock.json'
       - '.github/workflows/deploy-pages.yml'
   workflow_dispatch:
+  workflow_run:
+    workflows: ['Sync ERL issues from Google Sheets']
+    types: [completed]
 
 permissions:
   contents: read
@@ -28,9 +31,16 @@ concurrency:
 
 jobs:
   build:
+    # A sheet sync may fail validation. Publish only after successful syncs,
+    # while retaining normal push and manual deployments.
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          # workflow_run starts from the commit that defined the workflow,
+          # so explicitly pick up the data commit pushed by the completed sync.
+          ref: ${{ github.event_name == 'workflow_run' && github.event.repository.default_branch || github.sha }}
       - uses: actions/setup-node@v4
         with:
           node-version: 22
