@@ -111,6 +111,18 @@
   color: var(--erl-text);
 }
 
+.erl-app-shell {
+  border-inline: 1px solid var(--erl-border);
+  box-shadow: 0 0 48px rgb(0 0 0 / 10%);
+}
+
+@media (max-width: 640px) {
+  .erl-app-shell {
+    border-inline: 0;
+    box-shadow: none;
+  }
+}
+
 .erl-tracker-theme[data-theme='dark'] {
   --erl-page: #071a20;
   --erl-reel: #0b222a;

@@ -170,7 +170,7 @@ function TrackerTopBar({
 }) {
   return (
     <div className="pointer-events-none absolute inset-x-0 top-0 z-30 px-3 pb-10 pt-3 sm:px-5 sm:pb-12 sm:pt-5">
-      <div className="erl-top-bar pointer-events-auto mx-auto flex max-w-6xl items-center justify-between gap-3 rounded-2xl border p-2 shadow-[0_14px_38px_var(--erl-nav-shadow)] backdrop-blur-xl sm:p-3">
+      <div className="erl-top-bar pointer-events-auto mx-auto flex items-center justify-between gap-3 rounded-2xl border p-2 shadow-[0_14px_38px_var(--erl-nav-shadow)] backdrop-blur-xl sm:p-3">
         <div className="min-w-0 pl-1">
           <p className="truncate text-[10px] font-black uppercase tracking-[0.12em] text-[var(--erl-accent)] sm:text-sm sm:tracking-[0.15em] lg:text-base">
             {title}
@@ -267,7 +267,7 @@ function ReelCard({
   return (
     <article
       data-reel-index={position}
-      className="relative flex h-full min-h-full max-h-full snap-start snap-always flex-col overflow-hidden bg-[var(--erl-reel)] px-5 pb-28 pt-28 text-[var(--erl-text)] sm:px-8 sm:pt-32 lg:px-10 lg:pt-36"
+      className="relative flex h-full min-h-full max-h-full snap-start snap-always flex-col overflow-hidden bg-[var(--erl-reel)] px-5 pb-28 pt-28 text-[var(--erl-text)] sm:px-8 sm:pt-32"
     >
       <div className="relative z-10 flex flex-wrap items-center justify-between gap-3">
         <span className="erl-number-chip inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-xs font-black uppercase tracking-[0.1em] shadow-[0_8px_24px_rgb(0_0_0/12%)] backdrop-blur sm:text-sm">
@@ -297,11 +297,11 @@ function ReelCard({
           </span>
         </div>
 
-        <h2 className="mt-4 line-clamp-5 max-w-5xl font-heading text-[1.65rem] font-semibold leading-[1.08] tracking-[-0.035em] sm:mt-6 sm:line-clamp-4 sm:text-4xl lg:text-5xl">
+        <h2 className="mt-4 line-clamp-5 font-heading text-[1.65rem] font-semibold leading-[1.08] tracking-[-0.035em] sm:mt-6 sm:line-clamp-4 sm:text-4xl">
           {issue.title}
         </h2>
 
-        <div className="mt-5 grid gap-2.5 sm:mt-7 sm:grid-cols-2 sm:gap-3">
+        <div className="mt-5 grid gap-2.5 sm:mt-7 sm:gap-3">
           <CommentBlock title="ERL response" text={issue.erlComment} />
           <CommentBlock
             title="TOA–ERL MoM · 29 Aug 2026"
@@ -791,12 +791,12 @@ function FundTab({
       />
 
       <div className="h-full overflow-y-auto px-4 pb-32 pt-28 sm:px-8 sm:pb-36 sm:pt-32">
-        <div className="mx-auto w-full max-w-6xl">
+        <div className="mx-auto w-full">
           <header className="mb-6 sm:mb-8">
             <p className="text-[10px] font-black uppercase tracking-[0.17em] text-[var(--erl-accent)] sm:text-xs">
               TOA · Financial claim
             </p>
-            <h1 className="mt-3 max-w-4xl font-heading text-4xl font-semibold leading-[0.98] tracking-[-0.045em] sm:text-6xl lg:text-7xl">
+            <h1 className="mt-3 font-heading text-4xl font-semibold leading-[0.98] tracking-[-0.045em] sm:text-5xl">
               Revised dues payable by the promoter (ERL)
             </h1>
           </header>
@@ -818,7 +818,7 @@ function FundTab({
               </span>
             </div>
 
-            <ol className="mt-6 grid gap-3 md:grid-cols-2">
+            <ol className="mt-6 grid gap-3">
               {fundDues.map((due, index) => (
                 <li
                   key={due.label}
@@ -1037,8 +1037,9 @@ export function IssueTracker({ issues }: { issues: ErlIssue[] }) {
       className={`erl-tracker-theme h-svh overflow-hidden ${theme === 'dark' ? 'dark' : ''}`}
       data-theme={theme}
     >
-      {activeTab === 'civil' ? (
-        <section className="relative h-svh w-full overflow-hidden bg-[var(--erl-page)]">
+      <main className="erl-app-shell relative mx-auto h-svh w-full max-w-[640px] overflow-hidden bg-[var(--erl-page)]">
+        {activeTab === 'civil' ? (
+          <section className="relative h-svh w-full overflow-hidden bg-[var(--erl-page)]">
           <TrackerTopBar
             title="ERL Civil Issues Tracker"
             summary={
@@ -1118,12 +1119,13 @@ export function IssueTracker({ issues }: { issues: ErlIssue[] }) {
           {showSwipeHint && !showCompletion && filteredIssues.length > 1 && (
             <SwipeHint onDismiss={dismissSwipeHint} />
           )}
-        </section>
-      ) : activeTab === 'fund' ? (
-        <FundTab theme={theme} onToggleTheme={toggleTheme} />
-      ) : (
-        <DocumentsTab theme={theme} onToggleTheme={toggleTheme} />
-      )}
+          </section>
+        ) : activeTab === 'fund' ? (
+          <FundTab theme={theme} onToggleTheme={toggleTheme} />
+        ) : (
+          <DocumentsTab theme={theme} onToggleTheme={toggleTheme} />
+        )}
+      </main>
 
       <nav
         className="erl-bottom-nav fixed bottom-4 left-1/2 z-50 flex w-[calc(100%-1.5rem)] max-w-[520px] -translate-x-1/2 items-center gap-1 rounded-[1.6rem] border p-1.5 shadow-[0_0_38px_var(--erl-nav-shadow)] ring-1 ring-inset ring-[var(--erl-ring)] backdrop-blur-2xl sm:bottom-6"
@@ -1139,7 +1141,7 @@ export function IssueTracker({ issues }: { issues: ErlIssue[] }) {
                 setActiveTab(id);
                 setShowFilters(false);
               }}
-              className={`relative flex min-h-14 flex-1 flex-col items-center justify-center gap-1 rounded-[1.15rem] px-2 text-[10px] font-black transition sm:flex-row sm:gap-2 sm:text-xs ${
+              className={`relative flex min-h-14 flex-1 flex-col items-center justify-center gap-1 rounded-[1.15rem] px-2 text-[10px] font-black transition ${
                 selected
                   ? 'bg-[var(--erl-selected)] text-[var(--erl-text)] shadow-[0_6px_18px_rgb(0_0_0/16%)] ring-1 ring-inset ring-[var(--erl-border)]'
                   : 'text-[var(--erl-muted)] hover:bg-[var(--erl-hover)] hover:text-[var(--erl-text)]'
