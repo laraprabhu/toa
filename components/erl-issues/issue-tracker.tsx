@@ -58,9 +58,12 @@ const appTabs: Array<{
 
 const swipeHintStorageKey = 'toa-erl-swipe-hint-dismissed-v2';
 const colorThemeStorageKey = 'toa-erl-color-theme';
-const fundBaselineTotal = 52_479_710;
+const fundBaselineTotal = 53_102_320.38;
 const fundDailyInterest = 9_402.64;
 const fundBaselineTimestamp = Date.UTC(2026, 9, 16, 18, 30);
+const fundInterestUpToOrder = 7_423_975;
+const fundAdditionalInterestBaseline = 14_132_161;
+const fundTotalInterestBaseline = 21_556_136;
 
 const fundDues = [
   {
@@ -68,25 +71,20 @@ const fundDues = [
     amount: 27_677_112,
   },
   {
-    label: 'Total interest on the corpus',
-    amount: 21_556_136,
+    label: 'Interest on corpus',
+    liveInterest: true,
   },
   {
-    label: 'Common area maintenance withheld by the promoter',
+    label: 'Common amenities maintenance withheld by the promoter',
     amount: 3_030_123,
   },
   {
-    label: 'Maintenance for 3 unsold flats',
-    period: 'April–September 2022',
-    amount: 85_839,
+    label: 'Maintenance dues for unsold flats',
+    period: 'As of 12 October 2026',
+    amount: 718_949.38,
   },
   {
-    label: 'Office electricity dues',
-    period: 'April–August 2022',
-    amount: 10_500,
-  },
-  {
-    label: 'Common area usage for the promoter’s office',
+    label: 'Common area usage charges for the promoter’s office',
     period: 'April–September 2022',
     amount: 120_000,
   },
@@ -101,7 +99,7 @@ function formatRupees(value: number, decimals = 0) {
   }).format(value);
 }
 
-function useLiveFundTotal() {
+function useLiveFundSnapshot() {
   const [now, setNow] = useState(fundBaselineTimestamp);
 
   useEffect(() => {
@@ -115,9 +113,14 @@ function useLiveFundTotal() {
   }, []);
 
   const elapsedMs = Math.max(0, now - fundBaselineTimestamp);
-  return (
-    fundBaselineTotal + (elapsedMs / (24 * 60 * 60 * 1_000)) * fundDailyInterest
-  );
+  const accruedInterest =
+    (elapsedMs / (24 * 60 * 60 * 1_000)) * fundDailyInterest;
+
+  return {
+    liveTotal: fundBaselineTotal + accruedInterest,
+    additionalInterest: fundAdditionalInterestBaseline + accruedInterest,
+    totalInterest: fundTotalInterestBaseline + accruedInterest,
+  };
 }
 
 function StatusIcon({
@@ -376,7 +379,7 @@ function CompletionModal({
 }) {
   const [displayedCompletion, setDisplayedCompletion] = useState(0);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
-  const liveFundTotal = useLiveFundTotal();
+  const { liveTotal: liveFundTotal } = useLiveFundSnapshot();
   const fundTargetCrores = (liveFundTotal / 10_000_000).toFixed(2);
 
   useEffect(() => {
@@ -660,9 +663,7 @@ function FilterSheet({
   );
 }
 
-function LiveFundTotal() {
-  const liveTotal = useLiveFundTotal();
-
+function LiveFundTotal({ liveTotal }: { liveTotal: number }) {
   return (
     <section className="erl-live-total relative overflow-hidden rounded-[2rem] border p-5 shadow-[0_0_48px_var(--erl-shadow)]">
       <div className="relative">
@@ -778,6 +779,8 @@ function FundTab({
   theme: ColorTheme;
   onToggleTheme: () => void;
 }) {
+  const fundSnapshot = useLiveFundSnapshot();
+
   return (
     <section className="relative h-svh overflow-hidden bg-[var(--erl-page)] text-[var(--erl-text)]">
       <TrackerTopBar
@@ -801,7 +804,7 @@ function FundTab({
             </h1>
           </header>
 
-          <LiveFundTotal />
+          <LiveFundTotal liveTotal={fundSnapshot.liveTotal} />
 
           <section className="erl-section-card mt-6 rounded-[2rem] border p-5">
             <div className="flex items-end justify-between gap-4">
@@ -814,7 +817,7 @@ function FundTab({
                 </h2>
               </div>
               <span className="erl-chip hidden rounded-full border px-3 py-1.5 text-xs font-bold sm:inline-flex">
-                6 components
+                5 components
               </span>
             </div>
 
@@ -840,7 +843,12 @@ function FundTab({
                     </div>
                   </div>
                   <strong className="mt-3 block pl-10 font-heading text-2xl font-semibold tracking-[-0.03em] text-[var(--erl-gold)]">
-                    {formatRupees(due.amount)}
+                    {formatRupees(
+                      'liveInterest' in due
+                        ? fundSnapshot.totalInterest
+                        : due.amount,
+                      2,
+                    )}
                   </strong>
                 </li>
               ))}
@@ -851,7 +859,7 @@ function FundTab({
                 Total revised dues as on today
               </span>
               <strong className="font-heading text-2xl font-semibold text-[var(--erl-text)]">
-                {formatRupees(fundBaselineTotal)}
+                {formatRupees(fundSnapshot.liveTotal, 2)}
               </strong>
             </div>
           </section>
@@ -870,7 +878,7 @@ function FundTab({
                   Up to 5 September 2022
                 </dt>
                 <dd className="shrink-0 font-bold text-[var(--erl-text)]">
-                  {formatRupees(7_423_975)}
+                  {formatRupees(fundInterestUpToOrder, 2)}
                 </dd>
               </div>
               <div className="flex items-center justify-between gap-4 py-3">
@@ -878,7 +886,7 @@ function FundTab({
                   Additional interest as on today
                 </dt>
                 <dd className="shrink-0 font-bold text-[var(--erl-text)]">
-                  {formatRupees(14_132_161)}
+                  {formatRupees(fundSnapshot.additionalInterest, 2)}
                 </dd>
               </div>
               <div className="flex items-center justify-between gap-4 py-3">
@@ -886,7 +894,7 @@ function FundTab({
                   Total accumulated interest
                 </dt>
                 <dd className="shrink-0 font-black text-[var(--erl-gold)]">
-                  {formatRupees(21_556_136)}
+                  {formatRupees(fundSnapshot.totalInterest, 2)}
                 </dd>
               </div>
             </dl>
