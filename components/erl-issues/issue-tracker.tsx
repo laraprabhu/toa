@@ -6,9 +6,11 @@ import {
   CircleDashed,
   Clock3,
   Construction,
+  FileText,
   FolderOpen,
   Hand,
   IndianRupee,
+  Maximize2,
   Moon,
   RotateCcw,
   Search,
@@ -118,7 +120,6 @@ function useLiveFundSnapshot() {
 
   return {
     liveTotal: fundBaselineTotal + accruedInterest,
-    additionalInterest: fundAdditionalInterestBaseline + accruedInterest,
     totalInterest: fundTotalInterestBaseline + accruedInterest,
   };
 }
@@ -692,54 +693,226 @@ function LiveFundTotal({ liveTotal }: { liveTotal: number }) {
 }
 
 function ImportantFacts() {
+  const [showJudgementCopy, setShowJudgementCopy] = useState(false);
+  const judgementCopyUrl = siteHref('/erl-issues/judgement-copy.jpeg');
+
+  useEffect(() => {
+    if (!showJudgementCopy) return;
+
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setShowJudgementCopy(false);
+    };
+    window.addEventListener('keydown', closeOnEscape);
+    return () => window.removeEventListener('keydown', closeOnEscape);
+  }, [showJudgementCopy]);
+
   return (
-    <section
-      className="erl-section-card mt-6 rounded-[2rem] border p-5"
-      aria-labelledby="important-facts-title"
-    >
-      <p className="text-[10px] font-black uppercase tracking-[0.15em] text-[var(--erl-accent)]">
-        Facts for calculation
-      </p>
-      <h2
-        id="important-facts-title"
-        className="mt-1 font-heading text-3xl font-semibold tracking-[-0.035em]"
+    <>
+      <section
+        className="erl-section-card mt-6 rounded-[2rem] border p-5"
+        aria-labelledby="important-facts-title"
       >
-        Important Facts
-      </h2>
+        <p className="text-[10px] font-black uppercase tracking-[0.15em] text-[var(--erl-accent)]">
+          Interest record &amp; judgement
+        </p>
+        <h2
+          id="important-facts-title"
+          className="mt-1 font-heading text-3xl font-semibold tracking-[-0.035em]"
+        >
+          Important Facts
+        </h2>
 
-      <div className="mt-6 grid gap-3">
-        <article className="erl-sub-card flex items-center gap-4 rounded-2xl border p-4">
-          <span className="grid size-11 shrink-0 place-items-center rounded-xl border border-[var(--erl-gold-border)] bg-[var(--erl-gold-soft)] text-[var(--erl-gold)]">
-            <Calculator size={21} aria-hidden="true" />
-          </span>
-          <div>
-            <p className="text-[10px] font-black uppercase tracking-[0.14em] text-[var(--erl-muted)]">
-              Interest percentage
-            </p>
-            <p className="mt-1 font-heading text-2xl font-semibold text-[var(--erl-text)]">
-              12.4%{' '}
-              <span className="text-base text-[var(--erl-muted)]">
-                per annum
+        <div className="mt-6 grid gap-4">
+          <article className="erl-sub-card rounded-2xl border p-4">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-[0.14em] text-[var(--erl-accent)]">
+                  Interest breakup
+                </p>
+                <h3 className="mt-1 font-heading text-2xl font-semibold text-[var(--erl-text)]">
+                  As of 17 October 2026
+                </h3>
+              </div>
+              <span className="grid size-10 shrink-0 place-items-center rounded-xl border border-[var(--erl-gold-border)] bg-[var(--erl-gold-soft)] text-[var(--erl-gold)]">
+                <IndianRupee size={19} aria-hidden="true" />
               </span>
-            </p>
-          </div>
-        </article>
+            </div>
 
-        <article className="erl-sub-card flex items-center gap-4 rounded-2xl border p-4">
-          <span className="grid size-11 shrink-0 place-items-center rounded-xl border border-[var(--erl-accent-border)] bg-[var(--erl-accent-soft)] text-[var(--erl-accent)]">
-            <ShieldCheck size={21} aria-hidden="true" />
-          </span>
-          <div>
-            <p className="text-[10px] font-black uppercase tracking-[0.14em] text-[var(--erl-muted)]">
-              RERA order received
-            </p>
-            <p className="mt-1 font-heading text-2xl font-semibold text-[var(--erl-text)]">
-              September 2022
-            </p>
-          </div>
-        </article>
-      </div>
-    </section>
+            <dl className="mt-4 divide-y divide-[var(--erl-border)]">
+              <div className="flex items-center justify-between gap-4 py-3">
+                <dt className="text-xs leading-5 text-[var(--erl-muted)]">
+                  Interest up to 5 September 2022
+                </dt>
+                <dd className="shrink-0 text-sm font-bold text-[var(--erl-text)]">
+                  {formatRupees(fundInterestUpToOrder, 2)}
+                </dd>
+              </div>
+              <div className="flex items-center justify-between gap-4 py-3">
+                <dt className="text-xs leading-5 text-[var(--erl-muted)]">
+                  Additional interest up to 17 October 2026
+                </dt>
+                <dd className="shrink-0 text-sm font-bold text-[var(--erl-text)]">
+                  {formatRupees(fundAdditionalInterestBaseline, 2)}
+                </dd>
+              </div>
+              <div className="flex items-center justify-between gap-4 py-3">
+                <dt className="text-xs font-bold leading-5 text-[var(--erl-accent)]">
+                  Total accumulated interest
+                </dt>
+                <dd className="shrink-0 text-sm font-black text-[var(--erl-gold)]">
+                  {formatRupees(fundTotalInterestBaseline, 2)}
+                </dd>
+              </div>
+            </dl>
+          </article>
+
+          <article className="erl-sub-card rounded-2xl border p-4">
+            <div className="flex items-center gap-3">
+              <span className="grid size-10 shrink-0 place-items-center rounded-xl border border-[var(--erl-accent-border)] bg-[var(--erl-accent-soft)] text-[var(--erl-accent)]">
+                <Calculator size={19} aria-hidden="true" />
+              </span>
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-[0.14em] text-[var(--erl-accent)]">
+                  Interest calculation
+                </p>
+                <h3 className="mt-0.5 font-heading text-2xl font-semibold text-[var(--erl-text)]">
+                  Calculation inputs
+                </h3>
+              </div>
+            </div>
+
+            <dl className="mt-4 grid grid-cols-2 gap-2">
+              <div className="col-span-2 rounded-xl bg-[var(--erl-chip)] p-3">
+                <dt className="text-[9px] font-black uppercase tracking-[0.12em] text-[var(--erl-muted)]">
+                  Principal
+                </dt>
+                <dd className="mt-1 font-heading text-xl font-semibold text-[var(--erl-text)]">
+                  {formatRupees(27_677_112)}
+                </dd>
+              </div>
+              <div className="rounded-xl bg-[var(--erl-chip)] p-3">
+                <dt className="text-[9px] font-black uppercase tracking-[0.12em] text-[var(--erl-muted)]">
+                  Annual rate
+                </dt>
+                <dd className="mt-1 font-heading text-xl font-semibold text-[var(--erl-text)]">
+                  12.4%
+                </dd>
+              </div>
+              <div className="rounded-xl bg-[var(--erl-chip)] p-3">
+                <dt className="text-[9px] font-black uppercase tracking-[0.12em] text-[var(--erl-muted)]">
+                  Reference period
+                </dt>
+                <dd className="mt-1 font-heading text-xl font-semibold text-[var(--erl-text)]">
+                  2,208 days
+                </dd>
+              </div>
+            </dl>
+
+            <div className="mt-3 rounded-2xl border border-[var(--erl-accent-border)] bg-[var(--erl-accent-soft)] p-4">
+              <p className="text-[9px] font-black uppercase tracking-[0.13em] text-[var(--erl-accent)]">
+                Applied formula · 1,503 days
+              </p>
+              <p className="mt-2 text-sm font-bold leading-6 text-[var(--erl-text)]">
+                ₹2,76,77,112 × 12.4% × 1,503 ÷ 365
+              </p>
+              <p className="mt-1 font-heading text-2xl font-semibold text-[var(--erl-gold)]">
+                = ₹1,41,32,160.86
+              </p>
+              <p className="mt-1 text-xs text-[var(--erl-muted)]">
+                Rounded to ₹1,41,32,161
+              </p>
+            </div>
+
+            <div className="mt-3 flex items-center justify-between gap-3 rounded-2xl border border-[var(--erl-gold-border)] bg-[var(--erl-gold-soft)] p-4">
+              <div>
+                <p className="text-[9px] font-black uppercase tracking-[0.12em] text-[var(--erl-gold)]">
+                  Further interest
+                </p>
+                <p className="mt-1 text-xs text-[var(--erl-muted)]">
+                  Approximate daily accrual
+                </p>
+              </div>
+              <strong className="shrink-0 font-heading text-xl font-semibold text-[var(--erl-text)]">
+                ₹9,402.64/day
+              </strong>
+            </div>
+          </article>
+
+          <figure className="overflow-hidden rounded-2xl border border-[var(--erl-accent-border)] bg-[var(--erl-accent-soft)] p-3">
+            <div className="flex items-center justify-between gap-3 px-1 pb-3">
+              <div className="flex items-center gap-3">
+                <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-[var(--erl-surface-solid)] text-[var(--erl-accent)] shadow-sm">
+                  <FileText size={19} aria-hidden="true" />
+                </span>
+                <div>
+                  <p className="text-[10px] font-black uppercase tracking-[0.14em] text-[var(--erl-accent)]">
+                    Judgement copy
+                  </p>
+                  <p className="mt-0.5 text-xs text-[var(--erl-muted)]">
+                    TNREAT · Appeal No. 30 of 2022
+                  </p>
+                </div>
+              </div>
+              <span className="rounded-full border border-[var(--erl-accent-border)] bg-[var(--erl-surface-solid)] px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.1em] text-[var(--erl-accent)]">
+                Evidence
+              </span>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setShowJudgementCopy(true)}
+              className="group relative block w-full overflow-hidden rounded-xl border border-[var(--erl-border)] bg-white text-left shadow-[0_14px_34px_rgb(0_0_0/15%)]"
+              aria-label="Open the judgement copy full screen"
+            >
+              <img
+                src={judgementCopyUrl}
+                alt="TNREAT judgement copy listing dues payable by the promoter in Appeal No. 30 of 2022"
+                className="aspect-[3/4] w-full object-cover object-top transition duration-500 group-hover:scale-[1.015]"
+                loading="lazy"
+              />
+              <span className="absolute inset-x-0 bottom-0 flex items-center justify-center gap-2 bg-gradient-to-t from-black/90 via-black/65 to-transparent px-4 pb-4 pt-12 text-xs font-black text-white">
+                <Maximize2 size={15} aria-hidden="true" />
+                Tap to view the full judgement
+              </span>
+            </button>
+          </figure>
+        </div>
+      </section>
+
+      {showJudgementCopy && (
+        <dialog
+          open
+          className="fixed inset-0 z-[120] m-0 grid h-svh max-h-none w-screen max-w-none place-items-center border-0 bg-black/94 p-3 backdrop-blur-md"
+          aria-modal="true"
+          aria-labelledby="judgement-copy-title"
+          onClick={(event) => {
+            if (event.currentTarget === event.target) {
+              setShowJudgementCopy(false);
+            }
+          }}
+        >
+          <p
+            id="judgement-copy-title"
+            className="fixed left-4 top-4 z-[122] rounded-full bg-black/60 px-3 py-2 text-[10px] font-black uppercase tracking-[0.13em] text-white backdrop-blur"
+          >
+            Judgement copy
+          </p>
+          <button
+            type="button"
+            onClick={() => setShowJudgementCopy(false)}
+            className="fixed right-4 top-4 z-[122] grid size-11 place-items-center rounded-full border border-white/20 bg-black/60 text-white backdrop-blur transition hover:bg-white/15"
+            aria-label="Close judgement copy"
+          >
+            <X size={20} aria-hidden="true" />
+          </button>
+          <img
+            src={judgementCopyUrl}
+            alt="Full TNREAT judgement copy listing dues payable by the promoter"
+            className="max-h-[calc(100svh-2rem)] max-w-full object-contain shadow-2xl"
+          />
+        </dialog>
+      )}
+    </>
   );
 }
 
@@ -862,42 +1035,6 @@ function FundTab({
                 {formatRupees(fundSnapshot.liveTotal, 2)}
               </strong>
             </div>
-          </section>
-
-          <section className="erl-section-card mt-6 rounded-[2rem] border p-5">
-            <p className="text-[10px] font-black uppercase tracking-[0.15em] text-[var(--erl-accent)]">
-              Interest breakup
-            </p>
-            <h2 className="mt-1 font-heading text-2xl font-semibold">
-              Accumulated interest
-            </h2>
-
-            <dl className="mt-6 divide-y divide-[var(--erl-border)]">
-              <div className="flex items-center justify-between gap-4 py-3">
-                <dt className="text-sm text-[var(--erl-muted)]">
-                  Up to 5 September 2022
-                </dt>
-                <dd className="shrink-0 font-bold text-[var(--erl-text)]">
-                  {formatRupees(fundInterestUpToOrder, 2)}
-                </dd>
-              </div>
-              <div className="flex items-center justify-between gap-4 py-3">
-                <dt className="text-sm text-[var(--erl-muted)]">
-                  Additional interest as on today
-                </dt>
-                <dd className="shrink-0 font-bold text-[var(--erl-text)]">
-                  {formatRupees(fundSnapshot.additionalInterest, 2)}
-                </dd>
-              </div>
-              <div className="flex items-center justify-between gap-4 py-3">
-                <dt className="text-sm font-bold text-[var(--erl-accent)]">
-                  Total accumulated interest
-                </dt>
-                <dd className="shrink-0 font-black text-[var(--erl-gold)]">
-                  {formatRupees(fundSnapshot.totalInterest, 2)}
-                </dd>
-              </div>
-            </dl>
           </section>
 
           <ImportantFacts />
