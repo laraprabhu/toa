@@ -695,18 +695,24 @@ function ImportantFacts({
   additionalInterest,
   totalInterest,
   currentCorpus,
+  openingCompoundBalance,
   dailyInterest,
   paymentCount,
+  completedCompoundYears,
+  currentCompoundYearDays,
+  currentCompoundYearTotalDays,
   formulaPeriodDays,
-  referencePeriodDays,
 }: {
   additionalInterest: number;
   totalInterest: number;
   currentCorpus: number;
+  openingCompoundBalance: number;
   dailyInterest: number;
   paymentCount: number;
+  completedCompoundYears: number;
+  currentCompoundYearDays: number;
+  currentCompoundYearTotalDays: number;
   formulaPeriodDays: number;
-  referencePeriodDays: number;
 }) {
   const [showJudgementCopy, setShowJudgementCopy] = useState(false);
   const today = useIndiaTodayLabel();
@@ -800,6 +806,17 @@ function ImportantFacts({
             <dl className="mt-4 grid grid-cols-2 gap-2">
               <div className="col-span-2 rounded-xl bg-[var(--erl-chip)] p-3">
                 <dt className="text-[9px] font-black uppercase tracking-[0.12em] text-[var(--erl-muted)]">
+                  Opening compound balance
+                </dt>
+                <dd className="mt-1 font-heading text-xl font-semibold text-[var(--erl-text)]">
+                  {formatRupees(openingCompoundBalance)}
+                </dd>
+                <p className="mt-1 text-[10px] leading-4 text-[var(--erl-muted)]">
+                  Corpus plus interest accumulated up to 5 September 2022
+                </p>
+              </div>
+              <div className="col-span-2 rounded-xl bg-[var(--erl-chip)] p-3">
+                <dt className="text-[9px] font-black uppercase tracking-[0.12em] text-[var(--erl-muted)]">
                   Current corpus balance
                 </dt>
                 <dd className="mt-1 font-heading text-xl font-semibold text-[var(--erl-text)]">
@@ -808,7 +825,7 @@ function ImportantFacts({
               </div>
               <div className="rounded-xl bg-[var(--erl-chip)] p-3">
                 <dt className="text-[9px] font-black uppercase tracking-[0.12em] text-[var(--erl-muted)]">
-                  Annual rate
+                  Annual compound rate
                 </dt>
                 <dd className="mt-1 font-heading text-xl font-semibold text-[var(--erl-text)]">
                   {fundAnnualInterestRate}%
@@ -816,27 +833,34 @@ function ImportantFacts({
               </div>
               <div className="rounded-xl bg-[var(--erl-chip)] p-3">
                 <dt className="text-[9px] font-black uppercase tracking-[0.12em] text-[var(--erl-muted)]">
-                  Reference period as on today
+                  Compounding
                 </dt>
                 <dd className="mt-1 font-heading text-xl font-semibold text-[var(--erl-text)]">
-                  {formatDays(referencePeriodDays)} days
+                  Yearly
                 </dd>
               </div>
             </dl>
 
             <div className="mt-3 rounded-2xl border border-[var(--erl-accent-border)] bg-[var(--erl-accent-soft)] p-4">
               <p className="text-[9px] font-black uppercase tracking-[0.13em] text-[var(--erl-accent)]">
-                Applied formula · {formatDays(formulaPeriodDays)} days
+                Annual compounding · {completedCompoundYears} completed years ·{' '}
+                {formatDays(formulaPeriodDays)} days total
               </p>
               {paymentCount === 0 ? (
                 <p className="mt-2 text-sm font-bold leading-6 text-[var(--erl-text)]">
-                  {formatRupees(currentCorpus)} × {fundAnnualInterestRate}% ×{' '}
-                  {formatDays(formulaPeriodDays)} ÷ 365
+                  ({formatRupees(openingCompoundBalance)} × (1 +{' '}
+                  {fundAnnualInterestRate}%)
+                  <sup>{completedCompoundYears}</sup> × (1 +{' '}
+                  {fundAnnualInterestRate}% ×{' '}
+                  {formatDays(currentCompoundYearDays)} ÷{' '}
+                  {formatDays(currentCompoundYearTotalDays)})) −{' '}
+                  {formatRupees(openingCompoundBalance)}
                 </p>
               ) : (
                 <p className="mt-2 text-sm font-bold leading-6 text-[var(--erl-text)]">
-                  Calculated on each outstanding corpus balance from the date it
-                  applied, using {paymentCount}{' '}
+                  Interest is capitalized every year. Each payment reduces the
+                  interest-bearing balance from its recorded date, using{' '}
+                  {paymentCount}{' '}
                   {paymentCount === 1
                     ? 'recorded payment'
                     : 'recorded payments'}
@@ -986,8 +1010,8 @@ function FundTab({
         key === 'commonAreaMaintenance'
           ? 'Advance maintenance received from the owners'
           : key === 'unsoldFlatsMaintenance' || key === 'officeCommonAreaUsage'
-          ? erlFundData.balances[key].notes
-          : undefined,
+            ? erlFundData.balances[key].notes
+            : undefined,
     })),
   ];
 
@@ -1073,10 +1097,15 @@ function FundTab({
             additionalInterest={fundSnapshot.additionalInterest}
             totalInterest={fundSnapshot.totalInterest}
             currentCorpus={fundSnapshot.currentCorpus}
+            openingCompoundBalance={fundSnapshot.openingCompoundBalance}
             dailyInterest={fundSnapshot.dailyInterest}
             paymentCount={fundSnapshot.paymentCount}
+            completedCompoundYears={fundSnapshot.completedCompoundYears}
+            currentCompoundYearDays={fundSnapshot.currentCompoundYearDays}
+            currentCompoundYearTotalDays={
+              fundSnapshot.currentCompoundYearTotalDays
+            }
             formulaPeriodDays={fundSnapshot.formulaPeriodDays}
-            referencePeriodDays={fundSnapshot.referencePeriodDays}
           />
         </div>
       </div>

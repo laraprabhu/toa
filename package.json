@@ -14,6 +14,8 @@
     "worker:deploy": "wrangler deploy worker/src/index.ts --config worker/wrangler.toml",
     "issues:sync": "node scripts/sync-erl-issues.mjs",
     "funds:sync": "node scripts/sync-erl-funds.mjs",
+    "test:funds": "npm run test:fund-interest && npm run test:funds-sync",
+    "test:fund-interest": "node --test lib/erl-fund-interest.test.ts",
     "test:funds-sync": "node --test lib/erl-funds-sync.test.mjs",
     "admin:hash": "node scripts/hash-admin-email.mjs",
     "check": "tsc --noEmit && npm run build:pages",
