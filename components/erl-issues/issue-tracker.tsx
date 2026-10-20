@@ -977,10 +977,15 @@ function FundTab({
       amount: fundSnapshot.totalInterest,
     },
     ...fundBalanceOrder.slice(1).map((key) => ({
-      label: erlFundData.balances[key].label,
+      label:
+        key === 'unsoldFlatsMaintenance'
+          ? 'Maintenance dues for ERL owned flats and spaces'
+          : erlFundData.balances[key].label,
       amount: erlFundData.balances[key].amountPaise / 100,
       period:
-        key === 'unsoldFlatsMaintenance' || key === 'officeCommonAreaUsage'
+        key === 'commonAreaMaintenance'
+          ? 'Advance maintenance received from the owners'
+          : key === 'unsoldFlatsMaintenance' || key === 'officeCommonAreaUsage'
           ? erlFundData.balances[key].notes
           : undefined,
     })),
