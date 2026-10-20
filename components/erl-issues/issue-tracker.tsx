@@ -898,7 +898,7 @@ function ImportantFacts({
                 </span>
                 <div>
                   <p className="text-[10px] font-black uppercase tracking-[0.14em] text-[var(--erl-accent)]">
-                    Judgement copy
+                    RERA Document
                   </p>
                   <p className="mt-0.5 text-xs text-[var(--erl-muted)]">
                     TNREAT · Appeal No. 30 of 2022
@@ -914,17 +914,17 @@ function ImportantFacts({
               type="button"
               onClick={() => setShowJudgementCopy(true)}
               className="group relative block w-full overflow-hidden rounded-xl border border-[var(--erl-border)] bg-white text-left shadow-[0_14px_34px_rgb(0_0_0/15%)]"
-              aria-label="Open the judgement copy full screen"
+              aria-label="Open the RERA document full screen"
             >
               <img
                 src={judgementCopyUrl}
-                alt="TNREAT judgement copy listing dues payable by the promoter in Appeal No. 30 of 2022"
+                alt="TNREAT RERA document listing dues payable by the promoter in Appeal No. 30 of 2022"
                 className="aspect-[3/4] w-full object-cover object-top transition duration-500 group-hover:scale-[1.015]"
                 loading="lazy"
               />
               <span className="absolute inset-x-0 bottom-0 flex items-center justify-center gap-2 bg-gradient-to-t from-black/90 via-black/65 to-transparent px-4 pb-4 pt-12 text-xs font-black text-white">
                 <Maximize2 size={15} aria-hidden="true" />
-                Tap to view the full judgement
+                Tap to view the full document
               </span>
             </button>
           </figure>
@@ -947,19 +947,19 @@ function ImportantFacts({
             id="judgement-copy-title"
             className="fixed left-4 top-4 z-[122] rounded-full bg-black/60 px-3 py-2 text-[10px] font-black uppercase tracking-[0.13em] text-white backdrop-blur"
           >
-            Judgement copy
+            RERA Document
           </p>
           <button
             type="button"
             onClick={() => setShowJudgementCopy(false)}
             className="fixed right-4 top-4 z-[122] grid size-11 place-items-center rounded-full border border-white/20 bg-black/60 text-white backdrop-blur transition hover:bg-white/15"
-            aria-label="Close judgement copy"
+            aria-label="Close RERA document"
           >
             <X size={20} aria-hidden="true" />
           </button>
           <img
             src={judgementCopyUrl}
-            alt="Full TNREAT judgement copy listing dues payable by the promoter"
+            alt="Full TNREAT RERA document listing dues payable by the promoter"
             className="max-h-[calc(100svh-2rem)] max-w-full object-contain shadow-2xl"
           />
         </dialog>
