@@ -121,6 +121,9 @@ function useLiveFundSnapshot() {
   return {
     liveTotal: fundBaselineTotal + accruedInterest,
     totalInterest: fundTotalInterestBaseline + accruedInterest,
+    additionalInterest: fundAdditionalInterestBaseline + accruedInterest,
+    formulaPeriodDays: 1_503 + elapsedMs / (24 * 60 * 60 * 1_000),
+    referencePeriodDays: 2_208 + elapsedMs / (24 * 60 * 60 * 1_000),
   };
 }
 
@@ -692,8 +695,50 @@ function LiveFundTotal({ liveTotal }: { liveTotal: number }) {
   );
 }
 
-function ImportantFacts() {
+function useIndiaTodayLabel() {
+  const [today, setToday] = useState('');
+
+  useEffect(() => {
+    const update = () =>
+      setToday(
+        new Intl.DateTimeFormat('en-IN', {
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric',
+          timeZone: 'Asia/Kolkata',
+        }).format(new Date()),
+      );
+    const initialUpdate = window.setTimeout(update, 0);
+    const interval = window.setInterval(update, 60_000);
+    return () => {
+      window.clearTimeout(initialUpdate);
+      window.clearInterval(interval);
+    };
+  }, []);
+
+  return today;
+}
+
+function formatDays(value: number) {
+  return new Intl.NumberFormat('en-IN', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(value);
+}
+
+function ImportantFacts({
+  additionalInterest,
+  totalInterest,
+  formulaPeriodDays,
+  referencePeriodDays,
+}: {
+  additionalInterest: number;
+  totalInterest: number;
+  formulaPeriodDays: number;
+  referencePeriodDays: number;
+}) {
   const [showJudgementCopy, setShowJudgementCopy] = useState(false);
+  const today = useIndiaTodayLabel();
   const judgementCopyUrl = siteHref('/erl-issues/judgement-copy.jpeg');
 
   useEffect(() => {
@@ -730,7 +775,7 @@ function ImportantFacts() {
                   Interest breakup
                 </p>
                 <h3 className="mt-1 font-heading text-2xl font-semibold text-[var(--erl-text)]">
-                  As of 17 October 2026
+                  As on {today || 'today'}
                 </h3>
               </div>
               <span className="grid size-10 shrink-0 place-items-center rounded-xl border border-[var(--erl-gold-border)] bg-[var(--erl-gold-soft)] text-[var(--erl-gold)]">
@@ -749,10 +794,10 @@ function ImportantFacts() {
               </div>
               <div className="flex items-center justify-between gap-4 py-3">
                 <dt className="text-xs leading-5 text-[var(--erl-muted)]">
-                  Additional interest up to 17 October 2026
+                  Additional interest as on today
                 </dt>
                 <dd className="shrink-0 text-sm font-bold text-[var(--erl-text)]">
-                  {formatRupees(fundAdditionalInterestBaseline, 2)}
+                  {formatRupees(additionalInterest, 2)}
                 </dd>
               </div>
               <div className="flex items-center justify-between gap-4 py-3">
@@ -760,7 +805,7 @@ function ImportantFacts() {
                   Total accumulated interest
                 </dt>
                 <dd className="shrink-0 text-sm font-black text-[var(--erl-gold)]">
-                  {formatRupees(fundTotalInterestBaseline, 2)}
+                  {formatRupees(totalInterest, 2)}
                 </dd>
               </div>
             </dl>
@@ -800,26 +845,26 @@ function ImportantFacts() {
               </div>
               <div className="rounded-xl bg-[var(--erl-chip)] p-3">
                 <dt className="text-[9px] font-black uppercase tracking-[0.12em] text-[var(--erl-muted)]">
-                  Reference period
+                  Reference period as on today
                 </dt>
                 <dd className="mt-1 font-heading text-xl font-semibold text-[var(--erl-text)]">
-                  2,208 days
+                  {formatDays(referencePeriodDays)} days
                 </dd>
               </div>
             </dl>
 
             <div className="mt-3 rounded-2xl border border-[var(--erl-accent-border)] bg-[var(--erl-accent-soft)] p-4">
               <p className="text-[9px] font-black uppercase tracking-[0.13em] text-[var(--erl-accent)]">
-                Applied formula · 1,503 days
+                Applied formula · {formatDays(formulaPeriodDays)} days
               </p>
               <p className="mt-2 text-sm font-bold leading-6 text-[var(--erl-text)]">
-                ₹2,76,77,112 × 12.4% × 1,503 ÷ 365
+                ₹2,76,77,112 × 12.4% × {formatDays(formulaPeriodDays)} ÷ 365
               </p>
               <p className="mt-1 font-heading text-2xl font-semibold text-[var(--erl-gold)]">
-                = ₹1,41,32,160.86
+                = {formatRupees(additionalInterest, 2)}
               </p>
               <p className="mt-1 text-xs text-[var(--erl-muted)]">
-                Rounded to ₹1,41,32,161
+                Rounded to {formatRupees(Math.round(additionalInterest))}
               </p>
             </div>
 
@@ -917,25 +962,7 @@ function ImportantFacts() {
 }
 
 function TodayStamp() {
-  const [today, setToday] = useState('');
-
-  useEffect(() => {
-    const update = () =>
-      setToday(
-        new Intl.DateTimeFormat('en-IN', {
-          day: 'numeric',
-          month: 'long',
-          year: 'numeric',
-          timeZone: 'Asia/Kolkata',
-        }).format(new Date()),
-      );
-    const initialUpdate = window.setTimeout(update, 0);
-    const interval = window.setInterval(update, 60_000);
-    return () => {
-      window.clearTimeout(initialUpdate);
-      window.clearInterval(interval);
-    };
-  }, []);
+  const today = useIndiaTodayLabel();
 
   return (
     <span>
@@ -1037,7 +1064,12 @@ function FundTab({
             </div>
           </section>
 
-          <ImportantFacts />
+          <ImportantFacts
+            additionalInterest={fundSnapshot.additionalInterest}
+            totalInterest={fundSnapshot.totalInterest}
+            formulaPeriodDays={fundSnapshot.formulaPeriodDays}
+            referencePeriodDays={fundSnapshot.referencePeriodDays}
+          />
         </div>
       </div>
     </section>
