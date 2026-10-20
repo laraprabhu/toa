@@ -29,6 +29,13 @@ import {
   type ReactNode,
 } from 'react';
 import {
+  calculateLiveFundSnapshot,
+  erlFundData,
+  fundAnnualInterestRate,
+  fundBalanceOrder,
+  fundInterestUpToOrder,
+} from '@/lib/erl-funds';
+import {
   formatTower,
   issueStatusLabels,
   type ErlIssue,
@@ -60,37 +67,7 @@ const appTabs: Array<{
 
 const swipeHintStorageKey = 'toa-erl-swipe-hint-dismissed-v2';
 const colorThemeStorageKey = 'toa-erl-color-theme';
-const fundBaselineTotal = 53_102_320.38;
-const fundDailyInterest = 9_402.64;
-const fundBaselineTimestamp = Date.UTC(2026, 9, 16, 18, 30);
-const fundInterestUpToOrder = 7_423_975;
-const fundAdditionalInterestBaseline = 14_132_161;
-const fundTotalInterestBaseline = 21_556_136;
-
-const fundDues = [
-  {
-    label: 'Corpus amount receivable',
-    amount: 27_677_112,
-  },
-  {
-    label: 'Interest on corpus',
-    liveInterest: true,
-  },
-  {
-    label: 'Common amenities maintenance withheld by the promoter',
-    amount: 3_030_123,
-  },
-  {
-    label: 'Maintenance dues for unsold flats',
-    period: 'As of 12 October 2026',
-    amount: 718_949.38,
-  },
-  {
-    label: 'Common area usage charges for the promoter’s office',
-    period: 'April–September 2022',
-    amount: 120_000,
-  },
-] as const;
+const fundInitialRenderTimestamp = Date.UTC(2026, 9, 16, 18, 30);
 
 function formatRupees(value: number, decimals = 0) {
   return new Intl.NumberFormat('en-IN', {
@@ -102,7 +79,7 @@ function formatRupees(value: number, decimals = 0) {
 }
 
 function useLiveFundSnapshot() {
-  const [now, setNow] = useState(fundBaselineTimestamp);
+  const [now, setNow] = useState(fundInitialRenderTimestamp);
 
   useEffect(() => {
     const update = () => setNow(Date.now());
@@ -114,17 +91,7 @@ function useLiveFundSnapshot() {
     };
   }, []);
 
-  const elapsedMs = Math.max(0, now - fundBaselineTimestamp);
-  const accruedInterest =
-    (elapsedMs / (24 * 60 * 60 * 1_000)) * fundDailyInterest;
-
-  return {
-    liveTotal: fundBaselineTotal + accruedInterest,
-    totalInterest: fundTotalInterestBaseline + accruedInterest,
-    additionalInterest: fundAdditionalInterestBaseline + accruedInterest,
-    formulaPeriodDays: 1_503 + elapsedMs / (24 * 60 * 60 * 1_000),
-    referencePeriodDays: 2_208 + elapsedMs / (24 * 60 * 60 * 1_000),
-  };
+  return useMemo(() => calculateLiveFundSnapshot(erlFundData, now), [now]);
 }
 
 function StatusIcon({
@@ -186,9 +153,7 @@ function TrackerTopBar({
             {summary}
           </p>
         </div>
-        <div className="flex shrink-0 items-center gap-1.5">
-          {actions}
-        </div>
+        <div className="flex shrink-0 items-center gap-1.5">{actions}</div>
       </div>
     </div>
   );
@@ -729,11 +694,17 @@ function formatDays(value: number) {
 function ImportantFacts({
   additionalInterest,
   totalInterest,
+  currentCorpus,
+  dailyInterest,
+  paymentCount,
   formulaPeriodDays,
   referencePeriodDays,
 }: {
   additionalInterest: number;
   totalInterest: number;
+  currentCorpus: number;
+  dailyInterest: number;
+  paymentCount: number;
   formulaPeriodDays: number;
   referencePeriodDays: number;
 }) {
@@ -829,10 +800,10 @@ function ImportantFacts({
             <dl className="mt-4 grid grid-cols-2 gap-2">
               <div className="col-span-2 rounded-xl bg-[var(--erl-chip)] p-3">
                 <dt className="text-[9px] font-black uppercase tracking-[0.12em] text-[var(--erl-muted)]">
-                  Principal
+                  Current corpus balance
                 </dt>
                 <dd className="mt-1 font-heading text-xl font-semibold text-[var(--erl-text)]">
-                  {formatRupees(27_677_112)}
+                  {formatRupees(currentCorpus)}
                 </dd>
               </div>
               <div className="rounded-xl bg-[var(--erl-chip)] p-3">
@@ -840,7 +811,7 @@ function ImportantFacts({
                   Annual rate
                 </dt>
                 <dd className="mt-1 font-heading text-xl font-semibold text-[var(--erl-text)]">
-                  12.4%
+                  {fundAnnualInterestRate}%
                 </dd>
               </div>
               <div className="rounded-xl bg-[var(--erl-chip)] p-3">
@@ -857,9 +828,21 @@ function ImportantFacts({
               <p className="text-[9px] font-black uppercase tracking-[0.13em] text-[var(--erl-accent)]">
                 Applied formula · {formatDays(formulaPeriodDays)} days
               </p>
-              <p className="mt-2 text-sm font-bold leading-6 text-[var(--erl-text)]">
-                ₹2,76,77,112 × 12.4% × {formatDays(formulaPeriodDays)} ÷ 365
-              </p>
+              {paymentCount === 0 ? (
+                <p className="mt-2 text-sm font-bold leading-6 text-[var(--erl-text)]">
+                  {formatRupees(currentCorpus)} × {fundAnnualInterestRate}% ×{' '}
+                  {formatDays(formulaPeriodDays)} ÷ 365
+                </p>
+              ) : (
+                <p className="mt-2 text-sm font-bold leading-6 text-[var(--erl-text)]">
+                  Calculated on each outstanding corpus balance from the date it
+                  applied, using {paymentCount}{' '}
+                  {paymentCount === 1
+                    ? 'recorded payment'
+                    : 'recorded payments'}
+                  .
+                </p>
+              )}
               <p className="mt-1 font-heading text-2xl font-semibold text-[var(--erl-gold)]">
                 = {formatRupees(additionalInterest, 2)}
               </p>
@@ -878,7 +861,7 @@ function ImportantFacts({
                 </p>
               </div>
               <strong className="shrink-0 font-heading text-xl font-semibold text-[var(--erl-text)]">
-                ₹9,402.64/day
+                {formatRupees(dailyInterest, 2)}/day
               </strong>
             </div>
           </article>
@@ -980,6 +963,28 @@ function FundTab({
   onToggleTheme: () => void;
 }) {
   const fundSnapshot = useLiveFundSnapshot();
+  const fundDues: Array<{
+    label: string;
+    amount: number;
+    period?: string;
+  }> = [
+    {
+      label: erlFundData.balances.corpus.label,
+      amount: fundSnapshot.currentCorpus,
+    },
+    {
+      label: 'Interest on corpus',
+      amount: fundSnapshot.totalInterest,
+    },
+    ...fundBalanceOrder.slice(1).map((key) => ({
+      label: erlFundData.balances[key].label,
+      amount: erlFundData.balances[key].amountPaise / 100,
+      period:
+        key === 'unsoldFlatsMaintenance' || key === 'officeCommonAreaUsage'
+          ? erlFundData.balances[key].notes
+          : undefined,
+    })),
+  ];
 
   return (
     <section className="relative h-svh overflow-hidden bg-[var(--erl-page)] text-[var(--erl-text)]">
@@ -1035,7 +1040,7 @@ function FundTab({
                       <h3 className="text-sm font-bold leading-5 text-[var(--erl-text)]">
                         {due.label}
                       </h3>
-                      {'period' in due && (
+                      {due.period && (
                         <p className="mt-1 text-xs text-[var(--erl-muted)]">
                           {due.period}
                         </p>
@@ -1043,12 +1048,7 @@ function FundTab({
                     </div>
                   </div>
                   <strong className="mt-3 block pl-10 font-heading text-2xl font-semibold tracking-[-0.03em] text-[var(--erl-gold)]">
-                    {formatRupees(
-                      'liveInterest' in due
-                        ? fundSnapshot.totalInterest
-                        : due.amount,
-                      2,
-                    )}
+                    {formatRupees(due.amount, 2)}
                   </strong>
                 </li>
               ))}
@@ -1067,6 +1067,9 @@ function FundTab({
           <ImportantFacts
             additionalInterest={fundSnapshot.additionalInterest}
             totalInterest={fundSnapshot.totalInterest}
+            currentCorpus={fundSnapshot.currentCorpus}
+            dailyInterest={fundSnapshot.dailyInterest}
+            paymentCount={fundSnapshot.paymentCount}
             formulaPeriodDays={fundSnapshot.formulaPeriodDays}
             referencePeriodDays={fundSnapshot.referencePeriodDays}
           />
@@ -1217,85 +1220,88 @@ export function IssueTracker({ issues }: { issues: ErlIssue[] }) {
       <main className="erl-app-shell relative mx-auto h-svh w-full max-w-[640px] overflow-hidden bg-[var(--erl-page)]">
         {activeTab === 'civil' ? (
           <section className="relative h-svh w-full overflow-hidden bg-[var(--erl-page)]">
-          <TrackerTopBar
-            title="ERL Civil Issues Tracker"
-            summary={
-              <>
-                Total Issues: {issues.length} ·{' '}
-                <span className="font-black text-[var(--erl-text)]">
-                  {completion}% Completed
-                </span>
-              </>
-            }
-            actions={
-              <>
-                <button
-                  type="button"
-                  onClick={() => setShowFilters(true)}
-                  aria-label="Filter issues"
-                  className="erl-icon-button relative inline-flex size-10 items-center justify-center gap-2 rounded-xl border text-sm font-black transition hover:-translate-y-0.5"
-                >
-                  <SlidersHorizontal size={19} aria-hidden="true" />
-                  <span className="sr-only">Filter</span>
-                  {activeFilterCount > 0 && (
-                    <span className="absolute -right-1 -top-1 grid size-5 place-items-center rounded-full bg-sun text-[10px] text-ink">
-                      {activeFilterCount}
-                    </span>
-                  )}
-                </button>
-                <ThemeToggle theme={theme} onToggle={toggleTheme} />
-                <a
-                  href={siteHref('/erl-issues/admin')}
-                  className="erl-icon-button grid size-10 place-items-center rounded-xl border transition hover:-translate-y-0.5"
-                  aria-label="Open issue synchronization"
-                >
-                  <ShieldCheck size={19} aria-hidden="true" />
-                </a>
-              </>
-            }
-          />
+            <TrackerTopBar
+              title="ERL Civil Issues Tracker"
+              summary={
+                <>
+                  Total Issues: {issues.length} ·{' '}
+                  <span className="font-black text-[var(--erl-text)]">
+                    {completion}% Completed
+                  </span>
+                </>
+              }
+              actions={
+                <>
+                  <button
+                    type="button"
+                    onClick={() => setShowFilters(true)}
+                    aria-label="Filter issues"
+                    className="erl-icon-button relative inline-flex size-10 items-center justify-center gap-2 rounded-xl border text-sm font-black transition hover:-translate-y-0.5"
+                  >
+                    <SlidersHorizontal size={19} aria-hidden="true" />
+                    <span className="sr-only">Filter</span>
+                    {activeFilterCount > 0 && (
+                      <span className="absolute -right-1 -top-1 grid size-5 place-items-center rounded-full bg-sun text-[10px] text-ink">
+                        {activeFilterCount}
+                      </span>
+                    )}
+                  </button>
+                  <ThemeToggle theme={theme} onToggle={toggleTheme} />
+                  <a
+                    href={siteHref('/erl-issues/admin')}
+                    className="erl-icon-button grid size-10 place-items-center rounded-xl border transition hover:-translate-y-0.5"
+                    aria-label="Open issue synchronization"
+                  >
+                    <ShieldCheck size={19} aria-hidden="true" />
+                  </a>
+                </>
+              }
+            />
 
-          {filteredIssues.length === 0 ? (
-            <div className="grid h-full place-items-center bg-[var(--erl-page)] px-8 pb-28 pt-28 text-center text-[var(--erl-text)]">
-              <div>
-                <Search className="mx-auto text-[var(--erl-muted)]" size={28} />
-                <h2 className="mt-3 font-heading text-2xl font-semibold">
-                  No matching issues
-                </h2>
-                <p className="mt-2 text-sm text-[var(--erl-muted)]">
-                  Adjust the filters to return to the issue feed.
-                </p>
-                <button
-                  className="mt-4 rounded-full bg-sun px-5 py-3 text-sm font-black text-ink"
-                  type="button"
-                  onClick={resetFilters}
-                >
-                  Clear filters
-                </button>
-              </div>
-            </div>
-          ) : (
-            <section className="relative h-full overflow-hidden bg-[var(--erl-page)]">
-              <section
-                ref={reelRef}
-                className="h-full snap-y snap-mandatory overflow-y-auto overscroll-contain"
-                aria-label="Swipeable civil issue reel"
-              >
-                {filteredIssues.map((issue, index) => (
-                  <ReelCard
-                    key={issue.id}
-                    issue={issue}
-                    position={index}
-                    total={filteredIssues.length}
+            {filteredIssues.length === 0 ? (
+              <div className="grid h-full place-items-center bg-[var(--erl-page)] px-8 pb-28 pt-28 text-center text-[var(--erl-text)]">
+                <div>
+                  <Search
+                    className="mx-auto text-[var(--erl-muted)]"
+                    size={28}
                   />
-                ))}
+                  <h2 className="mt-3 font-heading text-2xl font-semibold">
+                    No matching issues
+                  </h2>
+                  <p className="mt-2 text-sm text-[var(--erl-muted)]">
+                    Adjust the filters to return to the issue feed.
+                  </p>
+                  <button
+                    className="mt-4 rounded-full bg-sun px-5 py-3 text-sm font-black text-ink"
+                    type="button"
+                    onClick={resetFilters}
+                  >
+                    Clear filters
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <section className="relative h-full overflow-hidden bg-[var(--erl-page)]">
+                <section
+                  ref={reelRef}
+                  className="h-full snap-y snap-mandatory overflow-y-auto overscroll-contain"
+                  aria-label="Swipeable civil issue reel"
+                >
+                  {filteredIssues.map((issue, index) => (
+                    <ReelCard
+                      key={issue.id}
+                      issue={issue}
+                      position={index}
+                      total={filteredIssues.length}
+                    />
+                  ))}
+                </section>
               </section>
-            </section>
-          )}
+            )}
 
-          {showSwipeHint && !showCompletion && filteredIssues.length > 1 && (
-            <SwipeHint onDismiss={dismissSwipeHint} />
-          )}
+            {showSwipeHint && !showCompletion && filteredIssues.length > 1 && (
+              <SwipeHint onDismiss={dismissSwipeHint} />
+            )}
           </section>
         ) : activeTab === 'fund' ? (
           <FundTab theme={theme} onToggleTheme={toggleTheme} />

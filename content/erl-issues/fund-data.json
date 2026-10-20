@@ -1,0 +1,31 @@
+{
+  "currency": "INR",
+  "sourceUpdatedOn": "2026-10-20",
+  "balances": {
+    "corpus": {
+      "label": "Corpus amount receivable",
+      "amountPaise": 2767711200,
+      "updatedOn": "2026-10-20",
+      "notes": "Current outstanding corpus balance"
+    },
+    "commonAreaMaintenance": {
+      "label": "Common area maintenance withheld by the promoter",
+      "amountPaise": 303012300,
+      "updatedOn": "2026-10-20",
+      "notes": "Current outstanding balance"
+    },
+    "unsoldFlatsMaintenance": {
+      "label": "Maintenance dues for unsold flats",
+      "amountPaise": 71894938,
+      "updatedOn": "2026-10-20",
+      "notes": "Includes dues calculated through 12 October 2026"
+    },
+    "officeCommonAreaUsage": {
+      "label": "Common area usage charges for the promoter's office",
+      "amountPaise": 12000000,
+      "updatedOn": "2026-10-20",
+      "notes": "Charges for April to September 2022"
+    }
+  },
+  "payments": []
+}

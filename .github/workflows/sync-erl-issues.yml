@@ -10,7 +10,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: erl-issues-sync
+  group: erl-data-sync
   cancel-in-progress: false
 
 jobs:

@@ -3,12 +3,14 @@
 import {
   ArrowLeft,
   ExternalLink,
+  IndianRupee,
   LogOut,
   RefreshCw,
   ShieldCheck,
   Sheet,
 } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { erlFundData } from '@/lib/erl-funds';
 import { siteHref } from '@/lib/site-path';
 
 type GoogleCredentialResponse = { credential: string };
@@ -36,10 +38,14 @@ type IssueSummary = {
 };
 
 const authSessionStorageKey = 'toa-erl-issues-admin-session-v2';
-const googleSheetUrl =
+const civilGoogleSheetUrl =
   'https://docs.google.com/spreadsheets/d/13DREMQUny0iHV71Lc8GbUjSmGQR3LixC/edit?usp=sharing';
-const githubSyncWorkflowUrl =
+const civilSyncWorkflowUrl =
   'https://github.com/laraprabhu/toa/actions/workflows/sync-erl-issues.yml';
+const fundGoogleSheetUrl =
+  'https://docs.google.com/spreadsheets/d/1wG3KF2mRPGIAV_zV-tsE10MKww7y2HUS_3ajbfzGhMk/edit?usp=sharing';
+const fundSyncWorkflowUrl =
+  'https://github.com/laraprabhu/toa/actions/workflows/sync-erl-funds.yml';
 
 export function IssueAdminConsole({
   apiUrl,
@@ -172,11 +178,11 @@ export function IssueAdminConsole({
                   Admin only
                 </p>
                 <h1 className="mt-1 font-heading text-3xl font-semibold tracking-[-0.035em] sm:text-4xl">
-                  Issue synchronization
+                  Tracker synchronization
                 </h1>
                 <p className="mt-2 text-sm leading-6 text-slate-300">
-                  Google Sheets is the source of truth. The tracker syncs every
-                  morning at 2:00 AM IST.
+                  Civil issues and fund balances use separate Google Sheets and
+                  separate automated jobs each morning.
                 </p>
               </div>
             </div>
@@ -222,45 +228,33 @@ export function IssueAdminConsole({
                   </button>
                 </div>
 
-                <div className="rounded-[1.5rem] border border-white/10 bg-black/15 p-5">
-                  <div className="flex items-center gap-3">
-                    <Sheet className="text-sun" size={22} aria-hidden="true" />
-                    <div>
-                      <h2 className="font-black">Google Sheets tracker</h2>
-                      <p className="mt-0.5 text-xs text-slate-400">
-                        {issueCount === null
-                          ? 'Checking records'
-                          : `${issueCount} issue records loaded`}
-                      </p>
-                    </div>
-                  </div>
-
-                  <p className="mt-4 text-xs leading-5 text-slate-400">
-                    GitHub will confirm repository access before allowing a
-                    manual sync.
-                  </p>
-
-                  <a
-                    href={githubSyncWorkflowUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="mt-5 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl bg-sun px-5 text-sm font-black text-ink transition hover:bg-[#ffd872]"
-                  >
-                    <RefreshCw size={18} aria-hidden="true" />
-                    Open force sync
-                    <ExternalLink size={16} aria-hidden="true" />
-                  </a>
-
-                  <a
-                    href={googleSheetUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="mt-3 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-5 text-sm font-black text-white transition hover:bg-white/10"
-                  >
-                    Open Google Sheet
-                    <ExternalLink size={16} aria-hidden="true" />
-                  </a>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <SyncCard
+                    icon={<Sheet size={22} aria-hidden="true" />}
+                    title="Civil issues"
+                    detail={
+                      issueCount === null
+                        ? 'Checking records'
+                        : `${issueCount} issue records loaded`
+                    }
+                    syncUrl={civilSyncWorkflowUrl}
+                    sheetUrl={civilGoogleSheetUrl}
+                    syncLabel="Sync civil issues"
+                  />
+                  <SyncCard
+                    icon={<IndianRupee size={22} aria-hidden="true" />}
+                    title="Fund balances"
+                    detail={`${Object.keys(erlFundData.balances).length} balance categories loaded`}
+                    syncUrl={fundSyncWorkflowUrl}
+                    sheetUrl={fundGoogleSheetUrl}
+                    syncLabel="Sync fund balances"
+                  />
                 </div>
+
+                <p className="text-xs leading-5 text-slate-400">
+                  GitHub confirms repository access before allowing either
+                  manual sync.
+                </p>
               </>
             )}
 
@@ -269,6 +263,55 @@ export function IssueAdminConsole({
         </section>
       </div>
     </main>
+  );
+}
+
+function SyncCard({
+  icon,
+  title,
+  detail,
+  syncUrl,
+  sheetUrl,
+  syncLabel,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  detail: string;
+  syncUrl: string;
+  sheetUrl: string;
+  syncLabel: string;
+}) {
+  return (
+    <section className="rounded-[1.5rem] border border-white/10 bg-black/15 p-5">
+      <div className="flex items-center gap-3">
+        <span className="text-sun">{icon}</span>
+        <div>
+          <h2 className="font-black">{title}</h2>
+          <p className="mt-0.5 text-xs text-slate-400">{detail}</p>
+        </div>
+      </div>
+
+      <a
+        href={syncUrl}
+        target="_blank"
+        rel="noreferrer"
+        className="mt-5 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl bg-sun px-4 text-center text-sm font-black text-ink transition hover:bg-[#ffd872]"
+      >
+        <RefreshCw size={18} aria-hidden="true" />
+        {syncLabel}
+        <ExternalLink size={16} aria-hidden="true" />
+      </a>
+
+      <a
+        href={sheetUrl}
+        target="_blank"
+        rel="noreferrer"
+        className="mt-3 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-4 text-sm font-black text-white transition hover:bg-white/10"
+      >
+        Open Google Sheet
+        <ExternalLink size={16} aria-hidden="true" />
+      </a>
+    </section>
   );
 }
 

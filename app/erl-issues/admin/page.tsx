@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { IssueAdminConsole } from '@/components/erl-issues/issue-admin-console';
 
 export const metadata: Metadata = {
-  title: 'ERL Issue Sync',
+  title: 'ERL Tracker Sync',
   robots: { index: false, follow: false },
 };
 

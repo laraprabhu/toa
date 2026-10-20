@@ -13,6 +13,8 @@
     "worker:dev": "wrangler dev worker/src/index.ts --config worker/wrangler.toml",
     "worker:deploy": "wrangler deploy worker/src/index.ts --config worker/wrangler.toml",
     "issues:sync": "node scripts/sync-erl-issues.mjs",
+    "funds:sync": "node scripts/sync-erl-funds.mjs",
+    "test:funds-sync": "node --test lib/erl-funds-sync.test.mjs",
     "admin:hash": "node scripts/hash-admin-email.mjs",
     "check": "tsc --noEmit && npm run build:pages",
     "lint": "oxlint",

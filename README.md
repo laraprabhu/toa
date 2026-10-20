@@ -16,7 +16,8 @@ A mobile-first communication hub for residents. The public site is a static GitH
 - **Short resident links:** every published notice is available at `https://laraprabhu.github.io/toa/<announcement-number>/`.
 - **Publishing:** each content commit triggers the Pages workflow, so residents see the new version after the build finishes.
 - **ERL progress hub:** `https://laraprabhu.github.io/toa/erl-issues/` opens with animated verified completion, then provides Civil, Fund and Documents tabs. Civil is a full-screen swipeable issue reel with fixed progress controls and sheet-based filters; Fund and Documents are reserved as static modules.
-- **ERL issue source:** the shared read-only Google Sheet is imported into `content/erl-issues/issues.json` every day at 2:00 AM IST by `.github/workflows/sync-erl-issues.yml`.
+- **ERL issue source:** the shared read-only civil Google Sheet is imported into `content/erl-issues/issues.json` every day at 2:00 AM IST by `.github/workflows/sync-erl-issues.yml`.
+- **ERL fund source:** the separate fund Google Sheet is validated and imported into `content/erl-issues/fund-data.json` every day at 2:05 AM IST by `.github/workflows/sync-erl-funds.yml`. Only balances and dated corpus payments are stored; interest is calculated by the site.
 - **Separate issue admins:** `content/erl-issues/admins.json` controls only the ERL synchronization console at `/erl-issues/admin/`; noticeboard access remains independent. Authenticated issue admins can open the repository’s force-sync workflow, which GitHub protects with repository permissions.
 
 GitHub Pages cannot securely hold a GitHub write credential or verify Google authorization by itself. The Worker is therefore required for secure editing, but it stores no announcement or resident data.
@@ -113,6 +114,8 @@ Issue status is intentionally conservative from TOA's perspective:
 - **Not Done:** only a promise, acknowledgement, discussion or future action is recorded.
 
 Google Sheets is the issue tracker’s source of truth. The scheduled workflow downloads the public read-only CSV export, validates all required columns and commits `content/erl-issues/issues.json` only when data changes. The admin console links authorized administrators to the same workflow for a force sync; GitHub requires repository access before it can be run. Website-based issue creation, editing and deletion are disabled.
+
+The Fund tab uses a separate Google Sheet and workflow. Its importer requires one balance row for each configured category and optional `Corpus Payment` rows containing the payment date and amount received. It reconciles the remaining corpus against the original corpus and all recorded payments before committing. Interest rates, historical interest and formulas are intentionally absent from the Sheet; the website calculates them from the validated local balances and payment dates.
 
 If an ERL response has not changed, the importer preserves its reviewed status. A changed response is re-evaluated conservatively: future commitments remain `Not Done`, partial or percentage completion remains `In Progress`, and an unqualified completion statement can become `Done`. An optional Sheet column named `Status` can explicitly provide `Done`, `In Progress` or `Not Done`.
 

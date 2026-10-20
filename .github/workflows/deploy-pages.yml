@@ -17,7 +17,9 @@ on:
       - '.github/workflows/deploy-pages.yml'
   workflow_dispatch:
   workflow_run:
-    workflows: ['Sync ERL issues from Google Sheets']
+    workflows:
+      - 'Sync ERL issues from Google Sheets'
+      - 'Sync ERL fund data from Google Sheets'
     types: [completed]
 
 permissions:
