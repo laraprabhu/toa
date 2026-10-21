@@ -201,7 +201,9 @@ function useTrackerViewCount(viewApiUrl: string) {
 
 function TrackerViewCount({ count }: { count: number | null }) {
   const label =
-    count === null ? 'App view count loading' : `${count} total app views`;
+    count === null
+      ? 'App view count loading'
+      : `${count} total app views so far`;
 
   return (
     <span
@@ -1723,7 +1725,7 @@ export function IssueTracker({
                 />
                 <TrackerViewCount count={viewCount} />
                 <span className="text-xs font-bold text-[var(--erl-muted)]">
-                  total app views
+                  Total app views so far
                 </span>
               </div>
               <a
