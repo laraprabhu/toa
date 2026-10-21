@@ -7,6 +7,7 @@ import {
   CircleDashed,
   Clock3,
   Construction,
+  Eye,
   FileText,
   FolderOpen,
   Hand,
@@ -202,10 +203,11 @@ function TrackerViewCount({ count }: { count: number | null }) {
 
   return (
     <span
-      className="font-heading shrink-0 text-base font-semibold leading-none text-[var(--erl-text)]"
+      className="inline-flex shrink-0 items-center gap-1 font-heading text-base font-semibold leading-none text-[var(--erl-text)]"
       aria-label={label}
       title={label}
     >
+      <Eye size={17} strokeWidth={2.4} aria-hidden="true" />
       {count === null ? '—' : count.toLocaleString('en-IN')}
     </span>
   );
