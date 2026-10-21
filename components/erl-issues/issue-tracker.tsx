@@ -4,6 +4,7 @@ import {
   Calculator,
   CheckCircle2,
   ChevronDown,
+  ChevronUp,
   CircleDashed,
   Clock3,
   Construction,
@@ -203,14 +204,11 @@ function TrackerViewCount({ count }: { count: number | null }) {
 
   return (
     <span
-      className="inline-flex h-5 shrink-0 items-center justify-center gap-1 text-[var(--erl-text)]"
+      className="block shrink-0 text-sm font-black leading-none text-[var(--erl-text)]"
       aria-label={label}
       title={label}
     >
-      <Eye className="block shrink-0" size={17} strokeWidth={2.4} aria-hidden="true" />
-      <span className="block text-sm font-black leading-none">
-        {count === null ? '—' : count.toLocaleString('en-IN')}
-      </span>
+      {count === null ? '—' : count.toLocaleString('en-IN')}
     </span>
   );
 }
@@ -1446,8 +1444,10 @@ export function IssueTracker({
   const [tower, setTower] = useState('all');
   const [owner, setOwner] = useState('all');
   const [showSwipeHint, setShowSwipeHint] = useState(false);
+  const [showMoreMenu, setShowMoreMenu] = useState(false);
   const reelRef = useRef<HTMLElement>(null);
   const viewCount = useTrackerViewCount(viewApiUrl);
+  const reraDocumentUrl = siteHref('/erl-issues/rera-judgement.pdf');
 
   const categories = useMemo(
     () => [...new Set(issues.map((issue) => issue.category))].sort(),
@@ -1550,6 +1550,16 @@ export function IssueTracker({
     return () => window.clearTimeout(timer);
   }, []);
 
+  useEffect(() => {
+    if (!showMoreMenu) return;
+
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setShowMoreMenu(false);
+    };
+    window.addEventListener('keydown', closeOnEscape);
+    return () => window.removeEventListener('keydown', closeOnEscape);
+  }, [showMoreMenu]);
+
   return (
     <div
       className={`erl-tracker-theme h-svh overflow-hidden ${theme === 'dark' ? 'dark' : ''}`}
@@ -1648,6 +1658,15 @@ export function IssueTracker({
         )}
       </main>
 
+      {showMoreMenu && (
+        <button
+          type="button"
+          className="fixed inset-0 z-40 cursor-default bg-transparent"
+          onClick={() => setShowMoreMenu(false)}
+          aria-label="Close more options"
+        />
+      )}
+
       <div className="fixed bottom-4 left-1/2 z-50 flex w-[calc(100%-1.5rem)] max-w-[606px] -translate-x-1/2 items-stretch gap-2">
         <nav
           className="erl-bottom-nav flex min-w-0 flex-1 items-center gap-1 rounded-[1.6rem] border p-1.5 shadow-[0_0_38px_var(--erl-nav-shadow)] ring-1 ring-inset ring-[var(--erl-ring)] backdrop-blur-2xl"
@@ -1662,6 +1681,7 @@ export function IssueTracker({
                 onClick={() => {
                   setActiveTab(id);
                   setShowFilters(false);
+                  setShowMoreMenu(false);
                 }}
                 className={`relative flex min-h-14 min-w-0 flex-1 flex-col items-center justify-center gap-1 rounded-[1.15rem] px-1 text-[10px] font-black transition ${
                   selected
@@ -1684,16 +1704,56 @@ export function IssueTracker({
           })}
         </nav>
 
-        <aside
-          className="erl-bottom-nav flex w-[78px] shrink-0 flex-col items-center justify-center rounded-full border shadow-[0_0_38px_var(--erl-nav-shadow)] ring-1 ring-inset ring-[var(--erl-ring)] backdrop-blur-2xl"
-          aria-label="Tracker views"
-          aria-live="polite"
-        >
-          <TrackerViewCount count={viewCount} />
-          <span className="mt-0.5 text-[9px] font-bold text-[var(--erl-muted)]">
-            views
-          </span>
-        </aside>
+        <div className="relative flex w-[78px] shrink-0">
+          {showMoreMenu && (
+            <section
+              className="erl-bottom-nav absolute bottom-full right-0 mb-3 w-[min(17rem,calc(100vw-1.5rem))] overflow-hidden rounded-3xl border p-2 shadow-[0_0_38px_var(--erl-nav-shadow)] ring-1 ring-inset ring-[var(--erl-ring)] backdrop-blur-2xl"
+              aria-label="More tracker options"
+            >
+              <div
+                className="flex items-center gap-2 border-b border-[var(--erl-border)] px-3 py-3 text-[var(--erl-text)]"
+                aria-live="polite"
+              >
+                <Eye className="shrink-0" size={18} strokeWidth={2.3} aria-hidden="true" />
+                <TrackerViewCount count={viewCount} />
+                <span className="text-xs font-bold text-[var(--erl-muted)]">views</span>
+              </div>
+              <a
+                href={reraDocumentUrl}
+                target="_blank"
+                rel="noreferrer"
+                onClick={() => setShowMoreMenu(false)}
+                className="mt-1 flex items-center gap-3 rounded-2xl px-3 py-3 text-left text-[var(--erl-text)] transition hover:bg-[var(--erl-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--erl-accent)]"
+              >
+                <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-[var(--erl-accent-soft)] text-[var(--erl-accent)]">
+                  <FileText size={18} aria-hidden="true" />
+                </span>
+                <span className="min-w-0">
+                  <span className="block text-sm font-black">View RERA judgement</span>
+                  <span className="mt-0.5 block text-[10px] font-semibold text-[var(--erl-muted)]">
+                    Open or download the 43-page PDF
+                  </span>
+                </span>
+              </a>
+            </section>
+          )}
+
+          <button
+            type="button"
+            onClick={() => setShowMoreMenu((current) => !current)}
+            className="erl-bottom-nav flex w-full flex-col items-center justify-center rounded-full border shadow-[0_0_38px_var(--erl-nav-shadow)] ring-1 ring-inset ring-[var(--erl-ring)] backdrop-blur-2xl transition hover:-translate-y-0.5"
+            aria-label="More tracker options"
+            aria-expanded={showMoreMenu}
+          >
+            <ChevronUp
+              className={`transition-transform ${showMoreMenu ? 'rotate-180' : ''}`}
+              size={20}
+              strokeWidth={2.6}
+              aria-hidden="true"
+            />
+            <span className="mt-0.5 text-[9px] font-black text-[var(--erl-muted)]">More</span>
+          </button>
+        </div>
       </div>
 
       {showCompletion && (
