@@ -200,7 +200,8 @@ function useTrackerViewCount(viewApiUrl: string) {
 }
 
 function TrackerViewCount({ count }: { count: number | null }) {
-  const label = count === null ? 'View count loading' : `${count} total views`;
+  const label =
+    count === null ? 'App view count loading' : `${count} total app views`;
 
   return (
     <span
@@ -1714,9 +1715,16 @@ export function IssueTracker({
                 className="flex items-center gap-2 border-b border-[var(--erl-border)] px-3 py-3 text-[var(--erl-text)]"
                 aria-live="polite"
               >
-                <Eye className="shrink-0" size={18} strokeWidth={2.3} aria-hidden="true" />
+                <Eye
+                  className="shrink-0"
+                  size={18}
+                  strokeWidth={2.3}
+                  aria-hidden="true"
+                />
                 <TrackerViewCount count={viewCount} />
-                <span className="text-xs font-bold text-[var(--erl-muted)]">views</span>
+                <span className="text-xs font-bold text-[var(--erl-muted)]">
+                  total app views
+                </span>
               </div>
               <a
                 href={reraDocumentUrl}
@@ -1741,17 +1749,16 @@ export function IssueTracker({
           <button
             type="button"
             onClick={() => setShowMoreMenu((current) => !current)}
-            className="erl-bottom-nav flex w-full flex-col items-center justify-center rounded-full border shadow-[0_0_38px_var(--erl-nav-shadow)] ring-1 ring-inset ring-[var(--erl-ring)] backdrop-blur-2xl transition hover:-translate-y-0.5"
+            className="erl-bottom-nav flex min-h-14 w-full flex-col items-center justify-center gap-1 rounded-full border px-1 text-[10px] font-black text-[var(--erl-muted)] shadow-[0_0_38px_var(--erl-nav-shadow)] ring-1 ring-inset ring-[var(--erl-ring)] backdrop-blur-2xl transition hover:-translate-y-0.5 hover:text-[var(--erl-text)]"
             aria-label="More tracker options"
             aria-expanded={showMoreMenu}
           >
             <ChevronUp
               className={`transition-transform ${showMoreMenu ? 'rotate-180' : ''}`}
-              size={20}
-              strokeWidth={2.6}
+              size={19}
               aria-hidden="true"
             />
-            <span className="mt-0.5 text-[9px] font-black text-[var(--erl-muted)]">More</span>
+            <span>More</span>
           </button>
         </div>
       </div>
