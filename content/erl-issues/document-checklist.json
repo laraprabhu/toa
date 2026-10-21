@@ -2,126 +2,186 @@
   "title": "Society Handover Document Checklist",
   "sections": [
     {
-      "id": "statutory-legal",
+      "id": "statutory-approvals-and-legal-ownership",
       "title": "Statutory Approvals & Legal Ownership",
       "items": [
         {
+          "id": "DOC-001",
           "name": "Occupancy Certificate (OC)",
           "notes": "Must cover all blocks and phases completely. Essential for legal residency and water connections.",
-          "handedOver": false
+          "handedOver": false,
+          "handedOverDate": null,
+          "remarks": ""
         },
         {
+          "id": "DOC-002",
           "name": "Completion Certificate (CC)",
           "notes": "Issued by the local planning authority, confirming that execution matches the approved maps.",
-          "handedOver": false
+          "handedOver": false,
+          "handedOverDate": null,
+          "remarks": ""
         },
         {
+          "id": "DOC-003",
           "name": "Parent Title Deeds",
           "notes": "Mother Deed, Land Sale Agreements, and Title Clearance or Encumbrance Certificates for 30 years.",
-          "handedOver": false
+          "handedOver": false,
+          "handedOverDate": null,
+          "remarks": ""
         },
         {
+          "id": "DOC-004",
           "name": "Approved Layout Plans",
           "notes": "Sanctioned building blueprints and floor plans approved by the municipal corporation or town planning board.",
-          "handedOver": false
+          "handedOver": false,
+          "handedOverDate": null,
+          "remarks": ""
         },
         {
+          "id": "DOC-005",
           "name": "Joint Development Agreement",
           "notes": "If built through a JDA, collect the allocation sheet and registered agreement between the landowner and builder.",
-          "handedOver": false
+          "handedOver": false,
+          "handedOverDate": null,
+          "remarks": ""
         },
         {
+          "id": "DOC-006",
           "name": "Declaration & Bye-laws",
           "notes": "Deed of Declaration submitted under the local Apartment Ownership Act.",
-          "handedOver": false
+          "handedOver": false,
+          "handedOverDate": null,
+          "remarks": ""
         }
       ]
     },
     {
-      "id": "technical-handover",
+      "id": "infrastructure-and-technical-handover",
       "title": "Infrastructure & Technical Handover",
       "items": [
         {
+          "id": "DOC-007",
           "name": "As-Built Structure Drawings",
           "notes": "Detailed architectural, structural, foundation, and column placement maps.",
-          "handedOver": false
+          "handedOver": false,
+          "handedOverDate": null,
+          "remarks": ""
         },
         {
+          "id": "DOC-008",
           "name": "Electrical Systems & Schematics",
           "notes": "Single Line Diagrams, transformer specifications, generator wiring, panel room distributions, and lightning protection maps.",
-          "handedOver": false
+          "handedOver": false,
+          "handedOverDate": null,
+          "remarks": ""
         },
         {
+          "id": "DOC-009",
           "name": "Plumbing & Drainage Layouts",
           "notes": "Inflow and outflow pipelines, water tank configurations, borewell pits, and municipal water line entry blueprints.",
-          "handedOver": false
+          "handedOver": false,
+          "handedOverDate": null,
+          "remarks": ""
         },
         {
+          "id": "DOC-010",
           "name": "STP & WTP Layouts",
           "notes": "Operations manuals, pipeline schematics, and chemical storage plans for the Sewage and Water Treatment Plants.",
-          "handedOver": false
+          "handedOver": false,
+          "handedOverDate": null,
+          "remarks": ""
         },
         {
+          "id": "DOC-011",
           "name": "Firefighting & Piping Networks",
           "notes": "Sprinkler layouts, fire hydrant locations, smoke detector wiring maps, and escape routes.",
-          "handedOver": false
+          "handedOver": false,
+          "handedOverDate": null,
+          "remarks": ""
         }
       ]
     },
     {
-      "id": "operations-licenses",
+      "id": "operations-licenses-and-vendor-contracts",
       "title": "Operations, Licenses & Vendor Contracts",
       "items": [
         {
+          "id": "DOC-012",
           "name": "Fire Department NOC",
           "notes": "Valid No Objection Certificate from Fire & Emergency Services. It must be active and requires annual renewal.",
-          "handedOver": false
+          "handedOver": false,
+          "handedOverDate": null,
+          "remarks": ""
         },
         {
+          "id": "DOC-013",
           "name": "Lift Operational Licenses",
           "notes": "Valid registration and safety clearance certificates from the Inspector of Lifts.",
-          "handedOver": false
+          "handedOver": false,
+          "handedOverDate": null,
+          "remarks": ""
         },
         {
+          "id": "DOC-014",
           "name": "Consent to Operate (CTO)",
           "notes": "Environmental clearance from the State Pollution Control Board for DG sets and STP operations.",
-          "handedOver": false
+          "handedOver": false,
+          "handedOverDate": null,
+          "remarks": ""
         },
         {
+          "id": "DOC-015",
           "name": "Active AMCs & Warranties",
           "notes": "Original Annual Maintenance Contracts and warranty documents for lifts, generators, pumps, CCTVs, and transformers.",
-          "handedOver": false
+          "handedOver": false,
+          "handedOverDate": null,
+          "remarks": ""
         },
         {
+          "id": "DOC-016",
           "name": "Vendor Service Ledgers",
           "notes": "Contact information and outstanding ledger balances for existing security, housekeeping, and technical staff.",
-          "handedOver": false
+          "handedOver": false,
+          "handedOverDate": null,
+          "remarks": ""
         }
       ]
     },
     {
-      "id": "financial-audit",
+      "id": "financial-auditing-and-corpus-funds",
       "title": "Financial Auditing & Corpus Funds",
       "items": [
         {
+          "id": "DOC-017",
           "name": "IFMS Corpus Fund Transfer",
           "notes": "Complete transfer of Interest-Free Maintenance Security, along with up-to-date bank account statements and interest logs.",
-          "handedOver": false
+          "handedOver": false,
+          "handedOverDate": null,
+          "remarks": ""
         },
         {
+          "id": "DOC-018",
           "name": "Audited Society Accounts",
           "notes": "Certified financial balances showing all maintenance revenue collections and expenses under the builder's tenure.",
-          "handedOver": false
+          "handedOver": false,
+          "handedOverDate": null,
+          "remarks": ""
         },
         {
+          "id": "DOC-019",
           "name": "Property Tax Receipts",
           "notes": "Proof of paid property and land taxes up to the exact formal date of society management handover.",
-          "handedOver": false
+          "handedOver": false,
+          "handedOverDate": null,
+          "remarks": ""
         },
         {
+          "id": "DOC-020",
           "name": "Utility Bill Ledgers",
           "notes": "Zero-due certificates and payment confirmations for shared electrical connections, water tankers, and common-area grids.",
-          "handedOver": false
+          "handedOver": false,
+          "handedOverDate": null,
+          "remarks": ""
         }
       ]
     },
@@ -130,14 +190,20 @@
       "title": "Structural Assurances",
       "items": [
         {
+          "id": "DOC-021",
           "name": "Indemnity Bond",
           "notes": "A registered legal undertaking protecting the association from past tax claims, pending litigation, or pre-handover construction liabilities.",
-          "handedOver": false
+          "handedOver": false,
+          "handedOverDate": null,
+          "remarks": ""
         },
         {
+          "id": "DOC-022",
           "name": "RERA Defect Liability Clause",
           "notes": "A formal written document reiterating the developer's five-year structural defect liability window as mandated by RERA.",
-          "handedOver": false
+          "handedOver": false,
+          "handedOverDate": null,
+          "remarks": ""
         }
       ]
     }

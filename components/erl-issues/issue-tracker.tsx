@@ -53,9 +53,12 @@ interface HandoverDocumentSection {
   id: string;
   title: string;
   items: Array<{
+    id: string;
     name: string;
     notes: string;
     handedOver: boolean;
+    handedOverDate: string | null;
+    remarks: string;
   }>;
 }
 
@@ -70,6 +73,16 @@ const handedOverDocumentCount = handoverDocumentSections.reduce(
     total + section.items.filter((item) => item.handedOver).length,
   0,
 );
+
+function formatDocumentDate(value: string) {
+  const [year, month, day] = value.split('-').map(Number);
+  return new Intl.DateTimeFormat('en-IN', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+    timeZone: 'UTC',
+  }).format(new Date(Date.UTC(year, month - 1, day)));
+}
 
 const reelStatusStyles: Record<IssueStatus, string> = {
   done: 'border-emerald-600/25 bg-emerald-500/10 text-emerald-800 dark:border-emerald-300/40 dark:bg-emerald-300/15 dark:text-emerald-100',
@@ -1230,7 +1243,7 @@ function DocumentsTab({
                 <ol className="grid gap-2 border-t border-[var(--erl-border)] p-3">
                   {section.items.map((item, itemIndex) => (
                     <li
-                      key={item.name}
+                      key={item.id}
                       className={`rounded-2xl border p-4 ${
                         item.handedOver
                           ? 'border-emerald-500/35 bg-emerald-500/10'
@@ -1269,6 +1282,22 @@ function DocumentsTab({
                           <p className="mt-1.5 text-xs leading-5 text-[var(--erl-muted)]">
                             {item.notes}
                           </p>
+                          {item.handedOver && item.handedOverDate && (
+                            <p className="mt-2 text-[10px] font-black uppercase tracking-[0.08em] text-emerald-700 dark:text-emerald-300">
+                              Handed over on{' '}
+                              {formatDocumentDate(item.handedOverDate)}
+                            </p>
+                          )}
+                          {item.remarks && (
+                            <div className="mt-3 rounded-xl border border-current/10 bg-black/[0.04] px-3 py-2 dark:bg-black/10">
+                              <p className="text-[9px] font-black uppercase tracking-[0.1em] text-[var(--erl-muted)]">
+                                Remarks
+                              </p>
+                              <p className="mt-1 text-xs leading-5 text-[var(--erl-text)]">
+                                {item.remarks}
+                              </p>
+                            </div>
+                          )}
                           <p className="mt-2 text-[9px] font-black uppercase tracking-[0.1em] text-[var(--erl-muted)]">
                             Item {itemIndex + 1} of {section.items.length}
                           </p>

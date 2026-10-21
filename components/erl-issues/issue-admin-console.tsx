@@ -3,6 +3,7 @@
 import {
   ArrowLeft,
   ExternalLink,
+  FolderOpen,
   IndianRupee,
   LogOut,
   RefreshCw,
@@ -10,6 +11,7 @@ import {
   Sheet,
 } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import documentChecklistJson from '@/content/erl-issues/document-checklist.json';
 import { erlFundData } from '@/lib/erl-funds';
 import { siteHref } from '@/lib/site-path';
 
@@ -46,6 +48,14 @@ const fundGoogleSheetUrl =
   'https://docs.google.com/spreadsheets/d/1wG3KF2mRPGIAV_zV-tsE10MKww7y2HUS_3ajbfzGhMk/edit?usp=sharing';
 const fundSyncWorkflowUrl =
   'https://github.com/laraprabhu/toa/actions/workflows/sync-erl-funds.yml';
+const documentGoogleSheetUrl =
+  'https://docs.google.com/spreadsheets/d/1lsv00lKoM9ItsRVwK46yhgiEs4S3Mo7itxG5GB1GBBQ/edit?usp=sharing';
+const documentSyncWorkflowUrl =
+  'https://github.com/laraprabhu/toa/actions/workflows/sync-erl-documents.yml';
+const documentCount = documentChecklistJson.sections.reduce(
+  (total, section) => total + section.items.length,
+  0,
+);
 
 export function IssueAdminConsole({
   apiUrl,
@@ -181,8 +191,8 @@ export function IssueAdminConsole({
                   Tracker synchronization
                 </h1>
                 <p className="mt-2 text-sm leading-6 text-slate-300">
-                  Civil issues and fund balances use separate Google Sheets and
-                  separate automated jobs each morning.
+                  Civil issues, fund balances, and document handovers use
+                  separate Google Sheets and automated jobs each morning.
                 </p>
               </div>
             </div>
@@ -249,11 +259,21 @@ export function IssueAdminConsole({
                     sheetUrl={fundGoogleSheetUrl}
                     syncLabel="Sync fund balances"
                   />
+                  <div className="sm:col-span-2">
+                    <SyncCard
+                      icon={<FolderOpen size={22} aria-hidden="true" />}
+                      title="Document handover"
+                      detail={`${documentCount} document records loaded`}
+                      syncUrl={documentSyncWorkflowUrl}
+                      sheetUrl={documentGoogleSheetUrl}
+                      syncLabel="Sync documents"
+                    />
+                  </div>
                 </div>
 
                 <p className="text-xs leading-5 text-slate-400">
-                  GitHub confirms repository access before allowing either
-                  manual sync.
+                  GitHub confirms repository access before allowing each manual
+                  sync.
                 </p>
               </>
             )}
