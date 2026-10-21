@@ -55,6 +55,7 @@ interface HandoverDocumentSection {
   items: Array<{
     name: string;
     notes: string;
+    handedOver: boolean;
   }>;
 }
 
@@ -62,6 +63,11 @@ const handoverDocumentSections =
   documentChecklistJson.sections as HandoverDocumentSection[];
 const handoverDocumentCount = handoverDocumentSections.reduce(
   (total, section) => total + section.items.length,
+  0,
+);
+const handedOverDocumentCount = handoverDocumentSections.reduce(
+  (total, section) =>
+    total + section.items.filter((item) => item.handedOver).length,
   0,
 );
 
@@ -438,8 +444,9 @@ function CompletionModal({
               },
               {
                 label: 'Documents',
-                value: `0 of ${handoverDocumentCount}`,
-                progress: 0,
+                value: `${handedOverDocumentCount} of ${handoverDocumentCount}`,
+                progress:
+                  (handedOverDocumentCount / handoverDocumentCount) * 100,
               },
             ].map((row, index) => (
               <div key={row.label}>
@@ -1148,8 +1155,7 @@ function DocumentsTab({
         title="ERL Document Handover Tracker"
         summary={
           <>
-            {handoverDocumentCount} required · {handoverDocumentSections.length}{' '}
-            categories
+            {handedOverDocumentCount} of {handoverDocumentCount} handed over
           </>
         }
         actions={<ThemeToggle theme={theme} onToggle={onToggleTheme} />}
@@ -1171,21 +1177,26 @@ function DocumentsTab({
           </header>
 
           <section className="erl-live-total relative overflow-hidden rounded-[2rem] border p-5 shadow-[0_0_48px_var(--erl-shadow)]">
-            <div className="relative flex items-end justify-between gap-5">
+            <div className="relative">
               <div>
                 <p className="text-[10px] font-black uppercase tracking-[0.16em] text-[var(--erl-accent)]">
                   Handover checklist
                 </p>
-                <p className="mt-3 font-heading text-5xl font-semibold leading-none tracking-[-0.055em]">
-                  {handoverDocumentCount}
+                <p className="mt-3 font-heading text-4xl font-semibold leading-[1.05] tracking-[-0.045em]">
+                  {handedOverDocumentCount} out of {handoverDocumentCount}
                 </p>
-                <p className="mt-2 text-sm font-semibold text-[var(--erl-muted)]">
-                  Required documents
+                <p className="mt-2 text-sm font-semibold leading-5 text-[var(--erl-muted)]">
+                  documents handed over so far.
                 </p>
               </div>
-              <span className="erl-chip rounded-full border px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.1em]">
-                Awaiting handover
-              </span>
+              <div className="mt-5 h-2.5 overflow-hidden rounded-full bg-rose-500/15">
+                <div
+                  className="h-full rounded-full bg-emerald-500 transition-[width] duration-500"
+                  style={{
+                    width: `${(handedOverDocumentCount / handoverDocumentCount) * 100}%`,
+                  }}
+                />
+              </div>
             </div>
           </section>
 
@@ -1220,19 +1231,39 @@ function DocumentsTab({
                   {section.items.map((item, itemIndex) => (
                     <li
                       key={item.name}
-                      className="erl-sub-card rounded-2xl border p-4"
+                      className={`rounded-2xl border p-4 ${
+                        item.handedOver
+                          ? 'border-emerald-500/35 bg-emerald-500/10'
+                          : 'border-rose-500/35 bg-rose-500/10'
+                      }`}
                     >
                       <div className="flex items-start gap-3">
-                        <span className="mt-0.5 grid size-7 shrink-0 place-items-center rounded-lg bg-[var(--erl-chip)] text-[var(--erl-accent)]">
-                          <CircleDashed size={15} aria-hidden="true" />
+                        <span
+                          className={`mt-0.5 grid size-8 shrink-0 place-items-center rounded-xl ${
+                            item.handedOver
+                              ? 'bg-emerald-500/20 text-emerald-700 dark:text-emerald-300'
+                              : 'bg-rose-500/20 text-rose-700 dark:text-rose-300'
+                          }`}
+                        >
+                          {item.handedOver ? (
+                            <CheckCircle2 size={17} aria-hidden="true" />
+                          ) : (
+                            <X size={17} aria-hidden="true" />
+                          )}
                         </span>
                         <div className="min-w-0 flex-1">
                           <div className="flex items-start justify-between gap-3">
                             <h2 className="text-sm font-bold leading-5">
                               {item.name}
                             </h2>
-                            <span className="shrink-0 text-[9px] font-black uppercase tracking-[0.1em] text-[var(--erl-accent)]">
-                              Required
+                            <span
+                              className={`shrink-0 rounded-full px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.08em] ${
+                                item.handedOver
+                                  ? 'bg-emerald-600 text-white dark:bg-emerald-400 dark:text-emerald-950'
+                                  : 'bg-rose-600 text-white dark:bg-rose-400 dark:text-rose-950'
+                              }`}
+                            >
+                              Handed over: {item.handedOver ? 'Yes' : 'No'}
                             </span>
                           </div>
                           <p className="mt-1.5 text-xs leading-5 text-[var(--erl-muted)]">
@@ -1251,7 +1282,8 @@ function DocumentsTab({
           </div>
 
           <p className="px-3 pt-5 text-center text-[10px] font-semibold leading-5 text-[var(--erl-muted)]">
-            Status tracking will be connected to the document register later.
+            Only documents confirmed as received by Tejomaya owners are marked
+            Yes.
           </p>
         </div>
       </div>

@@ -7,27 +7,33 @@
       "items": [
         {
           "name": "Occupancy Certificate (OC)",
-          "notes": "Must cover all blocks and phases completely. Essential for legal residency and water connections."
+          "notes": "Must cover all blocks and phases completely. Essential for legal residency and water connections.",
+          "handedOver": false
         },
         {
           "name": "Completion Certificate (CC)",
-          "notes": "Issued by the local planning authority, confirming that execution matches the approved maps."
+          "notes": "Issued by the local planning authority, confirming that execution matches the approved maps.",
+          "handedOver": false
         },
         {
           "name": "Parent Title Deeds",
-          "notes": "Mother Deed, Land Sale Agreements, and Title Clearance or Encumbrance Certificates for 30 years."
+          "notes": "Mother Deed, Land Sale Agreements, and Title Clearance or Encumbrance Certificates for 30 years.",
+          "handedOver": false
         },
         {
           "name": "Approved Layout Plans",
-          "notes": "Sanctioned building blueprints and floor plans approved by the municipal corporation or town planning board."
+          "notes": "Sanctioned building blueprints and floor plans approved by the municipal corporation or town planning board.",
+          "handedOver": false
         },
         {
           "name": "Joint Development Agreement",
-          "notes": "If built through a JDA, collect the allocation sheet and registered agreement between the landowner and builder."
+          "notes": "If built through a JDA, collect the allocation sheet and registered agreement between the landowner and builder.",
+          "handedOver": false
         },
         {
           "name": "Declaration & Bye-laws",
-          "notes": "Deed of Declaration submitted under the local Apartment Ownership Act."
+          "notes": "Deed of Declaration submitted under the local Apartment Ownership Act.",
+          "handedOver": false
         }
       ]
     },
@@ -37,23 +43,28 @@
       "items": [
         {
           "name": "As-Built Structure Drawings",
-          "notes": "Detailed architectural, structural, foundation, and column placement maps."
+          "notes": "Detailed architectural, structural, foundation, and column placement maps.",
+          "handedOver": false
         },
         {
           "name": "Electrical Systems & Schematics",
-          "notes": "Single Line Diagrams, transformer specifications, generator wiring, panel room distributions, and lightning protection maps."
+          "notes": "Single Line Diagrams, transformer specifications, generator wiring, panel room distributions, and lightning protection maps.",
+          "handedOver": false
         },
         {
           "name": "Plumbing & Drainage Layouts",
-          "notes": "Inflow and outflow pipelines, water tank configurations, borewell pits, and municipal water line entry blueprints."
+          "notes": "Inflow and outflow pipelines, water tank configurations, borewell pits, and municipal water line entry blueprints.",
+          "handedOver": false
         },
         {
           "name": "STP & WTP Layouts",
-          "notes": "Operations manuals, pipeline schematics, and chemical storage plans for the Sewage and Water Treatment Plants."
+          "notes": "Operations manuals, pipeline schematics, and chemical storage plans for the Sewage and Water Treatment Plants.",
+          "handedOver": false
         },
         {
           "name": "Firefighting & Piping Networks",
-          "notes": "Sprinkler layouts, fire hydrant locations, smoke detector wiring maps, and escape routes."
+          "notes": "Sprinkler layouts, fire hydrant locations, smoke detector wiring maps, and escape routes.",
+          "handedOver": false
         }
       ]
     },
@@ -63,23 +74,28 @@
       "items": [
         {
           "name": "Fire Department NOC",
-          "notes": "Valid No Objection Certificate from Fire & Emergency Services. It must be active and requires annual renewal."
+          "notes": "Valid No Objection Certificate from Fire & Emergency Services. It must be active and requires annual renewal.",
+          "handedOver": false
         },
         {
           "name": "Lift Operational Licenses",
-          "notes": "Valid registration and safety clearance certificates from the Inspector of Lifts."
+          "notes": "Valid registration and safety clearance certificates from the Inspector of Lifts.",
+          "handedOver": false
         },
         {
           "name": "Consent to Operate (CTO)",
-          "notes": "Environmental clearance from the State Pollution Control Board for DG sets and STP operations."
+          "notes": "Environmental clearance from the State Pollution Control Board for DG sets and STP operations.",
+          "handedOver": false
         },
         {
           "name": "Active AMCs & Warranties",
-          "notes": "Original Annual Maintenance Contracts and warranty documents for lifts, generators, pumps, CCTVs, and transformers."
+          "notes": "Original Annual Maintenance Contracts and warranty documents for lifts, generators, pumps, CCTVs, and transformers.",
+          "handedOver": false
         },
         {
           "name": "Vendor Service Ledgers",
-          "notes": "Contact information and outstanding ledger balances for existing security, housekeeping, and technical staff."
+          "notes": "Contact information and outstanding ledger balances for existing security, housekeeping, and technical staff.",
+          "handedOver": false
         }
       ]
     },
@@ -89,19 +105,23 @@
       "items": [
         {
           "name": "IFMS Corpus Fund Transfer",
-          "notes": "Complete transfer of Interest-Free Maintenance Security, along with up-to-date bank account statements and interest logs."
+          "notes": "Complete transfer of Interest-Free Maintenance Security, along with up-to-date bank account statements and interest logs.",
+          "handedOver": false
         },
         {
           "name": "Audited Society Accounts",
-          "notes": "Certified financial balances showing all maintenance revenue collections and expenses under the builder's tenure."
+          "notes": "Certified financial balances showing all maintenance revenue collections and expenses under the builder's tenure.",
+          "handedOver": false
         },
         {
           "name": "Property Tax Receipts",
-          "notes": "Proof of paid property and land taxes up to the exact formal date of society management handover."
+          "notes": "Proof of paid property and land taxes up to the exact formal date of society management handover.",
+          "handedOver": false
         },
         {
           "name": "Utility Bill Ledgers",
-          "notes": "Zero-due certificates and payment confirmations for shared electrical connections, water tankers, and common-area grids."
+          "notes": "Zero-due certificates and payment confirmations for shared electrical connections, water tankers, and common-area grids.",
+          "handedOver": false
         }
       ]
     },
@@ -111,11 +131,13 @@
       "items": [
         {
           "name": "Indemnity Bond",
-          "notes": "A registered legal undertaking protecting the association from past tax claims, pending litigation, or pre-handover construction liabilities."
+          "notes": "A registered legal undertaking protecting the association from past tax claims, pending litigation, or pre-handover construction liabilities.",
+          "handedOver": false
         },
         {
           "name": "RERA Defect Liability Clause",
-          "notes": "A formal written document reiterating the developer's five-year structural defect liability window as mandated by RERA."
+          "notes": "A formal written document reiterating the developer's five-year structural defect liability window as mandated by RERA.",
+          "handedOver": false
         }
       ]
     }
