@@ -207,7 +207,12 @@ function TrackerViewCount({ count }: { count: number | null }) {
       aria-label={label}
       title={label}
     >
-      <Eye size={12} strokeWidth={2.4} aria-hidden="true" />
+      <Eye
+        className="erl-view-eye-blink"
+        size={17}
+        strokeWidth={2.4}
+        aria-hidden="true"
+      />
       {count === null ? '—' : count.toLocaleString('en-IN')}
     </span>
   );
@@ -281,12 +286,10 @@ function TrackerTopBar({
   title,
   summary,
   actions,
-  viewCount,
 }: {
   title: string;
   summary: ReactNode;
   actions: ReactNode;
-  viewCount: number | null;
 }) {
   return (
     <div className="pointer-events-none absolute inset-x-0 top-0 z-30 px-3 pb-10 pt-3">
@@ -298,10 +301,6 @@ function TrackerTopBar({
           <p className="mt-1 truncate text-xs font-semibold text-[var(--erl-muted)]">
             {summary}
           </p>
-          <div className="mt-1 flex items-center text-[10px] leading-none">
-            <TrackerViewCount count={viewCount} />
-            <span className="ml-1 text-[var(--erl-muted)]">total views</span>
-          </div>
         </div>
         <div className="flex shrink-0 items-center gap-1.5">{actions}</div>
       </div>
@@ -1137,11 +1136,9 @@ function TodayStamp() {
 function FundTab({
   theme,
   onToggleTheme,
-  viewCount,
 }: {
   theme: ColorTheme;
   onToggleTheme: () => void;
-  viewCount: number | null;
 }) {
   const fundSnapshot = useLiveFundSnapshot();
   const fundDues: Array<{
@@ -1182,7 +1179,6 @@ function FundTab({
           </>
         }
         actions={<ThemeToggle theme={theme} onToggle={onToggleTheme} />}
-        viewCount={viewCount}
       />
 
       <div className="h-full overflow-y-auto px-4 pb-32 pt-28">
@@ -1274,11 +1270,9 @@ function FundTab({
 function DocumentsTab({
   theme,
   onToggleTheme,
-  viewCount,
 }: {
   theme: ColorTheme;
   onToggleTheme: () => void;
-  viewCount: number | null;
 }) {
   return (
     <section className="relative h-svh overflow-hidden bg-[var(--erl-page)] text-[var(--erl-text)]">
@@ -1290,7 +1284,6 @@ function DocumentsTab({
           </>
         }
         actions={<ThemeToggle theme={theme} onToggle={onToggleTheme} />}
-        viewCount={viewCount}
       />
 
       <div className="h-full overflow-y-auto px-4 pb-32 pt-28">
@@ -1604,7 +1597,6 @@ export function IssueTracker({
                   </a>
                 </>
               }
-              viewCount={viewCount}
             />
 
             {filteredIssues.length === 0 ? (
@@ -1653,54 +1645,59 @@ export function IssueTracker({
             )}
           </section>
         ) : activeTab === 'fund' ? (
-          <FundTab
-            theme={theme}
-            onToggleTheme={toggleTheme}
-            viewCount={viewCount}
-          />
+          <FundTab theme={theme} onToggleTheme={toggleTheme} />
         ) : (
-          <DocumentsTab
-            theme={theme}
-            onToggleTheme={toggleTheme}
-            viewCount={viewCount}
-          />
+          <DocumentsTab theme={theme} onToggleTheme={toggleTheme} />
         )}
       </main>
 
-      <nav
-        className="erl-bottom-nav fixed bottom-4 left-1/2 z-50 flex w-[calc(100%-1.5rem)] max-w-[520px] -translate-x-1/2 items-center gap-1 rounded-[1.6rem] border p-1.5 shadow-[0_0_38px_var(--erl-nav-shadow)] ring-1 ring-inset ring-[var(--erl-ring)] backdrop-blur-2xl"
-        aria-label="Progress sections"
-      >
-        {appTabs.map(({ id, label, icon: Icon }) => {
-          const selected = activeTab === id;
-          return (
-            <button
-              key={id}
-              type="button"
-              onClick={() => {
-                setActiveTab(id);
-                setShowFilters(false);
-              }}
-              className={`relative flex min-h-14 flex-1 flex-col items-center justify-center gap-1 rounded-[1.15rem] px-2 text-[10px] font-black transition ${
-                selected
-                  ? 'bg-[var(--erl-selected)] text-[var(--erl-text)] shadow-[0_6px_18px_rgb(0_0_0/16%)] ring-1 ring-inset ring-[var(--erl-border)]'
-                  : 'text-[var(--erl-muted)] hover:bg-[var(--erl-hover)] hover:text-[var(--erl-text)]'
-              }`}
-              aria-current={selected ? 'page' : undefined}
-            >
-              {selected && (
-                <span className="absolute top-1 h-0.5 w-6 rounded-full bg-sun" />
-              )}
-              <Icon
-                className={selected ? 'text-[var(--erl-gold)]' : undefined}
-                size={19}
-                aria-hidden="true"
-              />
-              <span>{label}</span>
-            </button>
-          );
-        })}
-      </nav>
+      <div className="fixed bottom-4 left-1/2 z-50 flex w-[calc(100%-1.5rem)] max-w-[606px] -translate-x-1/2 items-stretch gap-2">
+        <nav
+          className="erl-bottom-nav flex min-w-0 flex-1 items-center gap-1 rounded-[1.6rem] border p-1.5 shadow-[0_0_38px_var(--erl-nav-shadow)] ring-1 ring-inset ring-[var(--erl-ring)] backdrop-blur-2xl"
+          aria-label="Progress sections"
+        >
+          {appTabs.map(({ id, label, icon: Icon }) => {
+            const selected = activeTab === id;
+            return (
+              <button
+                key={id}
+                type="button"
+                onClick={() => {
+                  setActiveTab(id);
+                  setShowFilters(false);
+                }}
+                className={`relative flex min-h-14 min-w-0 flex-1 flex-col items-center justify-center gap-1 rounded-[1.15rem] px-1 text-[10px] font-black transition ${
+                  selected
+                    ? 'bg-[var(--erl-selected)] text-[var(--erl-text)] shadow-[0_6px_18px_rgb(0_0_0/16%)] ring-1 ring-inset ring-[var(--erl-border)]'
+                    : 'text-[var(--erl-muted)] hover:bg-[var(--erl-hover)] hover:text-[var(--erl-text)]'
+                }`}
+                aria-current={selected ? 'page' : undefined}
+              >
+                {selected && (
+                  <span className="absolute top-1 h-0.5 w-6 rounded-full bg-sun" />
+                )}
+                <Icon
+                  className={selected ? 'text-[var(--erl-gold)]' : undefined}
+                  size={19}
+                  aria-hidden="true"
+                />
+                <span className="max-w-full truncate">{label}</span>
+              </button>
+            );
+          })}
+        </nav>
+
+        <aside
+          className="erl-bottom-nav flex w-[78px] shrink-0 flex-col items-center justify-center rounded-full border shadow-[0_0_38px_var(--erl-nav-shadow)] ring-1 ring-inset ring-[var(--erl-ring)] backdrop-blur-2xl"
+          aria-label="Tracker views"
+          aria-live="polite"
+        >
+          <TrackerViewCount count={viewCount} />
+          <span className="mt-0.5 text-[9px] font-bold text-[var(--erl-muted)]">
+            views
+          </span>
+        </aside>
+      </div>
 
       {showCompletion && (
         <CompletionModal
