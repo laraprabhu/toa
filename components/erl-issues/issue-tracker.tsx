@@ -290,7 +290,7 @@ function TrackerTopBar({
 }) {
   return (
     <div className="pointer-events-none absolute inset-x-0 top-0 z-30 px-3 pb-10 pt-3">
-      <div className="erl-top-bar pointer-events-auto relative mx-auto flex items-center justify-between gap-3 rounded-2xl border p-2 shadow-[0_14px_38px_var(--erl-nav-shadow)] backdrop-blur-xl">
+      <div className="erl-top-bar pointer-events-auto mx-auto flex items-center justify-between gap-3 rounded-2xl border p-2 shadow-[0_14px_38px_var(--erl-nav-shadow)] backdrop-blur-xl">
         <div className="min-w-0 pl-1">
           <p className="truncate text-[10px] font-black uppercase tracking-[0.12em] text-[var(--erl-accent)]">
             {title}
@@ -298,12 +298,12 @@ function TrackerTopBar({
           <p className="mt-1 truncate text-xs font-semibold text-[var(--erl-muted)]">
             {summary}
           </p>
+          <div className="mt-1 flex items-center text-[10px] leading-none">
+            <TrackerViewCount count={viewCount} />
+            <span className="ml-1 text-[var(--erl-muted)]">total views</span>
+          </div>
         </div>
         <div className="flex shrink-0 items-center gap-1.5">{actions}</div>
-        <div className="erl-floating-card absolute -bottom-3 left-4 flex h-6 items-center rounded-full border px-2.5 text-[10px] shadow-[0_6px_18px_var(--erl-nav-shadow)]">
-          <TrackerViewCount count={viewCount} />
-          <span className="ml-1 text-[var(--erl-muted)]">views</span>
-        </div>
       </div>
     </div>
   );
