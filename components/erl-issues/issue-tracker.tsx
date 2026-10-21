@@ -3,6 +3,7 @@
 import {
   Calculator,
   CheckCircle2,
+  ChevronDown,
   CircleDashed,
   Clock3,
   Construction,
@@ -28,6 +29,7 @@ import {
   useState,
   type ReactNode,
 } from 'react';
+import documentChecklistJson from '@/content/erl-issues/document-checklist.json';
 import {
   calculateLiveFundSnapshot,
   erlFundData,
@@ -46,6 +48,22 @@ import { siteHref } from '@/lib/site-path';
 type AppTab = 'civil' | 'fund' | 'documents';
 type StatusFilter = IssueStatus | 'all';
 type ColorTheme = 'dark' | 'light';
+
+interface HandoverDocumentSection {
+  id: string;
+  title: string;
+  items: Array<{
+    name: string;
+    notes: string;
+  }>;
+}
+
+const handoverDocumentSections =
+  documentChecklistJson.sections as HandoverDocumentSection[];
+const handoverDocumentCount = handoverDocumentSections.reduce(
+  (total, section) => total + section.items.length,
+  0,
+);
 
 const reelStatusStyles: Record<IssueStatus, string> = {
   done: 'border-emerald-600/25 bg-emerald-500/10 text-emerald-800 dark:border-emerald-300/40 dark:bg-emerald-300/15 dark:text-emerald-100',
@@ -418,7 +436,11 @@ function CompletionModal({
                 value: `0 of ${fundTargetCrores} Crs`,
                 progress: 0,
               },
-              { label: 'Documents', value: 'No docs', progress: 0 },
+              {
+                label: 'Documents',
+                value: `0 of ${handoverDocumentCount}`,
+                progress: 0,
+              },
             ].map((row, index) => (
               <div key={row.label}>
                 <div className="flex items-center justify-between gap-4 text-sm sm:text-base">
@@ -1121,13 +1143,118 @@ function DocumentsTab({
   onToggleTheme: () => void;
 }) {
   return (
-    <section className="relative grid h-svh place-items-center bg-[var(--erl-page)] px-5 pb-24 text-center text-[var(--erl-text)]">
-      <div className="absolute right-4 top-4">
-        <ThemeToggle theme={theme} onToggle={onToggleTheme} />
+    <section className="relative h-svh overflow-hidden bg-[var(--erl-page)] text-[var(--erl-text)]">
+      <TrackerTopBar
+        title="ERL Document Handover Tracker"
+        summary={
+          <>
+            {handoverDocumentCount} required · {handoverDocumentSections.length}{' '}
+            categories
+          </>
+        }
+        actions={<ThemeToggle theme={theme} onToggle={onToggleTheme} />}
+      />
+
+      <div className="h-full overflow-y-auto px-4 pb-32 pt-28">
+        <div className="mx-auto w-full">
+          <header className="mb-6">
+            <p className="text-[10px] font-black uppercase tracking-[0.17em] text-[var(--erl-accent)]">
+              TOA · Document handover
+            </p>
+            <h1 className="mt-3 font-heading text-4xl font-semibold leading-[0.98] tracking-[-0.045em]">
+              Documents ERL must hand over
+            </h1>
+            <p className="mt-3 max-w-md text-sm leading-6 text-[var(--erl-muted)]">
+              A clear checklist of the statutory, technical, operational,
+              financial, and structural records due to Tejomaya owners.
+            </p>
+          </header>
+
+          <section className="erl-live-total relative overflow-hidden rounded-[2rem] border p-5 shadow-[0_0_48px_var(--erl-shadow)]">
+            <div className="relative flex items-end justify-between gap-5">
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-[0.16em] text-[var(--erl-accent)]">
+                  Handover checklist
+                </p>
+                <p className="mt-3 font-heading text-5xl font-semibold leading-none tracking-[-0.055em]">
+                  {handoverDocumentCount}
+                </p>
+                <p className="mt-2 text-sm font-semibold text-[var(--erl-muted)]">
+                  Required documents
+                </p>
+              </div>
+              <span className="erl-chip rounded-full border px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.1em]">
+                Awaiting handover
+              </span>
+            </div>
+          </section>
+
+          <div className="mt-5 grid gap-3">
+            {handoverDocumentSections.map((section, sectionIndex) => (
+              <details
+                key={section.id}
+                open={sectionIndex === 0}
+                className="group erl-section-card overflow-hidden rounded-[1.65rem] border"
+              >
+                <summary className="flex cursor-pointer list-none items-center gap-3 p-4 marker:content-none">
+                  <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-[var(--erl-accent-soft)] text-xs font-black text-[var(--erl-accent)]">
+                    {String(sectionIndex + 1).padStart(2, '0')}
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block font-heading text-lg font-semibold leading-5 tracking-[-0.02em]">
+                      {section.title}
+                    </span>
+                    <span className="mt-1 block text-[10px] font-bold uppercase tracking-[0.11em] text-[var(--erl-muted)]">
+                      {section.items.length}{' '}
+                      {section.items.length === 1 ? 'document' : 'documents'}
+                    </span>
+                  </span>
+                  <ChevronDown
+                    size={19}
+                    className="shrink-0 text-[var(--erl-muted)] transition-transform duration-200 group-open:rotate-180"
+                    aria-hidden="true"
+                  />
+                </summary>
+
+                <ol className="grid gap-2 border-t border-[var(--erl-border)] p-3">
+                  {section.items.map((item, itemIndex) => (
+                    <li
+                      key={item.name}
+                      className="erl-sub-card rounded-2xl border p-4"
+                    >
+                      <div className="flex items-start gap-3">
+                        <span className="mt-0.5 grid size-7 shrink-0 place-items-center rounded-lg bg-[var(--erl-chip)] text-[var(--erl-accent)]">
+                          <CircleDashed size={15} aria-hidden="true" />
+                        </span>
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-start justify-between gap-3">
+                            <h2 className="text-sm font-bold leading-5">
+                              {item.name}
+                            </h2>
+                            <span className="shrink-0 text-[9px] font-black uppercase tracking-[0.1em] text-[var(--erl-accent)]">
+                              Required
+                            </span>
+                          </div>
+                          <p className="mt-1.5 text-xs leading-5 text-[var(--erl-muted)]">
+                            {item.notes}
+                          </p>
+                          <p className="mt-2 text-[9px] font-black uppercase tracking-[0.1em] text-[var(--erl-muted)]">
+                            Item {itemIndex + 1} of {section.items.length}
+                          </p>
+                        </div>
+                      </div>
+                    </li>
+                  ))}
+                </ol>
+              </details>
+            ))}
+          </div>
+
+          <p className="px-3 pt-5 text-center text-[10px] font-semibold leading-5 text-[var(--erl-muted)]">
+            Status tracking will be connected to the document register later.
+          </p>
+        </div>
       </div>
-      <p className="font-heading text-2xl font-semibold tracking-[-0.025em] text-[var(--erl-muted)]">
-        No data loaded yet
-      </p>
     </section>
   );
 }
