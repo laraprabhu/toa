@@ -873,35 +873,9 @@
   animation: toa-swipe-demo 1.6s cubic-bezier(0.22, 1, 0.36, 1) infinite;
 }
 
-@keyframes toa-view-eye-blink {
-  0%,
-  18%,
-  34%,
-  52%,
-  100% {
-    transform: scaleY(1);
-  }
-
-  24%,
-  28%,
-  42%,
-  46% {
-    transform: scaleY(0.08);
-  }
-}
-
-.erl-view-eye-blink {
-  transform-origin: center;
-  animation: toa-view-eye-blink 1.35s ease-in-out 1 both;
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .swipe-demo-hand,
-  .erl-view-eye-blink {
-    animation: none !important;
-  }
-
   .swipe-demo-hand {
+    animation: none !important;
     transform: translateY(-1rem);
     opacity: 1;
   }
