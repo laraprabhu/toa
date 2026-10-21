@@ -203,12 +203,14 @@ function TrackerViewCount({ count }: { count: number | null }) {
 
   return (
     <span
-      className="inline-flex shrink-0 items-center gap-1 font-heading text-base font-semibold leading-none text-[var(--erl-text)]"
+      className="inline-flex h-5 shrink-0 items-center justify-center gap-1 text-[var(--erl-text)]"
       aria-label={label}
       title={label}
     >
-      <Eye size={17} strokeWidth={2.4} aria-hidden="true" />
-      {count === null ? '—' : count.toLocaleString('en-IN')}
+      <Eye className="block shrink-0" size={17} strokeWidth={2.4} aria-hidden="true" />
+      <span className="block text-sm font-black leading-none">
+        {count === null ? '—' : count.toLocaleString('en-IN')}
+      </span>
     </span>
   );
 }
