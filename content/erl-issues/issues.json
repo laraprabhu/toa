@@ -2,21 +2,6 @@
   {
     "number": 1,
     "id": "erl-issue-001",
-    "title": "Provide documentation regarding the Rainwater Harvesting system and HVAC units",
-    "tower": "ABC",
-    "category": "Administrative / Documentation",
-    "raisedBy": "TOA",
-    "owner": "ERL",
-    "status": "not-done",
-    "startDate": null,
-    "etaDate": null,
-    "erlComment": "To be collected from ERL office",
-    "momComment": "Documents collected by TOA, ERL to bring a vendor for training to TOA FMS staff",
-    "updatedOn": "2026-10-21"
-  },
-  {
-    "number": 2,
-    "id": "erl-issue-002",
     "title": "Confirm delivery of outdoor/indoor play area as advertised on website and brochure",
     "tower": "ABCE",
     "category": "Amenities Delivery",
@@ -30,8 +15,8 @@
     "updatedOn": "2026-10-21"
   },
   {
-    "number": 3,
-    "id": "erl-issue-003",
+    "number": 2,
+    "id": "erl-issue-002",
     "title": "Base shaft civil work in all shafts to avoid leakage due to termination in clubhouse/parking",
     "tower": "ABC",
     "category": "Civil & Plumbing (High Priority)",
@@ -45,8 +30,8 @@
     "updatedOn": "2026-10-21"
   },
   {
-    "number": 4,
-    "id": "erl-issue-004",
+    "number": 3,
+    "id": "erl-issue-003",
     "title": "Interior & exterior rebar exposure & spalling (All floors, basements, utility pergolas)",
     "tower": "ABCE",
     "category": "Civil & Structural",
@@ -60,8 +45,8 @@
     "updatedOn": "2026-10-21"
   },
   {
-    "number": 5,
-    "id": "erl-issue-005",
+    "number": 4,
+    "id": "erl-issue-004",
     "title": "Necessary civil works in Lift Shafts",
     "tower": "ABCE",
     "category": "Civil & Structural",
@@ -75,9 +60,24 @@
     "updatedOn": "2026-10-21"
   },
   {
+    "number": 5,
+    "id": "erl-issue-005",
+    "title": "Critical beam rebar exposure in Basement B1",
+    "tower": "ABC",
+    "category": "Civil & Structural",
+    "raisedBy": "TOA",
+    "owner": "ERL",
+    "status": "not-done",
+    "startDate": null,
+    "etaDate": null,
+    "erlComment": "Completed.",
+    "momComment": "TOA has inspected it, but it appears to be the issue is still there",
+    "updatedOn": "2026-10-21"
+  },
+  {
     "number": 6,
     "id": "erl-issue-006",
-    "title": "Critical beam rebar exposure in Basement B1",
+    "title": "Basement B2 plaster damage near the entrance ramp due to dampness/heavy plastering",
     "tower": "ABC",
     "category": "Civil & Structural",
     "raisedBy": "TOA",
@@ -92,21 +92,6 @@
   {
     "number": 7,
     "id": "erl-issue-007",
-    "title": "Basement B2 plaster damage near the entrance ramp due to dampness/heavy plastering",
-    "tower": "ABC",
-    "category": "Civil & Structural",
-    "raisedBy": "TOA",
-    "owner": "ERL",
-    "status": "not-done",
-    "startDate": null,
-    "etaDate": null,
-    "erlComment": "Completed.",
-    "momComment": "TOA has inspected it, but it appears to be the issue is still there",
-    "updatedOn": "2026-10-21"
-  },
-  {
-    "number": 8,
-    "id": "erl-issue-008",
     "title": "Initiate repairs/strengthening for the weak boundary wall",
     "tower": "ABCE",
     "category": "Civil & Structural",
@@ -120,8 +105,8 @@
     "updatedOn": "2026-10-21"
   },
   {
-    "number": 9,
-    "id": "erl-issue-009",
+    "number": 8,
+    "id": "erl-issue-008",
     "title": "Exhaust rusted areas in B1 and B2",
     "tower": "ABC",
     "category": "Civil & Structural",
@@ -135,8 +120,8 @@
     "updatedOn": "2026-10-21"
   },
   {
-    "number": 10,
-    "id": "erl-issue-010",
+    "number": 9,
+    "id": "erl-issue-009",
     "title": "Move granite slab below the drain hole to avoid rainwater inside the Gym",
     "tower": "ABC",
     "category": "Civil & Structural",
@@ -150,8 +135,8 @@
     "updatedOn": "2026-10-21"
   },
   {
-    "number": 11,
-    "id": "erl-issue-011",
+    "number": 10,
+    "id": "erl-issue-010",
     "title": "Rainwater Harvesting (RWH) overflow issue in B1/B2",
     "tower": "ABC",
     "category": "Civil & Structural",
@@ -162,11 +147,11 @@
     "etaDate": null,
     "erlComment": "To be explained in detail by TOA.We will take up and complete before 31.08.2026",
     "momComment": "ERL to bring vendor to explain the operations and understand how the overflow can be avoided",
-    "updatedOn": "2026-08-29"
+    "updatedOn": "2026-10-21"
   },
   {
-    "number": 12,
-    "id": "erl-issue-012",
+    "number": 11,
+    "id": "erl-issue-011",
     "title": "Verify plumbing shaft size (ERL confirmed no modification possible, noted for future)",
     "tower": "ABCE",
     "category": "Civil & Structural",
@@ -177,11 +162,11 @@
     "etaDate": null,
     "erlComment": "Info",
     "momComment": "Completed.",
-    "updatedOn": "2026-08-29"
+    "updatedOn": "2026-10-21"
   },
   {
-    "number": 13,
-    "id": "erl-issue-013",
+    "number": 12,
+    "id": "erl-issue-012",
     "title": "Damaged glass railings on the 1st floor podium due to weak anchoring and base instability",
     "tower": "ABC",
     "category": "Civil & Structural",
@@ -195,9 +180,24 @@
     "updatedOn": "2026-10-21"
   },
   {
+    "number": 13,
+    "id": "erl-issue-013",
+    "title": "Wetness in C Tower B2 (below Water Treatment Plant)",
+    "tower": "ABC",
+    "category": "Civil & Structural",
+    "raisedBy": "TOA",
+    "owner": "ERL",
+    "status": "not-done",
+    "startDate": null,
+    "etaDate": null,
+    "erlComment": "Will witness the issue during rainy season and will close and seal the leaks.",
+    "momComment": "To be completed by ERL. No work started so far.",
+    "updatedOn": "2026-10-21"
+  },
+  {
     "number": 14,
     "id": "erl-issue-014",
-    "title": "Wetness in C Tower B2 (below Water Treatment Plant)",
+    "title": "Leakage in B2 caused by shafts terminating in B1",
     "tower": "ABC",
     "category": "Civil & Structural",
     "raisedBy": "TOA",
@@ -212,7 +212,7 @@
   {
     "number": 15,
     "id": "erl-issue-015",
-    "title": "Leakage in B2 caused by shafts terminating in B1",
+    "title": "Leakage in B2 originating from the B1 STPL room bottom slab",
     "tower": "ABC",
     "category": "Civil & Structural",
     "raisedBy": "TOA",
@@ -227,7 +227,7 @@
   {
     "number": 16,
     "id": "erl-issue-016",
-    "title": "Leakage in B2 originating from the B1 STPL room bottom slab",
+    "title": "Leakage and comprehensive waterproofing for B1 and B2 store rooms",
     "tower": "ABC",
     "category": "Civil & Structural",
     "raisedBy": "TOA",
@@ -242,21 +242,6 @@
   {
     "number": 17,
     "id": "erl-issue-017",
-    "title": "Leakage and comprehensive waterproofing for B1 and B2 store rooms",
-    "tower": "ABC",
-    "category": "Civil & Structural",
-    "raisedBy": "TOA",
-    "owner": "ERL",
-    "status": "not-done",
-    "startDate": null,
-    "etaDate": null,
-    "erlComment": "Will witness the issue during rainy season and will close and seal the leaks.",
-    "momComment": "To be completed by ERL. No work started so far.",
-    "updatedOn": "2026-10-21"
-  },
-  {
-    "number": 18,
-    "id": "erl-issue-018",
     "title": "Water ingress through windows and glass panels in overall Clubhouse",
     "tower": "ABC",
     "category": "Civil & Structural",
@@ -270,8 +255,8 @@
     "updatedOn": "2026-10-21"
   },
   {
-    "number": 19,
-    "id": "erl-issue-019",
+    "number": 18,
+    "id": "erl-issue-018",
     "title": "Water dripping from the portico shade",
     "tower": "ABC",
     "category": "Civil & Structural",
@@ -285,8 +270,8 @@
     "updatedOn": "2026-10-21"
   },
   {
-    "number": 20,
-    "id": "erl-issue-020",
+    "number": 19,
+    "id": "erl-issue-019",
     "title": "Water ingress points on basement retaining walls",
     "tower": "ABC",
     "category": "Civil & Structural",
@@ -300,8 +285,8 @@
     "updatedOn": "2026-10-21"
   },
   {
-    "number": 21,
-    "id": "erl-issue-021",
+    "number": 20,
+    "id": "erl-issue-020",
     "title": "Waterfall effect in B1 caused by water ingress through the cable trench",
     "tower": "ABC",
     "category": "Civil & Structural",
@@ -315,8 +300,8 @@
     "updatedOn": "2026-10-21"
   },
   {
-    "number": 22,
-    "id": "erl-issue-022",
+    "number": 21,
+    "id": "erl-issue-021",
     "title": "Water ingress through windows and glass panels in affected apartments",
     "tower": "ABCE",
     "category": "Civil & Structural",
@@ -330,8 +315,8 @@
     "updatedOn": "2026-10-21"
   },
   {
-    "number": 23,
-    "id": "erl-issue-023",
+    "number": 22,
+    "id": "erl-issue-022",
     "title": "Leakage in Spa room to be rechecked and systems made operational",
     "tower": "ABC",
     "category": "Civil & Structural",
@@ -345,8 +330,8 @@
     "updatedOn": "2026-10-21"
   },
   {
-    "number": 24,
-    "id": "erl-issue-024",
+    "number": 23,
+    "id": "erl-issue-023",
     "title": "Provide gate at Tower E main Road entrance",
     "tower": "E",
     "category": "Civil & Structural",
@@ -357,11 +342,11 @@
     "etaDate": null,
     "erlComment": "Will provide the same before 15 th Sep.",
     "momComment": "Final Design to be shared by ERL before installation, TOA suggested the expected design",
-    "updatedOn": "2026-08-29"
+    "updatedOn": "2026-10-21"
   },
   {
-    "number": 25,
-    "id": "erl-issue-025",
+    "number": 24,
+    "id": "erl-issue-024",
     "title": "Provide Grill for safety of WTP system in Tower E",
     "tower": "E",
     "category": "Civil & Structural",
@@ -372,11 +357,11 @@
     "etaDate": null,
     "erlComment": "Will provide the same before 15 th Sep.",
     "momComment": "Final Design to be shared by ERL before installation, TOA suggested the expected design",
-    "updatedOn": "2026-08-29"
+    "updatedOn": "2026-10-21"
   },
   {
-    "number": 26,
-    "id": "erl-issue-026",
+    "number": 25,
+    "id": "erl-issue-025",
     "title": "Hot water panels & system to be in working condition in Tower ABCE",
     "tower": "ABCE",
     "category": "Civil & Structural",
@@ -390,8 +375,8 @@
     "updatedOn": "2026-10-21"
   },
   {
-    "number": 27,
-    "id": "erl-issue-027",
+    "number": 26,
+    "id": "erl-issue-026",
     "title": "Permanent pathway to ABC STP",
     "tower": "ABC",
     "category": "Civil & Structural",
@@ -405,8 +390,8 @@
     "updatedOn": "2026-10-21"
   },
   {
-    "number": 28,
-    "id": "erl-issue-028",
+    "number": 27,
+    "id": "erl-issue-027",
     "title": "Repair / Modify the road connecting to Tower D from the enterance after Tower D construction works are completed.",
     "tower": "ABC",
     "category": "Civil & Structural",
@@ -420,8 +405,8 @@
     "updatedOn": "2026-10-21"
   },
   {
-    "number": 29,
-    "id": "erl-issue-029",
+    "number": 28,
+    "id": "erl-issue-028",
     "title": "Rectification of Structural damages if occurred in Tower ABCE Buildings till completion of Tower D.",
     "tower": "ABCE",
     "category": "Civil & Structural",
@@ -435,8 +420,8 @@
     "updatedOn": "2026-10-21"
   },
   {
-    "number": 30,
-    "id": "erl-issue-030",
+    "number": 29,
+    "id": "erl-issue-029",
     "title": "Swimming pool surrounding wooden area to be painted",
     "tower": "ABC",
     "category": "Civil & Structural",
@@ -450,8 +435,8 @@
     "updatedOn": "2026-10-21"
   },
   {
-    "number": 31,
-    "id": "erl-issue-031",
+    "number": 30,
+    "id": "erl-issue-030",
     "title": "Arrest all the leaks in the swimming pool and hand it over to TOA in a proper way.",
     "tower": "ABCE",
     "category": "Civil & Structural",
@@ -465,8 +450,8 @@
     "updatedOn": "2026-10-21"
   },
   {
-    "number": 32,
-    "id": "erl-issue-032",
+    "number": 31,
+    "id": "erl-issue-031",
     "title": "Painting of all metallic boundary grills, Main gate arch grill",
     "tower": "ABCE",
     "category": "Civil & Structural",
@@ -480,8 +465,8 @@
     "updatedOn": "2026-10-21"
   },
   {
-    "number": 33,
-    "id": "erl-issue-033",
+    "number": 32,
+    "id": "erl-issue-032",
     "title": "STP Calculation document required to determine resident occupancy across Towers A, B, C, E",
     "tower": "ABCE",
     "category": "Documentation / Compliance",
@@ -495,8 +480,8 @@
     "updatedOn": "2026-10-21"
   },
   {
-    "number": 34,
-    "id": "erl-issue-034",
+    "number": 33,
+    "id": "erl-issue-033",
     "title": "DG chimney needs to be straightened",
     "tower": "ABC",
     "category": "External Fixtures",
@@ -510,8 +495,8 @@
     "updatedOn": "2026-10-21"
   },
   {
-    "number": 35,
-    "id": "erl-issue-035",
+    "number": 34,
+    "id": "erl-issue-034",
     "title": "Provide comprehensive list of unit owners in default (Defaulter List of ERL)",
     "tower": "ABCE",
     "category": "Financial / Legal",
@@ -525,8 +510,8 @@
     "updatedOn": "2026-10-21"
   },
   {
-    "number": 36,
-    "id": "erl-issue-036",
+    "number": 35,
+    "id": "erl-issue-035",
     "title": "Establish an escrow account for funds to be collected from CAM defaulters towards ERL dues",
     "tower": "ABCE",
     "category": "Financial / Legal",
@@ -540,8 +525,8 @@
     "updatedOn": "2026-10-21"
   },
   {
-    "number": 37,
-    "id": "erl-issue-037",
+    "number": 36,
+    "id": "erl-issue-036",
     "title": "Immediate transfer of Corpus Fund plus accrued interest to date (or as submitted in TNRERA)",
     "tower": "ABCE",
     "category": "Financial / Legal",
@@ -555,8 +540,8 @@
     "updatedOn": "2026-10-21"
   },
   {
-    "number": 38,
-    "id": "erl-issue-038",
+    "number": 37,
+    "id": "erl-issue-037",
     "title": "Complete Handover to TOA including Official Name Transfer of licenses, certificates & project name",
     "tower": "ABCE",
     "category": "Financial / Legal",
@@ -570,8 +555,8 @@
     "updatedOn": "2026-10-21"
   },
   {
-    "number": 39,
-    "id": "erl-issue-039",
+    "number": 38,
+    "id": "erl-issue-038",
     "title": "Provide confirmation that the current STP for Towers A, B, C will not be used for Tower D",
     "tower": "ABCE",
     "category": "Legal / Documentation",
@@ -585,8 +570,8 @@
     "updatedOn": "2026-10-21"
   },
   {
-    "number": 40,
-    "id": "erl-issue-040",
+    "number": 39,
+    "id": "erl-issue-039",
     "title": "Provide confirmation that Tower D will not utilize Transformers from Tower ABCE or Clubhouse/Amenities",
     "tower": "ABCE",
     "category": "Legal / Documentation",
@@ -600,8 +585,8 @@
     "updatedOn": "2026-10-21"
   },
   {
-    "number": 41,
-    "id": "erl-issue-041",
+    "number": 40,
+    "id": "erl-issue-040",
     "title": "Provide purpose of NOC requirement and parent document/cover letter with Tower D plan modifications",
     "tower": "ABCE",
     "category": "Legal / Documentation",
@@ -615,8 +600,8 @@
     "updatedOn": "2026-10-21"
   },
   {
-    "number": 42,
-    "id": "erl-issue-042",
+    "number": 41,
+    "id": "erl-issue-041",
     "title": "Explain if any ABCE amenities or common areas are getting modified plan-wise for Tower D",
     "tower": "ABCE",
     "category": "Legal / Documentation",
@@ -630,8 +615,8 @@
     "updatedOn": "2026-10-21"
   },
   {
-    "number": 43,
-    "id": "erl-issue-043",
+    "number": 42,
+    "id": "erl-issue-042",
     "title": "Clarify TN RERA number for Tower D and relevance/impact on Phase 1 (ABCE) Allottees",
     "tower": "ABCE",
     "category": "Legal / Documentation",
@@ -645,8 +630,8 @@
     "updatedOn": "2026-10-21"
   },
   {
-    "number": 44,
-    "id": "erl-issue-044",
+    "number": 43,
+    "id": "erl-issue-043",
     "title": "Clarify UDS (Undivided Share) allocation and verify if proportion will change for Tower ABCE owners",
     "tower": "ABCE",
     "category": "Legal / Documentation",
@@ -660,8 +645,8 @@
     "updatedOn": "2026-10-21"
   },
   {
-    "number": 45,
-    "id": "erl-issue-045",
+    "number": 44,
+    "id": "erl-issue-044",
     "title": "Draft and register a Tripartite Memorandum of Compromise (MoC) in court with penalty clauses",
     "tower": "ABCE",
     "category": "Legal / Documentation",
@@ -675,8 +660,8 @@
     "updatedOn": "2026-10-21"
   },
   {
-    "number": 46,
-    "id": "erl-issue-046",
+    "number": 45,
+    "id": "erl-issue-045",
     "title": "Obtain SEIAA Environment Clearance for top 2 floors in Tower E",
     "tower": "E",
     "category": "Legal / Documentation",
@@ -690,8 +675,8 @@
     "updatedOn": "2026-10-21"
   },
   {
-    "number": 47,
-    "id": "erl-issue-047",
+    "number": 46,
+    "id": "erl-issue-046",
     "title": "Pollution control board certification",
     "tower": "ABCE",
     "category": "Legal / Documentation",
@@ -705,8 +690,8 @@
     "updatedOn": "2026-10-21"
   },
   {
-    "number": 48,
-    "id": "erl-issue-048",
+    "number": 47,
+    "id": "erl-issue-047",
     "title": "Handing over of Original Fire license",
     "tower": "ABCE",
     "category": "Legal / Documentation",
@@ -720,8 +705,8 @@
     "updatedOn": "2026-10-21"
   },
   {
-    "number": 49,
-    "id": "erl-issue-049",
+    "number": 48,
+    "id": "erl-issue-048",
     "title": "Waiver of GST charges levied on Owners even after our Association is Registeted in 2020",
     "tower": "ABCE",
     "category": "Legal / Documentation",
@@ -732,6 +717,21 @@
     "etaDate": null,
     "erlComment": "Already remitted to Government.",
     "momComment": "TOA needs to validate this claim from our side",
+    "updatedOn": "2026-10-21"
+  },
+  {
+    "number": 49,
+    "id": "erl-issue-049",
+    "title": "Provide documentation regarding the Rainwater Harvesting system and HVAC units",
+    "tower": "ABC",
+    "category": "Administrative / Documentation",
+    "raisedBy": "TOA",
+    "owner": "ERL",
+    "status": "not-done",
+    "startDate": null,
+    "etaDate": null,
+    "erlComment": "To be collected from ERL office",
+    "momComment": "Documents collected by TOA, ERL to bring a vendor for training to TOA FMS staff",
     "updatedOn": "2026-10-21"
   },
   {
