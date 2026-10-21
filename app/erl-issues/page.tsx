@@ -37,7 +37,10 @@ export const metadata: Metadata = {
 export default function ErlIssuesPage() {
   return (
     <main className="h-svh overflow-hidden bg-ink text-foreground">
-      <IssueTracker issues={erlIssues} />
+      <IssueTracker
+        issues={erlIssues}
+        viewApiUrl={process.env.NEXT_PUBLIC_ADMIN_API_URL ?? ''}
+      />
     </main>
   );
 }

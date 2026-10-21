@@ -107,6 +107,8 @@ The admin console can create, edit and delete announcements, generate a WhatsApp
 
 The public progress hub supports mobile and desktop layouts. Its Civil tab opens directly into a full-height vertical reel that can be swiped, scrolled or controlled with previous/next buttons. A filter sheet provides free-text search and filtering by status, category, tower/block and owner.
 
+The floating tracker header also shows one shared view count for the complete ERL hub. A browser contributes at most one view per IST calendar day; its last counted date is stored locally, while the shared total uses the same Cloudflare Durable Object service as notice views.
+
 Issue status is intentionally conservative from TOA's perspective:
 
 - **Done:** the available record shows a clean delivery with no remaining work, rework or verification gap.

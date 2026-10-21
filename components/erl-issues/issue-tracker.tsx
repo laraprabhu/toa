@@ -7,6 +7,7 @@ import {
   CircleDashed,
   Clock3,
   Construction,
+  Eye,
   FileText,
   FolderOpen,
   Hand,
@@ -104,7 +105,113 @@ const appTabs: Array<{
 
 const swipeHintStorageKey = 'toa-erl-swipe-hint-dismissed-v2';
 const colorThemeStorageKey = 'toa-erl-color-theme';
+const lastViewDateStorageKey = 'toa:erl-issues:last-view-date';
 const fundInitialRenderTimestamp = Date.UTC(2026, 9, 16, 18, 30);
+
+function getIndiaDateKey(date = new Date()) {
+  return new Intl.DateTimeFormat('en-CA', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    timeZone: 'Asia/Kolkata',
+  }).format(date);
+}
+
+function useTrackerViewCount(viewApiUrl: string) {
+  const [viewCount, setViewCount] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (!viewApiUrl) return;
+
+    const controller = new AbortController();
+    const counterUrl = `${viewApiUrl.replace(/\/$/, '')}/api/views/erl-issues`;
+    const indiaDateKey = getIndiaDateKey();
+    let shouldRecord = false;
+    let previousViewDate: string | null = null;
+
+    try {
+      previousViewDate = window.localStorage.getItem(lastViewDateStorageKey);
+      shouldRecord = previousViewDate !== indiaDateKey;
+      if (shouldRecord) {
+        window.localStorage.setItem(lastViewDateStorageKey, indiaDateKey);
+      }
+    } catch {
+      // Without local storage, read the shared count without incrementing it.
+      shouldRecord = false;
+    }
+
+    async function loadViewCount() {
+      for (let attempt = 0; attempt < 3; attempt += 1) {
+        try {
+          const response = await fetch(counterUrl, {
+            method: shouldRecord ? 'POST' : 'GET',
+            credentials: 'omit',
+            signal: controller.signal,
+          });
+          if (!response.ok) throw new Error('Unable to load tracker views.');
+
+          const { views } = (await response.json()) as { views?: unknown };
+          if (
+            typeof views !== 'number' ||
+            !Number.isSafeInteger(views) ||
+            views < 0
+          ) {
+            throw new Error('The tracker view count is invalid.');
+          }
+
+          setViewCount(views);
+          return;
+        } catch (error) {
+          if (controller.signal.aborted) return;
+          if (attempt === 2) {
+            if (shouldRecord) {
+              try {
+                if (
+                  window.localStorage.getItem(lastViewDateStorageKey) ===
+                  indiaDateKey
+                ) {
+                  if (previousViewDate === null) {
+                    window.localStorage.removeItem(lastViewDateStorageKey);
+                  } else {
+                    window.localStorage.setItem(
+                      lastViewDateStorageKey,
+                      previousViewDate,
+                    );
+                  }
+                }
+              } catch {}
+            }
+            console.warn(error);
+            return;
+          }
+          await new Promise((resolve) =>
+            window.setTimeout(resolve, 400 * 2 ** attempt),
+          );
+        }
+      }
+    }
+
+    void loadViewCount();
+    return () => controller.abort();
+  }, [viewApiUrl]);
+
+  return viewCount;
+}
+
+function TrackerViewCount({ count }: { count: number | null }) {
+  const label = count === null ? 'View count loading' : `${count} total views`;
+
+  return (
+    <span
+      className="inline-flex shrink-0 items-center gap-1 font-black text-[var(--erl-text)]"
+      aria-label={label}
+      title={label}
+    >
+      <Eye size={12} strokeWidth={2.4} aria-hidden="true" />
+      {count === null ? '—' : count.toLocaleString('en-IN')}
+    </span>
+  );
+}
 
 function formatRupees(value: number, decimals = 0) {
   return new Intl.NumberFormat('en-IN', {
@@ -174,14 +281,16 @@ function TrackerTopBar({
   title,
   summary,
   actions,
+  viewCount,
 }: {
   title: string;
   summary: ReactNode;
   actions: ReactNode;
+  viewCount: number | null;
 }) {
   return (
     <div className="pointer-events-none absolute inset-x-0 top-0 z-30 px-3 pb-10 pt-3">
-      <div className="erl-top-bar pointer-events-auto mx-auto flex items-center justify-between gap-3 rounded-2xl border p-2 shadow-[0_14px_38px_var(--erl-nav-shadow)] backdrop-blur-xl">
+      <div className="erl-top-bar pointer-events-auto relative mx-auto flex items-center justify-between gap-3 rounded-2xl border p-2 shadow-[0_14px_38px_var(--erl-nav-shadow)] backdrop-blur-xl">
         <div className="min-w-0 pl-1">
           <p className="truncate text-[10px] font-black uppercase tracking-[0.12em] text-[var(--erl-accent)]">
             {title}
@@ -191,6 +300,10 @@ function TrackerTopBar({
           </p>
         </div>
         <div className="flex shrink-0 items-center gap-1.5">{actions}</div>
+        <div className="erl-floating-card absolute -bottom-3 left-4 flex h-6 items-center rounded-full border px-2.5 text-[10px] shadow-[0_6px_18px_var(--erl-nav-shadow)]">
+          <TrackerViewCount count={viewCount} />
+          <span className="ml-1 text-[var(--erl-muted)]">views</span>
+        </div>
       </div>
     </div>
   );
@@ -1024,9 +1137,11 @@ function TodayStamp() {
 function FundTab({
   theme,
   onToggleTheme,
+  viewCount,
 }: {
   theme: ColorTheme;
   onToggleTheme: () => void;
+  viewCount: number | null;
 }) {
   const fundSnapshot = useLiveFundSnapshot();
   const fundDues: Array<{
@@ -1067,6 +1182,7 @@ function FundTab({
           </>
         }
         actions={<ThemeToggle theme={theme} onToggle={onToggleTheme} />}
+        viewCount={viewCount}
       />
 
       <div className="h-full overflow-y-auto px-4 pb-32 pt-28">
@@ -1158,9 +1274,11 @@ function FundTab({
 function DocumentsTab({
   theme,
   onToggleTheme,
+  viewCount,
 }: {
   theme: ColorTheme;
   onToggleTheme: () => void;
+  viewCount: number | null;
 }) {
   return (
     <section className="relative h-svh overflow-hidden bg-[var(--erl-page)] text-[var(--erl-text)]">
@@ -1172,6 +1290,7 @@ function DocumentsTab({
           </>
         }
         actions={<ThemeToggle theme={theme} onToggle={onToggleTheme} />}
+        viewCount={viewCount}
       />
 
       <div className="h-full overflow-y-auto px-4 pb-32 pt-28">
@@ -1320,7 +1439,13 @@ function DocumentsTab({
   );
 }
 
-export function IssueTracker({ issues }: { issues: ErlIssue[] }) {
+export function IssueTracker({
+  issues,
+  viewApiUrl,
+}: {
+  issues: ErlIssue[];
+  viewApiUrl: string;
+}) {
   const [activeTab, setActiveTab] = useState<AppTab>('civil');
   const [theme, setTheme] = useState<ColorTheme>('dark');
   const [showCompletion, setShowCompletion] = useState(true);
@@ -1332,6 +1457,7 @@ export function IssueTracker({ issues }: { issues: ErlIssue[] }) {
   const [owner, setOwner] = useState('all');
   const [showSwipeHint, setShowSwipeHint] = useState(false);
   const reelRef = useRef<HTMLElement>(null);
+  const viewCount = useTrackerViewCount(viewApiUrl);
 
   const categories = useMemo(
     () => [...new Set(issues.map((issue) => issue.category))].sort(),
@@ -1478,6 +1604,7 @@ export function IssueTracker({ issues }: { issues: ErlIssue[] }) {
                   </a>
                 </>
               }
+              viewCount={viewCount}
             />
 
             {filteredIssues.length === 0 ? (
@@ -1526,9 +1653,17 @@ export function IssueTracker({ issues }: { issues: ErlIssue[] }) {
             )}
           </section>
         ) : activeTab === 'fund' ? (
-          <FundTab theme={theme} onToggleTheme={toggleTheme} />
+          <FundTab
+            theme={theme}
+            onToggleTheme={toggleTheme}
+            viewCount={viewCount}
+          />
         ) : (
-          <DocumentsTab theme={theme} onToggleTheme={toggleTheme} />
+          <DocumentsTab
+            theme={theme}
+            onToggleTheme={toggleTheme}
+            viewCount={viewCount}
+          />
         )}
       </main>
 

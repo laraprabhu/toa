@@ -1,6 +1,11 @@
 name: Deploy admin API
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - 'worker/**'
+      - '.github/workflows/deploy-admin-api.yml'
   workflow_dispatch:
 
 permissions:

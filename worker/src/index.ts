@@ -124,6 +124,19 @@ const worker = {
       const url = new URL(request.url);
       const viewMatch = url.pathname.match(/^\/api\/views\/(\d+)\/?$/);
 
+      if (url.pathname.match(/^\/api\/views\/erl-issues\/?$/)) {
+        if (!['GET', 'POST'].includes(request.method))
+          return json({ error: 'Method not allowed.' }, 405, corsHeaders);
+
+        const counter = env.ANNOUNCEMENT_VIEWS.getByName('erl-issues-page');
+        const counterResponse = await counter.fetch(
+          'https://announcement-views/count',
+          { method: request.method },
+        );
+        const result = (await counterResponse.json()) as { views: number };
+        return json(result, 200, corsHeaders);
+      }
+
       if (viewMatch) {
         if (!['GET', 'POST'].includes(request.method))
           return json({ error: 'Method not allowed.' }, 405, corsHeaders);
