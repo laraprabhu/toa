@@ -1,5 +1,21 @@
 [
   {
+    "number": 49,
+    "id": "922e6810-0ee1-462f-b676-2b4dd05ab2f5",
+    "slug": "take-diversion-at-a-block",
+    "title": "Take diversion at A block 🚧👷🏻‍♀️",
+    "summary": "ThinkGas work is underway between A Block and OSR area, and the south-side road is temporarily closed. Please take a diversion or walk carefully. Details inside.",
+    "image": "/announcement-preview.png",
+    "body": "Dear Residents,\n\nThinkGas is carrying out work between the OSR and Tower A. During this period, vehicle entry to the basement and open parking areas has been rerouted via the road in front of Towers A, B and C.\n\nThe work is expected to continue for approximately 7 days.\n\nResidents are requested to exercise caution while walking through the affected areas. For safety reasons, children’s playtime infront of ABC tower will be restricted until the work is completed.\n\nWe appreciate your cooperation and understanding. We regret for the inconvenience caused.\n\nThanks,\nTOA.",
+    "category": "urgent",
+    "priority": "normal",
+    "status": "published",
+    "publishedAt": "2026-10-22T13:54:00.000Z",
+    "eventDate": "Until Next Week",
+    "location": "Tejomaya",
+    "contact": "TOA Manager"
+  },
+  {
     "number": 48,
     "id": "e7e439df-6b83-4666-a330-e7b3eecf3640",
     "slug": "png-go-live",
