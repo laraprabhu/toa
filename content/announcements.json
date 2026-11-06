@@ -15,7 +15,21 @@
     "location": "Tejomaya ABC & E",
     "contact": "TOA Manager",
     "previewVersion": "52-mw4vz8mp",
-    "previewHeight": 800
+    "previewHeight": 800,
+    "images": [
+      {
+        "src": "/media/announcement-52/d503fb2c-52cc-492a-97bb-090bc0b04fe6.webp",
+        "alt": "abc finalised cropped",
+        "width": 819,
+        "height": 1423
+      },
+      {
+        "src": "/media/announcement-52/049e7e0d-5ca3-42ac-8521-496b1ffb854f.webp",
+        "alt": "E Block cropped",
+        "width": 1237,
+        "height": 967
+      }
+    ]
   },
   {
     "number": 51,
