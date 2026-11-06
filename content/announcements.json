@@ -13,7 +13,21 @@
     "publishedAt": "2026-11-06T10:27:00.000Z",
     "eventDate": "Diwali 2026",
     "location": "Tejomaya ABC & E",
-    "contact": "TOA Manager"
+    "contact": "TOA Manager",
+    "images": [
+      {
+        "src": "/media/announcement-52/d8e156ed-1e74-47d5-8da0-df5eaca710c9.webp",
+        "alt": "diwali abc finalised",
+        "width": 1025,
+        "height": 1534
+      },
+      {
+        "src": "/media/announcement-52/6d44eb75-a526-44dc-8698-aed21b2f08af.webp",
+        "alt": "E Block cropped",
+        "width": 1237,
+        "height": 967
+      }
+    ]
   },
   {
     "number": 51,
