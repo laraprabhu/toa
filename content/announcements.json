@@ -1,5 +1,21 @@
 [
   {
+    "number": 53,
+    "id": "052415fe-cfb6-4838-ae8e-56dde3de2b87",
+    "slug": "gym-will-be-closed-tomorrow",
+    "title": "Gym Closed Tomorrow 🛑, but Open Next Sunday!",
+    "summary": "Tejomaya witnessed a wonderful Deepavali celebration today! The gym is closed tomorrow due to trainer delays and general maintenance. Tap to learn more.",
+    "image": "/announcement-preview.png",
+    "body": "Dear Residents,\n\nTejomaya witnessed a wonderful Deepavali celebration today! We hope you and your families had a joyful and memorable time.\n\nPlease note that the gym will remain closed tomorrow, as our trainers could not return to Chennai on time and a maintenance visit is scheduled too. To compensate for the closure, the gym will remain open next Sunday.\n\nThank you for your understanding.\n\nThanks,  \nTOA",
+    "category": "maintenance",
+    "priority": "normal",
+    "status": "published",
+    "publishedAt": "2026-11-08T16:01:00.000Z",
+    "eventDate": "9th November 2026",
+    "location": "Tejomaya Gym",
+    "contact": "TOA Manager"
+  },
+  {
     "number": 52,
     "id": "a4963b55-b146-44bd-ba2a-c88c1ced919d",
     "slug": "tejomayans-brace-yourself-for-diwali",
