@@ -13,7 +13,27 @@
     "publishedAt": "2026-11-09T16:15:00.000Z",
     "eventDate": "Coming weekend",
     "location": "Tejomaya",
-    "contact": "TOA Gym Trainer"
+    "contact": "TOA Gym Trainer",
+    "images": [
+      {
+        "src": "/media/announcement-55/3c9fc48a-6b8a-474d-b6c2-5f81d6ac962a.webp",
+        "alt": "lake1",
+        "width": 574,
+        "height": 1020
+      },
+      {
+        "src": "/media/announcement-55/547f6c37-ffb6-449e-bdb1-f292e1e32c87.webp",
+        "alt": "lake2",
+        "width": 765,
+        "height": 1020
+      },
+      {
+        "src": "/media/announcement-55/a3f4fb63-0797-41bf-b867-37271008efb4.webp",
+        "alt": "Screenshot 2026 11 09 at 9.44.00 PM",
+        "width": 1592,
+        "height": 772
+      }
+    ]
   },
   {
     "number": 54,
