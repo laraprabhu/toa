@@ -5,7 +5,7 @@
     "slug": "boom-barrier-vendor-office-hours",
     "title": "Boom Barrier Vendor - Office Hours ⏰",
     "summary": "Ou boom barrier vendor will be at the TOA office this Saturday, from 11 AM to 4 PM. Residents with gate-access issues may visit for assistance. More details inside.",
-    "image": "/announcement-preview.png",
+    "image": "/previews/announcement-56.png",
     "body": "Dear Residents,\n\nAn Engineer from GI Smart (Our boom barrier vendor) will be available at the TOA office on Saturday from 11:00 AM to 4:00 PM to resolve all issues related to the new boom barrier vehicle access system.\n\nResidents facing any issues with vehicle access are requested to make use of this opportunity to get their concerns addressed.\n\nResidents who are still using the existing Two-Wheeler Park+ sticker are also requested to migrate to the GI Smart system during this visit.\n\nPlease ensure that your vehicle access issues are resolved and stickers are migrated within the scheduled time.\nThank you for your cooperation.\n\nRegards,  \nTOA",
     "category": "action",
     "priority": "normal",
@@ -13,7 +13,9 @@
     "publishedAt": "2026-11-20T14:39:00.000Z",
     "eventDate": "21st November, Saturday",
     "location": "TOA Office",
-    "contact": "TOA Manager"
+    "contact": "TOA Manager",
+    "previewVersion": "56-mwp3hkzi",
+    "previewHeight": 800
   },
   {
     "number": 55,
