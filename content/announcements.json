@@ -10,7 +10,15 @@
     "category": "community",
     "priority": "normal",
     "status": "published",
-    "publishedAt": "2026-11-24T07:46:00.000Z"
+    "publishedAt": "2026-11-24T07:46:00.000Z",
+    "images": [
+      {
+        "src": "/media/announcement-57/473d8073-d601-4301-af9c-6dc1fdc10708.webp",
+        "alt": "WhatsApp Image 2026 11 24 at 11.38.14",
+        "width": 1264,
+        "height": 1528
+      }
+    ]
   },
   {
     "number": 56,
