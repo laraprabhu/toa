@@ -5,12 +5,14 @@
     "slug": "notice-tower-e-water-supply-update",
     "title": "NOTICE: Tower E Water Supply Update",
     "summary": "The submersible motor failed yesterday afternoon, and repairs were delayed while we waited for a rental motor. The rental motor is being installed, and water should resume by 1–2 PM today. Drums are available near the ground-floor lift until then. A new motor is approved and will be installed by end of day.",
-    "image": "/announcement-preview.png",
+    "image": "/previews/announcement-58.png",
     "body": "Dear Tower E Residents,\n\nWe regret the inconvenience caused by the water outage since yesterday afternoon.\n\nReason for outage: The Tower E submersible water motor developed a major fault around 1 PM on 25 Nov and could not pump water to the overhead tank.\n\nReasons for the delay:\n• Diagnosing the fault took time, and an external technician had to be consulted.\n• An alternate motor from another system was tried, but it was not powerful enough to reach the Tower E overhead tank.\n• The earliest rental motor was available only this morning.\n• Because the motor sits inside the sump, the sump water (about one tanker load) had to be moved to another sump before the motor could be removed.\n\nCurrent status: A rental motor is being installed, and water is expected to resume between 1 and 2 PM today.\n\nUntil then: Water drums are kept on the ground floor near the lift-side glass door. Please collect water in buckets.\n\nPermanent fix: A new motor has been approved and is targeted for installation by end of day.\n\nFurther updates will be shared.\n\nRegards,\nTOA",
     "category": "community",
     "priority": "normal",
     "status": "published",
-    "publishedAt": "2026-11-26T07:08:00.000Z"
+    "publishedAt": "2026-11-26T07:08:00.000Z",
+    "previewVersion": "58-mwx7rlh8",
+    "previewHeight": 800
   },
   {
     "number": 57,
